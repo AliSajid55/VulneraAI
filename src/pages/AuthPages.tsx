@@ -1,6 +1,6 @@
 import { useState, type FormEvent, type InputHTMLAttributes, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Bot, Eye, EyeOff, History, ShieldAlert, ShieldCheck, Sparkles } from "lucide-react";
+import { Bot, Eye, EyeOff, History, ShieldAlert, ShieldCheck } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext";
 import { Logo } from "../components/AppLayout";
@@ -19,10 +19,7 @@ function AuthShell({ title, subtitle, children, footer }: {
         <div className="relative"><Logo /></div>
 
         <div className="relative max-w-md">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/25 bg-indigo-500/10 px-2.5 py-1 text-xs font-medium text-indigo-300">
-            <Sparkles size={12} /> GraphCodeBERT + Gemini
-          </span>
-          <h2 className="mt-5 text-[32px] font-semibold leading-[1.15] tracking-tight text-white">
+          <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white">
             Find security risks in your code before they ship.
           </h2>
           <p className="mt-4 text-[15px] leading-7 text-slate-400">
