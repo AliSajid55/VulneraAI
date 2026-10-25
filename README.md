@@ -1,49 +1,110 @@
-# PolyGuard: AI-Powered Code Vulnerability Scanner
+<div align="center">
 
-PolyGuard classifies a code snippet as **safe** or **vulnerable** using a fine-tuned **GraphCodeBERT** model, then asks **Google Gemini** to explain the result in plain language with suggested fixes. Users sign up, scan code, and keep a searchable history of every scan in a dashboard.
+# 🛡️ PolyGuard
 
-- **Backend:** Flask (Python), PyTorch, Hugging Face Transformers, SQLAlchemy
-- **Database:** PostgreSQL
-- **Auth:** Email + password (hashed with Werkzeug), JWT tokens
-- **Frontend:** React + TypeScript (Vite, Tailwind CSS, React Router)
-- **Model:** GraphCodeBERT (RoBERTa architecture) fine-tuned for binary classification (`safe` / `vulnerable`)
-- **Explanations:** Google Gemini API (optional; the scanner works without it)
+### AI-Powered Code Vulnerability Scanner
 
----
+**Scan code. Understand predictions. Track every review.**
 
-## Features
+A code review dashboard powered by fine-tuned GraphCodeBERT, with optional Gemini explanations and a personal scan history.
 
-- **Sign up / log in** with email and password. Each user only sees their own scans.
-- **Dashboard:** total, vulnerable and safe scan counts, average confidence, a 14-day activity chart, a safe-vs-vulnerable donut, a per-language breakdown, and recent scans.
-- **New scan:** paste code, choose the language, optionally name the scan. You get the verdict, the confidence score and the AI explanation, and the scan is saved automatically.
-- **History:** search by name or code, filter by result and language, sort, paginate, open or delete a scan.
-- **Scan detail:** the full result, the AI explanation and the submitted code.
-- **Export:** download one scan as a **PDF report**, or the filtered history as **CSV**.
-- **Settings:** update name and email, change password, delete the account and all its scans.
+![React](https://img.shields.io/badge/React-TypeScript-61DAFB?style=flat-square&logo=react&logoColor=white)
+![Python](https://img.shields.io/badge/Python-Flask-3776AB?style=flat-square&logo=python&logoColor=white)
+![Model](https://img.shields.io/badge/AI-GraphCodeBERT-8B5CF6?style=flat-square)
+![Database](https://img.shields.io/badge/Database-PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+
+[Features](#features) · [Architecture](#architecture) · [Setup](#getting-started) · [API](#api-reference) · [Evaluation](#evaluation)
+
+</div>
 
 ---
 
-## How a scan works
+## Overview
+
+PolyGuard classifies submitted code as **safe** or **vulnerable** using a fine-tuned GraphCodeBERT model. Optional Google Gemini explanations turn the prediction into a readable summary, potential concerns, and suggested remediation. Authenticated users can review results, explore activity, and export their scan history.
+
+> **Research prototype:** predictions can contain false positives and false negatives. A “safe” result does not establish that code is secure. Review the evaluation and limitations before interpreting results.
+
+### Technology stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| Frontend | React, TypeScript, Vite, Tailwind CSS, React Router |
+| Backend | Python, Flask, SQLAlchemy |
+| Inference | PyTorch, Hugging Face Transformers, fine-tuned GraphCodeBERT |
+| Explanations | Google Gemini API — optional |
+| Persistence | PostgreSQL |
+| Authentication | JWT tokens, Werkzeug password hashing |
+
+---
+
+<a id="features"></a>
+
+## ✨ Features
+
+| Workspace | Implemented capabilities |
+| :--- | :--- |
+| **Dashboard** | Total, safe and vulnerable scan counts; total lines; average confidence; sparklines; 14-day activity; result donut; top six language groups; five recent scans |
+| **Scanner** | Paste code, upload or drag a file, use example snippets, add a title, and submit with `⌘ Enter` / `Ctrl Enter` |
+| **Results** | Whole-snippet verdict, vulnerable probability, decision threshold, confidence, optional AI explanation, and PDF download |
+| **History** | Debounced search across titles and code, result/language filters, sorting, pagination, individual details, deletion, and filtered CSV export |
+| **Account** | Signup/login, profile updates, password changes, logout, and password-confirmed account deletion with associated scans |
+| **Interface** | Dark indigo workspace, responsive sidebar/mobile drawer, loading skeletons, toasts, empty states, and backend status polling every 30 seconds |
+
+**Language options:** Python, JavaScript, TypeScript, Java, C++, C, Go, Swift, and “Auto detect.” File extensions select a language when uploading; pasted code is not automatically classified by language. The language value provides explanation context and history metadata; it does not change GraphCodeBERT inference. Language options do not establish validated detection accuracy for each language.
+
+**Input limits:** uploaded files are limited to 100,000 bytes in the frontend; API code submissions are limited to 100,000 characters. Uploaded files are read as text in the browser and submitted as JSON.
+
+---
+
+<a id="architecture"></a>
+
+## 🏗️ Architecture
+
+```mermaid
+flowchart TD
+    UI["React workspace"] --> API["Flask REST API"]
+    API --> Auth["JWT authentication"]
+    API --> Model["Local GraphCodeBERT inference"]
+    Model --> Rule["Aggregation and threshold"]
+    Rule --> Gemini["Optional Gemini explanation"]
+    Gemini --> DB["PostgreSQL scan history"]
+    DB --> UI
+```
+
+The diagram shows the authenticated scan path. The public `/api/predict` route runs inference without Gemini or database writes. PDF reports are generated in the browser with jsPDF; CSV history exports are generated by Flask. Dashboard charts use lightweight SVG/CSS components.
+
+**Data handling:** authenticated scans store the submitted code and explanation in PostgreSQL. When Gemini is configured, the backend sends up to the first **12,000 characters** of code, together with the prediction, confidence, and language, to Google's API. Leave `GEMINI_API_KEY` unset to disable that external explanation request.
+
+---
+
+## 🧠 How scanning works
 
 1. The frontend sends the code to `POST /api/scan` with the user's token.
-2. The backend **normalizes whitespace** (line endings, trailing spaces, leading/trailing blank lines), so the same code always gets the same score however it was pasted.
-3. GraphCodeBERT scores the snippet. Code longer than 512 tokens is split into overlapping chunks (stride 128), and the chunk probabilities are averaged.
-4. If the vulnerable probability is **≥ 0.5**, the snippet is labeled **vulnerable**; otherwise it is labeled **safe**.
-5. Gemini writes an explanation (summary, potential concerns, suggested remediation, limitations). Gemini only **explains** the result; it does not change the prediction.
+2. The backend **normalizes whitespace** (line endings, trailing spaces, leading/trailing blank lines), to reduce differences caused by line endings and surrounding whitespace.
+3. GraphCodeBERT scores the snippet. Long code is split into overlapping 512-token chunks (stride 128). Aggregation and the decision threshold depend on the loaded model configuration; see [Model configuration](#model-configuration).
+4. The vulnerable probability is compared with the configured threshold. The original model defaults to **0.5**; a v3 model can use validation-tuned thresholds.
+5. If configured, Gemini writes an explanation (summary, potential concerns, suggested remediation, limitations). Gemini only **explains** the result; it does not change the prediction.
 6. The scan and its explanation are saved to PostgreSQL.
 
 > The prediction applies to the **whole snippet**. The scanner does not point to specific vulnerable lines.
 
 ---
 
-## Project structure
+## 📁 Project structure
 
-```
+```text
+.
 ├── server.py                    # Flask app: model inference, Gemini, scan/history/stats routes
 ├── auth.py                      # Signup, login, profile, password (JWT)
 ├── database.py                  # PostgreSQL connection + User and Scan tables
 ├── model/                       # Fine-tuned GraphCodeBERT (weights stored with Git LFS)
-├── test.py                      # Evaluates the model on the test cases (via /api/predict)
+├── test.py                      # Small API-based evaluation suite
+├── test_300.py                  # Larger API-based evaluation runner
+├── test_cases_300.py            # Hand-written cases; saved run contains 271
+├── test_300_summary.csv         # Committed aggregate results
+├── test_300_results.csv         # Committed per-case predictions
+├── test_300_output.txt          # Saved run output and model/rule identification
 ├── vulnerability_test_cases.py  # 16 labeled Python examples (8 safe, 8 vulnerable)
 ├── .env.example                 # Template for your .env file
 ├── requirements.txt
@@ -58,7 +119,7 @@ PolyGuard classifies a code snippet as **safe** or **vulnerable** using a fine-t
 
 ---
 
-## Requirements
+## 📋 Requirements
 
 - Python 3.10+
 - Node.js 18+
@@ -68,7 +129,9 @@ PolyGuard classifies a code snippet as **safe** or **vulnerable** using a fine-t
 
 ---
 
-## Setup
+<a id="getting-started"></a>
+
+## 🚀 Getting started
 
 ### 1. Clone the repository with the model
 
@@ -98,7 +161,7 @@ createdb polyguard
 
 **Windows / Linux:** install PostgreSQL from [postgresql.org](https://www.postgresql.org/download/), then create a database called `polyguard` (for example `createdb -U postgres polyguard`).
 
-The tables (`users`, `scans`) are created automatically the first time the server starts.
+The tables (`users`, `scans`) are created automatically on startup. For older PostgreSQL tables, startup also adds missing `threshold` and `model_version` columns. Broader schema changes require a migration strategy.
 
 ### 3. Backend
 
@@ -118,9 +181,19 @@ DATABASE_URL=postgresql://YOUR_MAC_USERNAME@localhost:5432/polyguard
 # DATABASE_URL=postgresql://postgres:postgres@localhost:5432/polyguard
 
 JWT_SECRET_KEY=paste-a-long-random-string-here
-GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=gemini-3.5-flash-lite
+GEMINI_API_KEY=
+GEMINI_MODEL=your_supported_gemini_model
+GEMINI_TIMEOUT_SECONDS=120
+
+MODEL_DIR=model
+MAX_EVAL_CHUNKS=8
+JWT_EXPIRES_HOURS=24
+
+# Optional frontend override; restart Vite after editing
+VITE_API_URL=http://127.0.0.1:5000
 ```
+
+Leave `GEMINI_API_KEY` empty for local inference without explanations. To enable explanations, set the key and choose a model available to your account that supports the generation settings used in `server.py`. The repository default is `gemini-3.5-flash-lite`; availability has not been verified here.
 
 Generate a secret key with:
 ```bash
@@ -132,16 +205,20 @@ python -c "import secrets; print(secrets.token_hex(32))"
 ### 4. Frontend
 
 ```bash
-npm install
+npm ci
 ```
 
 ---
 
-## Using your own trained model (v3)
+<a id="model-configuration"></a>
 
-The backend can load any fine-tuned GraphCodeBERT folder saved with `save_pretrained()`, such as `outputs/graphcodebert_vuln_v3/best_model` from `GraphCodeBERT_Vuln_v3_PairAware.ipynb`.
+## ⚙️ Model configuration & v3 scoring
 
-1. Copy the whole `best_model` folder into the project as `model_v3/`. It must contain `config.json`, `model.safetensors`, the tokenizer files and **`best_info.json`**.
+**The repository contains `model/`; the `model_v3/` checkpoint and its training notebook are not included in the reviewed tree.** The saved larger evaluation used an external `model_v3` folder. A fresh clone therefore does not reproduce that run automatically.
+
+The backend can load a compatible binary fine-tuned GraphCodeBERT folder saved with `save_pretrained()`, such as `outputs/graphcodebert_vuln_v3/best_model` from `GraphCodeBERT_Vuln_v3_PairAware.ipynb`.
+
+1. Copy your compatible trained checkpoint into the project as `model_v3/`, including `config.json`, model weights, and tokenizer files. Include **`best_info.json`** to apply the validation-selected scoring rule.
 2. Add to `.env`:
    ```env
    MODEL_DIR=model_v3
@@ -154,14 +231,18 @@ How the backend scores code with a v3 model, matching the notebook's evaluation:
 - The chunk scores are combined with the rule's aggregation (`max`, `top2` or `mean`) from `best_info.json`.
 - The decision uses the threshold tuned on validation. Length-aware thresholds per chunk-count bucket (1 / 2–3 / 4+) are also supported.
 - Without `best_info.json` (for example the original `model/` folder), the backend falls back to `mean` with threshold 0.5.
+- The default **8-chunk cap applies to all model folders**, including `model/`. Code beyond those chunks does not contribute to the classifier verdict. `/api/predict` reports both `chunk_count` (scored) and `total_chunks` (tokenized).
+- Inference uses CUDA when available, otherwise CPU; the current code does not select Apple MPS.
 
 **Confidence** in the UI is the distance from the threshold, scaled from 50% (exactly at the threshold) to 100% (a score of 0.0 or 1.0). With a 0.9 threshold, a score of 0.85 is "safe" but only just, so it shows about 53%, not 15%. The raw vulnerable probability and the threshold are shown in the result meter and the PDF.
+
+This confidence value is a **decision-margin display score**, not a calibrated probability that the prediction is correct.
 
 Each saved scan stores the threshold and the model folder name, so scans made with different models stay correct in the history.
 
 ---
 
-## Running the app
+## 💻 Running locally
 
 Open **two terminals** in the project folder.
 
@@ -180,7 +261,9 @@ Open **http://localhost:3000**, create an account, and start scanning.
 
 ---
 
-## API
+<a id="api-reference"></a>
+
+## 🔌 API reference
 
 All endpoints except `/api/health`, `/api/predict`, `/api/auth/signup` and `/api/auth/login` need the header `Authorization: Bearer <token>`.
 
@@ -217,41 +300,78 @@ The `language` field is passed to Gemini for context only. The GraphCodeBERT pre
 
 ---
 
-## Testing the model
+<a id="evaluation"></a>
 
-With the backend running:
+## 🧪 Evaluation & test results
+
+### Committed evaluation results
+
+The saved output identifies **`model_v3` with `max @ 0.902`** (rounded threshold). Despite the filenames, this run contains **271 cases**, comprising **136 safe** and **135 vulnerable** examples.
+
+| Group | Cases | Accuracy | Precision | Recall | F1 |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| Easy | 103 | 75.73% | 76.79% | 78.18% | 77.48% |
+| Medium | 85 | 71.76% | 72.97% | 65.85% | 69.23% |
+| Complex | 83 | 75.90% | 85.19% | 58.97% | 69.70% |
+| **Overall** | **271** | **74.54%** | **77.50%** | **68.89%** | **72.94%** |
+
+Precision, recall, and F1 use **vulnerable** as the positive class.
+
+| Actual class | Predicted safe | Predicted vulnerable |
+| :--- | ---: | ---: |
+| Safe | 109 | 27 |
+| Vulnerable | 42 | 93 |
+
+**202 correct predictions; 27 false positives; 42 missed vulnerabilities.** These are committed results from a hand-written exploratory suite, not a new run or an independent benchmark. They do not establish performance on unseen repositories or across every selectable language. Sources: [`test_300_summary.csv`](test_300_summary.csv), [`test_300_results.csv`](test_300_results.csv), and [`test_300_output.txt`](test_300_output.txt).
+
+### Run the evaluation
+
+Start the backend with your chosen model, then run:
 
 ```bash
+# Additional dependency used by the larger evaluation runner
+# Currently missing from requirements.txt
+pip install scikit-learn
+
+# Small suite: saves server_test_results.csv
 python test.py
+
+# Larger suite: saves test_300_results.csv and test_300_summary.csv
+python test_300.py
+
+# Optional alternative cases file
+python test_300.py path/to/test_cases_300.py
 ```
 
-This sends the 16 examples in `vulnerability_test_cases.py` to `/api/predict`, prints each prediction, and saves the results to `server_test_results.csv`.
+The larger runner reads literal case lists using Python's AST without executing the case file. It can trim a syntactically incomplete tail, so inspect the printed case count before interpreting results. Both runners call `/api/predict`; outputs depend on the active checkpoint, aggregation, threshold, and chunk cap. Rerunning overwrites the corresponding result files.
 
-**Result with the original `model/` folder: 10/16 correct (62.5%).** Run it again after switching `MODEL_DIR` to compare models.
+### Frontend build checks
 
-| | Correct |
-|---|---|
-| Safe examples | 4 / 8 |
-| Vulnerable examples | 6 / 8 |
+```bash
+npm run build
+npx tsc --noEmit
+```
 
-Examples the model gets right include SQL injection, command injection and parameterized SQL. It misses `eval()` and `pickle.loads()`, and labels some simple safe code (f-strings, list sorting, dictionary lookup) as vulnerable.
-
-> This is a small exploratory test set, not a benchmark.
+The build script runs Vite; TypeScript checking is a separate command. These commands are provided for local verification, not reported as passed in this documentation review.
 
 ---
 
-## Known limitations
+## 📌 Limitations & deployment considerations
 
 - **Whole-snippet classification only.** The model does not identify the vulnerable line or the vulnerability type.
-- **Accuracy is limited.** See the test results above. More balanced training data is needed, especially for Python.
+- **Detection quality is limited.** The saved evaluation misses 42 of 135 vulnerable examples. Diverse training data and independent, leakage-controlled evaluation remain necessary.
+- **Partial analysis of long inputs.** The classifier scores only the first eight chunks by default, while Gemini sees only the first 12,000 characters. The displayed line count describes the submission, not guaranteed model coverage.
+- **Risk labels are derived.** “High” maps to a vulnerable verdict and “low” to safe; there is no separately trained severity estimator.
+- **Gemini health is configuration-based.** An “AI explanations on” indicator means a key is configured, not that an external API request has succeeded.
+- **Deployment hardening remains.** The current app uses permissive CORS, exposes public inference, and does not implement rate limiting. Password changes do not revoke already-issued JWTs; logout removes the local token. Review these behaviors before public hosting.
 - **No email verification or "forgot password".** Accounts are created immediately.
-- **No database migrations.** Tables are created with `create_all()` on startup. If you change the models later, drop the tables or add a migration tool such as Alembic.
-- **Login tokens are stored in the browser's `localStorage`.** This is fine for a local project; production apps often use HTTP-only cookies instead.
-- **Gemini availability.** Some Gemini models can be slow or overloaded (503/504 errors). If Gemini fails or times out, the scan still returns and saves the model prediction and shows "explanation unavailable". `gemini-3.5-flash-lite` usually answers in 1–2 seconds.
+- **Limited schema upgrades.** Startup creates tables and adds two compatibility columns; there is no versioned migration framework.
+- **Login tokens are stored in the browser's `localStorage`.** Browser scripts can access these tokens. Review token storage and session security before deployment; HTTP-only cookies are one option.
+- **Gemini availability.** Explanation generation runs synchronously, with up to three attempts for selected API errors. `GEMINI_TIMEOUT_SECONDS` is a per-request client timeout, not a total scan deadline. If explanation generation fails, the classifier result can still be saved and returned.
 
 ---
 
-## Troubleshooting
+## 🛠️ Troubleshooting
 
 | Problem | Fix |
 |---|---|
@@ -262,6 +382,26 @@ Examples the model gets right include SQL injection, command injection and param
 | `role "postgres" does not exist` | Use your Mac username in `DATABASE_URL` (see Setup step 3) |
 | Logged out after every server restart | Set `JWT_SECRET_KEY` in `.env` |
 | `ModuleNotFoundError` (torch, flask, sqlalchemy, ...) | Activate the venv and run `pip install -r requirements.txt` |
+| `ModuleNotFoundError: sklearn` | Run `pip install scikit-learn` before `python test_300.py` |
+| Saved metrics differ after cloning | The committed run used external `model_v3`; the clone defaults to `model/`. Check `/api/health` and checkpoint provenance |
+| Frontend build cannot connect to deployed API | Set `VITE_API_URL` before building. Flask does not serve the frontend build automatically |
 | AI explanation unavailable | Check the backend terminal for the Gemini error. Check `GEMINI_API_KEY` and `GEMINI_MODEL` in `.env` |
 | `503 UNAVAILABLE` / `504 DEADLINE_EXCEEDED` | Gemini is overloaded. Try again later or use a `flash-lite` model |
 | Frontend says it cannot reach the server | Make sure the backend is running on port 5000 |
+
+---
+
+## Development priorities
+
+- Package the evaluated checkpoint with its exact scoring metadata and provenance.
+- Add independent test data, per-language metrics, and complete run metadata.
+- Add automated authentication, authorization, API, and frontend integration tests.
+- Introduce versioned database migrations, rate limits, restrictive CORS, and token revocation.
+- Make truncation coverage explicit in saved scan results and the UI.
+
+<details>
+<summary><strong>Documentation review scope</strong></summary>
+
+This README was checked against the frontend pages and components, API client and export code, Flask routes, authentication, database models, environment template, package configuration, and committed evaluation artifacts at commit [`f99101e`](https://github.com/yasmeenmh90-beep/AI-Powered-Multi-Language-Code-Vulnerability-Scanner/tree/f99101e5ea44e194de7a5f7e591a9114761f712d). The model and database were not started, and browser flows were not exercised during this source review.
+
+</details>
