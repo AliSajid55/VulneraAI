@@ -344,7 +344,7 @@ Code:
 ```
 """
 
-    retryable_status_codes = {408, 429, 500, 502, 503, 504}
+    retryable_status_codes = {429, 500, 502, 503}
 
     for attempt in range(GEMINI_MAX_ATTEMPTS):
         try:
