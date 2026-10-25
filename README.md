@@ -304,6 +304,34 @@ The `language` field is passed to Gemini for context only. The GraphCodeBERT pre
 
 ## 🧪 Evaluation & test results
 
+### Test results at a glance
+
+The supplied terminal screenshots show two evaluation runs:
+
+| Test suite | Cases tested | Correct | Accuracy | Safe correctly classified | Vulnerable correctly classified |
+| :--- | ---: | ---: | ---: | ---: | ---: |
+| Small suite (`test.py`) | 16 | 13 | **81.25%** | 6 / 8 (75.00%) | 7 / 8 (87.50%) |
+| Larger suite (`test_300.py`) | 271 | 202 | **74.54%** | 109 / 136 (80.15%) | 93 / 135 (68.89%) |
+
+The larger suite's filename contains “300,” but the recorded run evaluated **271 cases**. These suites differ in size and composition; their accuracy figures should not be interpreted as a before/after comparison or combined into one score.
+
+### Small suite — 16 cases
+
+The supplied `16_cases.png` screenshot records **13 correct predictions out of 16**, with **3 misclassifications**: two safe examples flagged as vulnerable and one vulnerable example classified as safe.
+
+| Actual class | Predicted safe | Predicted vulnerable |
+| :--- | ---: | ---: |
+| Safe | 6 | 2 |
+| Vulnerable | 1 | 7 |
+
+For the vulnerable class, the counts imply **77.78% precision**, **87.50% recall**, and **82.35% F1**. These three metrics are calculated from the screenshot's class counts; the terminal directly reports accuracy and correct counts by class. The run saves its output to `server_test_results.csv`.
+
+The screenshot does not show the checkpoint name or scoring configuration, so this small-suite result is not attributed to a specific model version.
+
+### Larger suite — 271 cases
+
+The supplied `300_cases.png` screenshot confirms the committed larger-suite summary below: **202 correct predictions**, **27 false positives**, and **42 missed vulnerabilities**. Its displayed result rows include a decision threshold of `0.901606`.
+
 ### Committed evaluation results
 
 The saved output identifies **`model_v3` with `max @ 0.902`** (rounded threshold). Despite the filenames, this run contains **271 cases**, comprising **136 safe** and **135 vulnerable** examples.
@@ -322,7 +350,7 @@ Precision, recall, and F1 use **vulnerable** as the positive class.
 | Safe | 109 | 27 |
 | Vulnerable | 42 | 93 |
 
-**202 correct predictions; 27 false positives; 42 missed vulnerabilities.** These are committed results from a hand-written exploratory suite, not a new run or an independent benchmark. They do not establish performance on unseen repositories or across every selectable language. Sources: [`test_300_summary.csv`](test_300_summary.csv), [`test_300_results.csv`](test_300_results.csv), and [`test_300_output.txt`](test_300_output.txt).
+**202 correct predictions; 27 false positives; 42 missed vulnerabilities.** These are saved results from a hand-written exploratory suite, corroborated by the supplied terminal screenshot; they are not a new run or an independent benchmark. They do not establish performance on unseen repositories or across every selectable language. Sources: [`test_300_summary.csv`](test_300_summary.csv), [`test_300_results.csv`](test_300_results.csv), and [`test_300_output.txt`](test_300_output.txt).
 
 ### Run the evaluation
 
@@ -402,6 +430,6 @@ The build script runs Vite; TypeScript checking is a separate command. These com
 <details>
 <summary><strong>Documentation review scope</strong></summary>
 
-This README was checked against the frontend pages and components, API client and export code, Flask routes, authentication, database models, environment template, package configuration, and committed evaluation artifacts at commit [`f99101e`](https://github.com/yasmeenmh90-beep/AI-Powered-Multi-Language-Code-Vulnerability-Scanner/tree/f99101e5ea44e194de7a5f7e591a9114761f712d). The model and database were not started, and browser flows were not exercised during this source review.
+This README was checked against the frontend pages and components, API client and export code, Flask routes, authentication, database models, environment template, package configuration, and committed evaluation artifacts at commit [`f99101e`](https://github.com/yasmeenmh90-beep/AI-Powered-Multi-Language-Code-Vulnerability-Scanner/tree/f99101e5ea44e194de7a5f7e591a9114761f712d). The model and database were not started, and browser flows were not exercised during this source review. The evaluation section also incorporates the user-supplied `16_cases.png` and `300_cases.png` screenshots; results were transcribed rather than rerun.
 
 </details>
