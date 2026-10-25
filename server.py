@@ -348,9 +348,12 @@ Code:
 
     for attempt in range(GEMINI_MAX_ATTEMPTS):
         try:
-            response = gemini_client.models.generate_content(
+                response = gemini_client.models.generate_content(
                 model=GEMINI_MODEL,
                 contents=prompt,
+                config=types.GenerateContentConfig(
+                    thinking_config=types.ThinkingConfig(thinking_level="LOW")
+                ),
             )
 
             explanation = (response.text or "").strip()
