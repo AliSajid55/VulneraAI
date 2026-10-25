@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 from vulnerability_test_cases import TEST_CASES
 
-API_URL = "http://127.0.0.1:5000/api/scan"
+API_URL = "http://127.0.0.1:5000/api/predict"
 
 results = []
 

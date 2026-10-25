@@ -1,0 +1,788 @@
+level,idx,label,score,threshold,confidence,pred,correct,code_start
+Easy,1,1,0.998069,0.901606,0.9902,1,True,"def get_user(username):
+    query = ""SELECT * FROM users WHERE name = '"" + usern"
+Easy,2,1,0.998716,0.901606,0.9935,1,True,"def search_products(name):
+    sql = ""SELECT * FROM products WHERE name = '"" + n"
+Easy,3,1,0.99174,0.901606,0.958,1,True,"def delete_user(user_id):
+    query = ""DELETE FROM users WHERE id = "" + user_id
+"
+Easy,4,1,0.997765,0.901606,0.9886,1,True,"def login(user, password):
+    q = ""SELECT * FROM users WHERE name='"" + user + """
+Easy,5,1,0.989545,0.901606,0.9469,1,True,"def get_orders(customer):
+    sql = ""SELECT * FROM orders WHERE customer = '"" + "
+Easy,6,1,0.981725,0.901606,0.9071,1,True,"def update_email(uid, email):
+    q = ""UPDATE users SET email='"" + email + ""' WH"
+Easy,7,1,0.990456,0.901606,0.9515,1,True,"def find_product(pid):
+    query = ""SELECT * FROM products WHERE id = '"" + pid +"
+Easy,8,1,0.988731,0.901606,0.9427,1,True,"def get_messages(user):
+    sql = ""SELECT * FROM messages WHERE recipient='"" + u"
+Easy,9,1,0.981208,0.901606,0.9045,1,True,"def check_stock(item):
+    q = ""SELECT quantity FROM inventory WHERE item='"" + i"
+Easy,10,1,0.993189,0.901606,0.9654,1,True,"def add_comment(post_id, comment):
+    query = ""INSERT INTO comments VALUES("" + "
+Easy,11,1,0.994577,0.901606,0.9724,1,True,"def show_name(name):
+    return ""<h1>Hello "" + name + ""</h1>"""
+Easy,12,1,0.996249,0.901606,0.9809,1,True,"def render_profile(user_input):
+    return ""<div>"" + user_input + ""</div>"""
+Easy,13,1,0.994848,0.901606,0.9738,1,True,"def display_comment(comment):
+    html = ""<p>"" + comment + ""</p>""
+    return htm"
+Easy,14,1,0.996952,0.901606,0.9845,1,True,"def show_search(query):
+    return ""<h2>Results for: "" + query + ""</h2>"""
+Easy,15,1,0.99121,0.901606,0.9553,1,True,"def greet_user(name):
+    return ""<p>Welcome, "" + name + ""!</p>"""
+Easy,16,1,0.998694,0.901606,0.9934,1,True,"import os
+def ping(host):
+    os.system(""ping -c 1 "" + host)"
+Easy,17,1,0.126008,0.901606,0.9301,0,False,"import subprocess
+def run_cmd(command):
+    subprocess.call(""ls "" + command, she"
+Easy,18,1,0.997361,0.901606,0.9866,1,True,"import os
+def list_dir(path):
+    os.system(""ls -la "" + path)"
+Easy,19,1,0.083788,0.901606,0.9535,0,False,"import subprocess
+def check_host(host):
+    result = subprocess.check_output(""ns"
+Easy,20,1,0.998043,0.901606,0.9901,1,True,"import os
+def compress(file):
+    os.system(""gzip "" + file)"
+Easy,21,1,0.996275,0.901606,0.9811,1,True,"def read_file(filename):
+    f = open(""/uploads/"" + filename, ""r"")
+    return f."
+Easy,22,1,0.998664,0.901606,0.9932,1,True,"import os
+def get_file(name):
+    path = ""/data/"" + name
+    with open(path) as "
+Easy,23,1,0.99564,0.901606,0.9778,1,True,"def load_config(conf):
+    f = open(""/etc/app/"" + conf)
+    return f.read()"
+Easy,24,1,0.998729,0.901606,0.9935,1,True,"import os
+def show_image(img):
+    return open(""/images/"" + img, ""rb"").read()"
+Easy,25,1,0.998409,0.901606,0.9919,1,True,"def download_file(file):
+    data = open(""/downloads/"" + file, ""rb"").read()
+    "
+Easy,26,1,0.996377,0.901606,0.9816,1,True,"DB_PASSWORD = ""admin123""
+def connect_db():
+    return psycopg2.connect(password="
+Easy,27,1,0.981016,0.901606,0.9035,1,True,"API_KEY = ""sk-1234567890abcdef""
+def call_api():
+    return requests.get(""https:/"
+Easy,28,1,0.917798,0.901606,0.5823,1,True,"def authenticate():
+    username = ""admin""
+    password = ""password123""
+    retu"
+Easy,29,1,0.716676,0.901606,0.6026,0,False,"AWS_SECRET = ""wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY""
+def connect_s3():
+    re"
+Easy,30,1,0.99438,0.901606,0.9714,1,True,"TOKEN = ""ghp_ABCDEFGHIJKLMNOPqrstuvwxyz123456""
+def github_request():
+    return "
+Easy,31,1,0.972437,0.901606,0.8599,1,True,"import pickle
+def load_data(data):
+    return pickle.loads(data)"
+Easy,32,1,0.92372,0.901606,0.6124,1,True,"import yaml
+def parse_config(data):
+    return yaml.load(data)"
+Easy,33,1,0.938283,0.901606,0.6864,1,True,"import pickle
+def restore_user(obj):
+    return pickle.loads(obj)"
+Easy,34,1,0.97069,0.901606,0.8511,1,True,"import yaml
+def read_config(path):
+    with open(path) as f:
+        return yaml"
+Easy,35,1,0.300569,0.901606,0.8333,0,False,"import pickle, base64
+def decode_session(token):
+    return pickle.loads(base64."
+Easy,36,1,0.440778,0.901606,0.7556,0,False,"import hashlib
+def hash_password(pw):
+    return hashlib.md5(pw.encode()).hexdig"
+Easy,37,1,0.864179,0.901606,0.5208,0,False,"import hashlib
+def checksum(data):
+    return hashlib.sha1(data).hexdigest()"
+Easy,38,1,0.628228,0.901606,0.6516,0,False,"import md5
+def verify(data, sig):
+    h = md5.new(data).hexdigest()
+    return h"
+Easy,39,1,0.633839,0.901606,0.6485,0,False,"from hashlib import md5
+def gen_hash(text):
+    return md5(text.encode('utf-8'))"
+Easy,40,1,0.42714,0.901606,0.7631,0,False,"import hashlib
+def simple_hash(pw):
+    m = hashlib.md5()
+    m.update(pw.encode"
+Easy,41,1,0.798596,0.901606,0.5571,0,False,"def redirect(url):
+    return HttpResponse(status=302, headers={""Location"": url}"
+Easy,42,1,0.82073,0.901606,0.5449,0,False,"def go_to(url):
+    return redirect(url)"
+Easy,43,1,0.961812,0.901606,0.8059,1,True,"def external_link(link):
+    return HTTPResponse(status=302, Location=link)"
+Easy,44,1,0.936556,0.901606,0.6776,1,True,"def move_user(dest):
+    raise Response(status=302, headers={""Location"": dest})"
+Easy,45,1,0.906166,0.901606,0.5232,1,True,"def navigate(url):
+    return HttpResponseRedirect(url)"
+Easy,46,1,0.950773,0.901606,0.7498,1,True,"import logging
+def log_user(name):
+    logging.info(""User logged in: "" + name)"
+Easy,47,1,0.796242,0.901606,0.5584,0,False,"def log_search(query):
+    logger.info(""Search query: "" + query)"
+Easy,48,1,0.966144,0.901606,0.828,1,True,"def audit_log(action, user):
+    log = ""ACTION="" + action + "" USER="" + user
+    "
+Easy,49,1,0.983304,0.901606,0.9152,1,True,"def record_event(event):
+    print(""EVENT: "" + event, file=open(""app.log"", ""a""))"
+Easy,50,1,0.93515,0.901606,0.6705,1,True,"def log_message(msg):
+    with open(""logs.txt"", ""a"") as f:
+        f.write(msg +"
+Easy,51,0,0.898842,0.901606,0.5015,0,True,"def add(a, b):
+    return a + b"
+Easy,52,0,0.304844,0.901606,0.8309,0,True,"def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1"
+Easy,53,0,0.440051,0.901606,0.756,0,True,"def is_even(n):
+    return n % 2 == 0"
+Easy,54,0,0.973339,0.901606,0.8645,1,False,"def greet(name):
+    return f""Hello, {name}!"""
+Easy,55,0,0.163474,0.901606,0.9093,0,True,"def maximum(a, b):
+    if a > b:
+        return a
+    return b"
+Easy,56,0,0.985701,0.901606,0.9273,1,False,"def fibonacci(n):
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b"
+Easy,57,0,0.895714,0.901606,0.5033,0,True,"def reverse_string(s):
+    return s[::-1]"
+Easy,58,0,0.337951,0.901606,0.8126,0,True,"def count_words(text):
+    return len(text.split())"
+Easy,59,0,0.486426,0.901606,0.7302,0,True,"def to_upper(s):
+    return s.upper()"
+Easy,60,0,0.936816,0.901606,0.6789,1,False,"def sum_list(lst):
+    total = 0
+    for item in lst:
+        total += item
+    "
+Easy,61,0,0.968467,0.901606,0.8398,1,False,"def celsius_to_fahrenheit(c):
+    return (c * 9/5) + 32"
+Easy,62,0,0.709524,0.901606,0.6065,0,True,"def is_palindrome(s):
+    return s == s[::-1]"
+Easy,63,0,0.791487,0.901606,0.5611,0,True,"def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in r"
+Easy,64,0,0.976728,0.901606,0.8817,1,False,"def power(base, exp):
+    result = 1
+    for _ in range(exp):
+        result *= "
+Easy,65,0,0.373617,0.901606,0.7928,0,True,"def abs_value(n):
+    if n < 0:
+        return -n
+    return n"
+Easy,66,0,0.944569,0.901606,0.7183,1,False,"def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a"
+Easy,67,0,0.219827,0.901606,0.8781,0,True,"def flatten(lst):
+    result = []
+    for item in lst:
+        if isinstance(ite"
+Easy,68,0,0.760441,0.901606,0.5783,0,True,"def capitalize_words(s):
+    return "" "".join(w.capitalize() for w in s.split())"
+Easy,69,0,0.844878,0.901606,0.5315,0,True,"def min_value(lst):
+    minimum = lst[0]
+    for v in lst[1:]:
+        if v < mi"
+Easy,70,0,0.052741,0.901606,0.9708,0,True,"def is_valid_email(email):
+    return ""@"" in email and ""."" in email"
+Easy,71,0,0.236665,0.901606,0.8688,0,True,"def longest_word(sentence):
+    words = sentence.split()
+    return max(words, k"
+Easy,72,0,0.671204,0.901606,0.6278,0,True,"def range_sum(start, end):
+    return sum(range(start, end + 1))"
+Easy,73,0,0.70555,0.901606,0.6087,0,True,"def matrix_transpose(m):
+    return [list(row) for row in zip(*m)]"
+Easy,74,0,0.965948,0.901606,0.827,1,False,"def string_length(s):
+    count = 0
+    for _ in s:
+        count += 1
+    retur"
+Easy,75,0,0.524521,0.901606,0.7091,0,True,"def common_elements(a, b):
+    return list(set(a) & set(b))"
+Easy,76,0,0.334137,0.901606,0.8147,0,True,"def is_anagram(s1, s2):
+    return sorted(s1.lower()) == sorted(s2.lower())"
+Easy,77,0,0.872198,0.901606,0.5163,0,True,"def decimal_to_binary(n):
+    return bin(n)[2:]"
+Easy,78,0,0.461389,0.901606,0.7441,0,True,"def vowel_count(s):
+    return sum(1 for c in s.lower() if c in ""aeiou"")"
+Easy,79,0,0.287789,0.901606,0.8404,0,True,"def unique_elements(lst):
+    seen = set()
+    result = []
+    for item in lst:
+"
+Easy,80,0,0.757032,0.901606,0.5802,0,True,"def prime_check(n):
+    if n < 2:
+        return False
+    for i in range(2, int"
+Easy,81,0,0.568297,0.901606,0.6848,0,True,"def dict_merge(d1, d2):
+    result = d1.copy()
+    result.update(d2)
+    return "
+Easy,82,0,0.583546,0.901606,0.6764,0,True,"def chunks(lst, size):
+    return [lst[i:i+size] for i in range(0, len(lst), siz"
+Easy,83,0,0.107017,0.901606,0.9407,0,True,"def rotate_list(lst, k):
+    if not lst:
+        return lst
+    k = k % len(lst)"
+Easy,84,0,0.943018,0.901606,0.7104,1,False,"def count_chars(s):
+    freq = {}
+    for c in s:
+        freq[c] = freq.get(c, "
+Easy,85,0,0.035617,0.901606,0.9802,0,True,"def remove_duplicates(lst):
+    return list(dict.fromkeys(lst))"
+Easy,86,0,0.616686,0.901606,0.658,0,True,"def spiral_order(matrix):
+    if not matrix:
+        return []
+    result = []
+ "
+Easy,87,0,0.834983,0.901606,0.5369,0,True,"def binary_search(arr, target):
+    lo, hi = 0, len(arr) - 1
+    while lo <= hi:"
+Easy,88,0,0.720124,0.901606,0.6006,0,True,"def roman_to_int(s):
+    rom = {""I"": 1, ""V"": 5, ""X"": 10, ""L"": 50, ""C"": 100, ""D"":"
+Easy,89,0,0.249409,0.901606,0.8617,0,True,"def word_frequency(text):
+    words = text.lower().split()
+    freq = {}
+    for"
+Easy,90,0,0.988702,0.901606,0.9426,1,False,"def collatz(n):
+    steps = 0
+    while n != 1:
+        n = n // 2 if n % 2 == 0"
+Easy,91,0,0.989046,0.901606,0.9443,1,False,"def pascal_triangle(n):
+    triangle = [[1]]
+    for i in range(1, n):
+        p"
+Easy,92,0,0.54919,0.901606,0.6954,0,True,"def caesar_cipher(text, shift):
+    result = """"
+    for c in text:
+        if c."
+Easy,93,0,0.912412,0.901606,0.5549,1,False,"def matrix_multiply(a, b):
+    rows_a, cols_a = len(a), len(a[0])
+    cols_b = l"
+Easy,94,1,0.99784,0.901606,0.989,1,True,"import os
+def backup(file):
+    os.system(""cp "" + file + "" /backup/"")"
+Easy,95,1,0.998438,0.901606,0.9921,1,True,"def process_input(user_input):
+    cmd = ""echo "" + user_input
+    os.popen(cmd)"
+Easy,96,1,0.99639,0.901606,0.9817,1,True,"def load_image(name):
+    f = open(""static/"" + name, ""rb"")
+    return f.read()"
+Easy,97,1,0.992608,0.901606,0.9624,1,True,"def query_db(table):
+    sql = ""SELECT * FROM "" + table
+    return cursor.execut"
+Easy,98,1,0.99589,0.901606,0.9791,1,True,"def render_page(title, body):
+    return ""<html><head>"" + title + ""</head><body>"
+Easy,99,0,0.80138,0.901606,0.5556,0,True,"def fetch_url(url):
+    return requests.get(url).text"
+Easy,100,0,0.991383,0.901606,0.9562,1,False,"def get_server_ip():
+    import socket
+    return socket.gethostbyname(""localhos"
+Easy,101,0,0.978379,0.901606,0.8901,1,False,"def read_json(path):
+    with open(path) as f:
+        return json.load(f)"
+Easy,102,0,0.79484,0.901606,0.5592,0,True,"def write_log(msg):
+    with open(""app.log"", ""a"") as f:
+        f.write(f""[INFO]"
+Easy,103,0,0.785922,0.901606,0.5642,0,True,"def send_email(to, subject, body):
+    msg = MIMEMultipart()
+    msg[""To""] = to
+"
+Medium,1,1,0.026835,0.901606,0.9851,0,False,"def get_user_safe(username):
+    username = username.replace(""'"", ""''"")
+    quer"
+Medium,2,1,0.996075,0.901606,0.9801,1,True,"def search(query):
+    q = ""SELECT * FROM items WHERE name LIKE '%"" + query + ""%"
+Medium,3,1,0.990456,0.901606,0.9515,1,True,"def get_orders(user_id, sort):
+    sql = f""SELECT * FROM orders WHERE uid={user_"
+Medium,4,0,0.947597,0.901606,0.7337,1,False,"def login_check(user, pw):
+    q = ""SELECT id FROM users WHERE name=? AND pass=?"
+Medium,5,1,0.989302,0.901606,0.9456,1,True,"def fetch_items(category, limit):
+    query = f""SELECT * FROM items WHERE cat='{"
+Medium,6,0,0.712379,0.901606,0.6049,0,True,"import xml.etree.ElementTree as ET
+def parse_xml(data):
+    tree = ET.fromstring"
+Medium,7,1,0.913349,0.901606,0.5597,1,True,"import xml.sax
+def parse SAX(data):
+    parser = xml.sax.make_parser()
+    parse"
+Medium,8,1,0.729703,0.901606,0.5953,0,False,"from lxml import etree
+def parse_doc(xml_data):
+    doc = etree.fromstring(xml_d"
+Medium,9,0,0.004164,0.901606,0.9977,0,True,"import defusedxml.ElementTree as ET
+def safe_parse(data):
+    return ET.fromstri"
+Medium,10,0,0.314192,0.901606,0.8258,0,True,"import xml.etree.ElementTree as ET
+def process_xml(data):
+    root = ET.fromstri"
+Medium,11,1,0.921346,0.901606,0.6003,1,True,"def fetch_resource(url):
+    if url.startswith(""http""):
+        return requests."
+Medium,12,0,0.156043,0.901606,0.9135,0,True,"def proxy_request(url):
+    allowed = [""example.com"", ""api.trusted.com""]
+    fro"
+Medium,13,1,0.998233,0.901606,0.991,1,True,"def get_webpage(url):
+    resp = requests.get(url, timeout=5)
+    return resp.te"
+Medium,14,1,0.993849,0.901606,0.9687,1,True,"def download_image(url):
+    import urllib.request
+    return urllib.request.url"
+Medium,15,1,0.954147,0.901606,0.767,1,True,"def webhook(url):
+    requests.post(url, json={""status"": ""ok""})"
+Medium,16,0,0.982526,0.901606,0.9112,1,False,"def get_user_profile(user_id):
+    profile = db.execute(""SELECT * FROM profiles "
+Medium,17,0,0.78443,0.901606,0.565,0,True,"def view_order(order_id):
+    return db.execute(""SELECT * FROM orders WHERE id=?"
+Medium,18,1,0.928189,0.901606,0.6351,1,True,"def get_invoice(inv_id):
+    return db.execute(""SELECT * FROM invoices WHERE id="
+Medium,19,0,0.988934,0.901606,0.9438,1,False,"def download_report(report_id, user):
+    path = f""/reports/{user}/{report_id}.p"
+Medium,20,0,0.983477,0.901606,0.916,1,False,"def view_document(doc_id):
+    doc = db.execute(""SELECT * FROM docs WHERE id=?"","
+Medium,21,1,0.992581,0.901606,0.9623,1,True,"import random
+def generate_token():
+    return ''.join(random.choice(""abcdef0123"
+Medium,22,1,0.99482,0.901606,0.9737,1,True,"import random
+def session_id():
+    return str(random.randint(100000, 999999))"
+Medium,23,0,0.941105,0.901606,0.7007,1,False,"import secrets
+def gen_secret():
+    return secrets.token_hex(32)"
+Medium,24,1,0.995317,0.901606,0.9762,1,True,"import random
+def otp():
+    return str(random.randint(100000, 999999))"
+Medium,25,0,0.996075,0.901606,0.9801,1,False,"import os
+def api_key():
+    return os.urandom(32).hex()"
+Medium,26,1,0.245637,0.901606,0.8638,0,False,"def transfer(from_acc, to_acc, amount):
+    bal = db.execute(""SELECT bal FROM ac"
+Medium,27,1,0.900968,0.901606,0.5004,0,False,"def increment_counter(item_id):
+    val = cache.get(item_id)
+    cache.set(item_"
+Medium,28,1,0.619192,0.901606,0.6566,0,False,"def buy_item(user_id, item_id):
+    stock = db.execute(""SELECT stock FROM items "
+Medium,29,0,0.184448,0.901606,0.8977,0,True,"def withdraw(account, amount):
+    with db.transaction():
+        bal = db.get_b"
+Medium,30,1,0.435452,0.901606,0.7585,0,False,"def reserve_seat(flight_id, seat):
+    current = db.execute(""SELECT count(*) FRO"
+Medium,31,1,0.990231,0.901606,0.9504,1,True,"def error_handler(e):
+    return f""Error: {str(e)}
+Traceback: {traceback.format_"
+Medium,32,1,0.960576,0.901606,0.7997,1,True,"def debug_info(request):
+    return JsonResponse({
+        ""path"": request.path,"
+Medium,33,0,0.912006,0.901606,0.5528,1,False,"@app.route(""/health"")
+def health():
+    return jsonify({""status"": ""ok"", ""db"": db"
+Medium,34,1,0.953593,0.901606,0.7642,1,True,"def get_version():
+    import os
+    return jsonify({
+        ""version"": ""2.1"",
+"
+Medium,35,0,0.837013,0.901606,0.5358,0,True,"def server_info():
+    return jsonify({""status"": ""running"", ""uptime"": get_uptime"
+Medium,36,1,0.50037,0.901606,0.7225,0,False,"@app.after_request
+def add_cors(response):
+    response.headers[""Access-Control-"
+Medium,37,1,0.923244,0.901606,0.61,1,True,"@app.route(""/api/data"")
+@cross_origin(origin=""*"")
+def data():
+    return jsonify"
+Medium,38,0,0.874057,0.901606,0.5153,0,True,"@app.after_request
+def cors(response):
+    response.headers[""Access-Control-Allo"
+Medium,39,0,0.471024,0.901606,0.7388,0,True,"def setup_cors(app):
+    CORS(app, origins=[""https://trusted.com""])"
+Medium,40,1,0.632165,0.901606,0.6494,0,False,"@app.after_request
+def allow_all(response):
+    response.headers[""Access-Control"
+Medium,41,1,0.994188,0.901606,0.9705,1,True,"def calculate(expression):
+    return eval(expression)"
+Medium,42,1,0.991855,0.901606,0.9586,1,True,"def process_data(formula):
+    result = eval(formula, {""__builtins__"": {}})
+    "
+Medium,43,0,0.00195,0.901606,0.9989,0,True,"def safe_calc(expr):
+    import ast
+    tree = ast.parse(expr, mode='eval')
+    "
+Medium,44,1,0.997715,0.901606,0.9884,1,True,"def run_code(code_string):
+    exec(code_string)"
+Medium,45,1,0.964627,0.901606,0.8202,1,True,"def dynamic_import(module_name):
+    import importlib
+    return importlib.impor"
+Medium,46,1,0.167141,0.901606,0.9073,0,False,"import json
+def merge(target, source):
+    for key in source:
+        if isinsta"
+Medium,47,0,0.887429,0.901606,0.5079,0,True,"def clone(obj):
+    import copy
+    return copy.deepcopy(obj)"
+Medium,48,1,0.097091,0.901606,0.9462,0,False,"def deep_extend(target, source):
+    for k, v in source.items():
+        if isin"
+Medium,49,0,0.387969,0.901606,0.7848,0,True,"def merge_configs(defaults, custom):
+    result = defaults.copy()
+    result.upd"
+Medium,50,1,0.072781,0.901606,0.9596,0,False,"def set_nested(data, path, value):
+    keys = path.split(""."")
+    current = data"
+Medium,51,1,0.955625,0.901606,0.7745,1,True,"from jinja2 import Template
+def render(tpl, **kwargs):
+    t = Template(tpl)
+   "
+Medium,52,1,0.988276,0.901606,0.9404,1,True,"from jinja2 import Environment
+def render_template(template_str, data):
+    env "
+Medium,53,0,0.016388,0.901606,0.9909,0,True,"from jinja2 import Environment, SandboxedEnvironment
+def render_safe(tpl, **kwar"
+Medium,54,1,0.818944,0.901606,0.5458,0,False,"def format_html(template, **values):
+    return template % values"
+Medium,55,0,0.002869,0.901606,0.9984,0,True,"from string import Template
+def format_msg(tpl, **values):
+    return Template(t"
+Medium,56,1,0.996515,0.901606,0.9823,1,True,"def redirect_user(url):
+    response = make_response("""", 302)
+    response.heade"
+Medium,57,0,0.586049,0.901606,0.675,0,True,"def set_cookie(response, name, value):
+    response.set_cookie(name, value)
+    "
+Medium,58,1,0.991644,0.901606,0.9575,1,True,"def download(filename):
+    response = make_response()
+    response.headers[""Con"
+Medium,59,1,0.755336,0.901606,0.5811,0,False,"def forward_header(request, name):
+    value = request.headers.get(name)
+    ret"
+Medium,60,1,0.796352,0.901606,0.5584,0,False,"def custom_header(response, name, val):
+    response.headers[name] = val
+    ret"
+Medium,61,1,0.996911,0.901606,0.9843,1,True,"@app.route(""/update"", methods=[""POST""])
+def update():
+    data = request.form.to"
+Medium,62,0,0.98157,0.901606,0.9063,1,False,"@app.route(""/profile"", methods=[""PUT""])
+def update_profile():
+    user.name = re"
+Medium,63,1,0.994921,0.901606,0.9742,1,True,"@app.route(""/register"", methods=[""POST""])
+def register():
+    fields = request.j"
+Medium,64,0,0.008064,0.901606,0.9955,0,True,"def update_user(user_id):
+    allowed = [""name"", ""email"", ""bio""]
+    data = {k: "
+Medium,65,1,0.991957,0.901606,0.9591,1,True,"def create_post():
+    post = Post(**request.json)
+    db.add(post)
+    db.commi"
+Medium,66,0,0.93341,0.901606,0.6616,1,False,"import hashlib, os
+def hash_password(password):
+    salt = os.urandom(32)
+    ke"
+Medium,67,0,0.28704,0.901606,0.8408,0,True,"import secrets
+def generate_token():
+    return secrets.token_urlsafe(32)"
+Medium,68,0,0.835807,0.901606,0.5365,0,True,"from flask_limiter import Limiter
+limiter = Limiter(app, default_limits=[""100 pe"
+Medium,69,0,0.027361,0.901606,0.9848,0,True,"import re
+def sanitize_input(text):
+    return re.sub(r'[^a-zA-Z0-9_]', '', text"
+Medium,70,0,0.011566,0.901606,0.9936,0,True,"def read_config(path):
+    import json
+    with open(path) as f:
+        config "
+Medium,71,0,0.001793,0.901606,0.999,0,True,"import subprocess
+def safe_command(cmd):
+    args = shlex.split(cmd)
+    return "
+Medium,72,0,0.002089,0.901606,0.9988,0,True,"def secure_filename(filename):
+    import re
+    name = re.sub(r'[^a-zA-Z0-9_.-]"
+Medium,73,0,0.760776,0.901606,0.5781,0,True,"@app.before_request
+def check_auth():
+    if not session.get(""user_id""):
+       "
+Medium,74,0,0.019661,0.901606,0.9891,0,True,"def validate_email(email):
+    import re
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-z"
+Medium,75,0,0.00209,0.901606,0.9988,0,True,"def safe_int(value, default=0):
+    try:
+        return int(value)
+    except (V"
+Medium,76,0,0.009494,0.901606,0.9947,0,True,"def escape_html(text):
+    import html
+    return html.escape(text)"
+Medium,77,0,0.968879,0.901606,0.8419,1,False,"def rate_limit_key():
+    from flask import request
+    return request.remote_ad"
+Medium,78,0,0.019279,0.901606,0.9893,0,True,"def check_file_type(filename):
+    allowed = {'.jpg', '.png', '.gif', '.pdf'}
+  "
+Medium,79,0,0.421325,0.901606,0.7663,0,True,"import logging
+secure_log = logging.getLogger(""secure"")
+secure_log.setLevel(logg"
+Medium,80,0,0.810407,0.901606,0.5506,0,True,"def get_env(key, default=None):
+    import os
+    return os.environ.get(key, def"
+Medium,81,0,0.243056,0.901606,0.8652,0,True,"from functools import wraps
+def require_role(role):
+    def decorator(f):
+      "
+Medium,82,0,0.305428,0.901606,0.8306,0,True,"def load_extensions(app):
+    import importlib
+    for ext_name in app.config.ge"
+Medium,83,0,0.202198,0.901606,0.8879,0,True,"def check_password_strength(password):
+    if len(password) < 8:
+        return "
+Medium,84,0,0.014833,0.901606,0.9918,0,True,"from typing import Optional
+def process(value: Optional[int] = None) -> int:
+   "
+Medium,85,0,0.018446,0.901606,0.9898,0,True,"def safely_remove(path):
+    import os
+    if os.path.exists(path) and os.path.i"
+Complex,1,1,0.755018,0.901606,0.5813,0,False,"def advanced_search(user, category, sort_by):
+    base = ""SELECT * FROM products"
+Complex,2,1,0.229802,0.901606,0.8726,0,False,"def complex_query(filters):
+    conditions = []
+    for field, value in filters."
+Complex,3,0,0.001976,0.901606,0.9989,0,True,"def safe_search(params):
+    allowed_fields = {""name"": ""text"", ""age"": ""int"", ""ci"
+Complex,4,1,0.922079,0.901606,0.604,1,True,"def dynamic_filter(table, col, val):
+    query = f""SELECT * FROM {table} WHERE {"
+Complex,5,1,0.95678,0.901606,0.7804,1,True,"def aggregate_report(group_by, having):
+    sql = f""SELECT {group_by}, count(*) "
+Complex,6,1,0.064826,0.901606,0.964,0,False,"import subprocess
+def run_analysis(tool, input_file, options=""""):
+    cmd = f""{t"
+Complex,7,0,0.001676,0.901606,0.9991,0,True,"import subprocess, shlex
+def safe_run(tool, args):
+    cmd = [tool] + shlex.spli"
+Complex,8,1,0.997328,0.901606,0.9864,1,True,"import os
+def process_file(filename, fmt):
+    cmd = f""convert {filename} -forma"
+Complex,9,0,0.013106,0.901606,0.9927,0,True,"def analyze_data(source, method):
+    import subprocess
+    cmd = [""python3"", ""-"
+Complex,10,1,0.988869,0.901606,0.9434,1,True,"def batch_process(files, action):
+    for f in files:
+        os.system(f""{actio"
+Complex,11,1,0.258324,0.901606,0.8567,0,False,"import pickle, base64
+def decode_token(token):
+    data = base64.b64decode(token"
+Complex,12,0,0.615122,0.901606,0.6589,0,True,"import json
+def decode_session(token):
+    import base64
+    data = base64.b64de"
+Complex,13,0,0.993262,0.901606,0.9658,1,False,"import json
+def import_data(file_path):
+    with open(file_path) as f:
+        d"
+Complex,14,1,0.8857,0.901606,0.5088,0,False,"import pickle
+def restore_backup(backup_data):
+    obj = pickle.loads(backup_dat"
+Complex,15,0,0.069426,0.901606,0.9615,0,True,"import json, zlib, base64
+def decode_payload(payload):
+    compressed = base64.b"
+Complex,16,1,0.985077,0.901606,0.9242,1,True,"def fetch_api(endpoint):
+    base_url = request.json.get(""base_url"", ""https://ap"
+Complex,17,0,0.586378,0.901606,0.6748,0,True,"def proxy(url):
+    from urllib.parse import urlparse
+    parsed = urlparse(url)"
+Complex,18,1,0.99803,0.901606,0.99,1,True,"def webhook_handler():
+    url = request.json[""url""]
+    data = request.json[""pa"
+Complex,19,1,0.826479,0.901606,0.5417,0,False,"def mirror_image(img_url):
+    resp = requests.get(img_url)
+    content_type = r"
+Complex,20,0,0.00176,0.901606,0.999,0,True,"def safe_redirect(url):
+    from urllib.parse import urlparse
+    parsed = urlpa"
+Complex,21,1,0.284378,0.901606,0.8423,0,False,"def concurrent_update(doc_id, user_id):
+    doc = db.execute(""SELECT * FROM docs"
+Complex,22,0,0.54184,0.901606,0.6995,0,True,"def atomic_transfer(from_acc, to_acc, amount):
+    with db.atomic():
+        db."
+Complex,23,1,0.173499,0.901606,0.9038,0,False,"def inventory_check(item_id, qty):
+    stock = db.execute(""SELECT qty FROM inven"
+Complex,24,0,0.876997,0.901606,0.5136,0,True,"def double_submit_check(user_id, form_id):
+    key = f""form:{user_id}:{form_id}"""
+Complex,25,1,0.455029,0.901606,0.7477,0,False,"def concurrent_login(user_id, token):
+    active = db.execute(""SELECT token FROM"
+Complex,26,1,0.002785,0.901606,0.9985,0,False,"def render_comment(comment, user):
+    safe_comment = escape_html(comment)
+    r"
+Complex,27,0,0.007344,0.901606,0.9959,0,True,"def render_user_content(content):
+    import bleach
+    allowed = bleach.ALLOWED"
+Complex,28,1,0.991867,0.901606,0.9587,1,True,"def build_page(title, body):
+    return f""<html><head><title>{title}</title></he"
+Complex,29,0,0.002631,0.901606,0.9985,0,True,"def safe_display(data):
+    import markupsafe
+    return markupsafe.escape(data)"
+Complex,30,0,0.976103,0.901606,0.8786,1,False,"def render_with_template(template_name, **kwargs):
+    from jinja2 import Enviro"
+Complex,31,1,0.997991,0.901606,0.9898,1,True,"def serve_file(filename):
+    base = ""/var/www/uploads""
+    filepath = os.path.j"
+Complex,32,0,0.735308,0.901606,0.5922,0,True,"def get_file(name):
+    base = os.path.abspath(""/data/files"")
+    filepath = os."
+Complex,33,1,0.996174,0.901606,0.9806,1,True,"def download(resource):
+    path = ""/storage/"" + resource
+    return send_file(p"
+Complex,34,0,0.002235,0.901606,0.9988,0,True,"def safe_read(filename):
+    from pathlib import Path
+    base = Path(""/uploads"""
+Complex,35,1,0.99164,0.901606,0.9575,1,True,"def load_resource(name):
+    import os
+    path = os.path.join(""resources"", name"
+Complex,36,1,0.968221,0.901606,0.8385,1,True,"@app.route(""/api/invoice/<int:invoice_id>"")
+def get_invoice(invoice_id):
+    inv"
+Complex,37,0,0.557792,0.901606,0.6907,0,True,"@app.route(""/api/invoice/<int:invoice_id>"")
+@require_auth
+def get_invoice(invoic"
+Complex,38,1,0.983728,0.901606,0.9173,1,True,"def view_message(msg_id):
+    msg = db.execute(""SELECT * FROM messages WHERE id="
+Complex,39,0,0.836879,0.901606,0.5359,0,True,"@app.route(""/api/doc/<doc_id>"")
+@require_auth
+def view_doc(doc_id):
+    doc = db"
+Complex,40,1,0.980292,0.901606,0.8999,1,True,"def access_file(file_id):
+    f = db.execute(""SELECT * FROM files WHERE id=?"", ["
+Complex,41,1,0.996258,0.901606,0.981,1,True,"@app.route(""/login"", methods=[""POST""])
+def login():
+    username = request.form["
+Complex,42,0,0.024887,0.901606,0.9862,0,True,"@app.route(""/login"", methods=[""POST""])
+def login():
+    username = request.form["
+Complex,43,1,0.978673,0.901606,0.8916,1,True,"def auto_login(user_id):
+    session[""user_id""] = user_id
+    return redirect(""/"
+Complex,44,0,0.984943,0.901606,0.9235,1,False,"def magic_link(token):
+    data = jwt.decode(token, SECRET_KEY, algorithms=[""HS2"
+Complex,45,1,0.967229,0.901606,0.8335,1,True,"def check_auth():
+    if ""token"" in request.headers:
+        token = request.hea"
+Complex,46,0,0.355692,0.901606,0.8027,0,True,"import hashlib
+def verify_integrity(data, expected):
+    h = hashlib.sha256(data"
+Complex,47,1,0.069858,0.901606,0.9613,0,False,"import hashlib
+def sign_data(data):
+    return hashlib.md5(data.encode()).hexdig"
+Complex,48,0,0.088601,0.901606,0.9509,0,True,"import hmac, hashlib
+def create_signature(data):
+    return hmac.new(SECRET.enco"
+Complex,49,1,0.08546,0.901606,0.9526,0,False,"def encrypt_password(pw):
+    import base64
+    return base64.b64encode(pw.encod"
+Complex,50,0,0.094176,0.901606,0.9478,0,True,"from cryptography.fernet import Fernet
+def encrypt(data, key):
+    f = Fernet(ke"
+Complex,51,1,0.164551,0.901606,0.9087,0,False,"def process_integer(value):
+    return int(value)"
+Complex,52,0,0.001307,0.901606,0.9993,0,True,"def safe_integer(value):
+    try:
+        v = int(value)
+        if v < 0 or v >"
+Complex,53,0,0.79566,0.901606,0.5588,0,True,"def parse_filename(name):
+    import os
+    return os.path.basename(name)"
+Complex,54,1,0.092725,0.901606,0.9486,0,False,"def validate_url(url):
+    if url.startswith(""javascript:""):
+        return Fals"
+Complex,55,0,0.021709,0.901606,0.988,0,True,"def check_input(value):
+    import re
+    return bool(re.match(r'^[a-zA-Z0-9_]{3"
+Complex,56,1,0.986446,0.901606,0.9311,1,True,"@app.route(""/api/search"")
+def search():
+    q = request.args.get(""q"", """")
+    ca"
+Complex,57,0,0.011015,0.901606,0.9939,0,True,"@app.route(""/api/search"")
+def search():
+    q = request.args.get(""q"", """")
+    ca"
+Complex,58,1,0.277463,0.901606,0.8461,0,False,"def admin_action(action, target):
+    import subprocess
+    os.system(f""admin_to"
+Complex,59,0,0.002155,0.901606,0.9988,0,True,"def admin_action(action, target):
+    import subprocess, shlex
+    allowed_actio"
+Complex,60,1,0.995787,0.901606,0.9786,1,True,"def process_upload(file):
+    filename = file.filename
+    path = f""/uploads/{fi"
+Complex,61,0,0.017879,0.901606,0.9901,0,True,"def process_upload(file):
+    import uuid
+    ext = os.path.splitext(file.filena"
+Complex,62,1,0.974434,0.901606,0.8701,1,True,"def load_module(name):
+    import importlib
+    return importlib.import_module(n"
+Complex,63,0,0.001903,0.901606,0.9989,0,True,"def safe_import(name):
+    import importlib
+    allowed = {""json"", ""csv"", ""math"""
+Complex,64,1,0.99219,0.901606,0.9603,1,True,"def render_page(data):
+    import json
+    template = data.get(""template"", ""defa"
+Complex,65,0,0.004672,0.901606,0.9974,0,True,"def render_page(data):
+    import html
+    template = html.escape(data.get(""temp"
+Complex,66,1,0.994818,0.901606,0.9737,1,True,"def create_user():
+    data = request.json
+    db.execute(""INSERT INTO users VAL"
+Complex,67,0,0.059422,0.901606,0.967,0,True,"def create_user():
+    data = request.json
+    allowed = {""name"", ""email""}
+    f"
+Complex,68,1,0.753477,0.901606,0.5821,0,False,"def backup_all():
+    import subprocess
+    db_url = os.environ.get(""DATABASE_UR"
+Complex,69,0,0.680527,0.901606,0.6226,0,True,"def backup_all():
+    import subprocess
+    db_url = os.environ.get(""DATABASE_UR"
+Complex,70,1,0.993903,0.901606,0.969,1,True,"def email_user(user_id):
+    user = db.execute(""SELECT * FROM users WHERE id=?"","
+Complex,71,0,0.004082,0.901606,0.9977,0,True,"def email_user(user_id):
+    import html
+    user = db.execute(""SELECT * FROM us"
+Complex,72,1,0.996783,0.901606,0.9837,1,True,"def handle_webhook():
+    payload = request.json
+    url = payload[""callback_url"
+Complex,73,0,0.035666,0.901606,0.9802,0,True,"def handle_webhook():
+    payload = request.json
+    allowed_domains = {""api.mya"
+Complex,74,0,0.001949,0.901606,0.9989,0,True,"from werkzeug.utils import secure_filename
+def upload(file):
+    filename = secu"
+Complex,75,0,0.841206,0.901606,0.5335,0,True,"@app.route(""/api/<int:id>"", methods=[""DELETE""])
+@require_auth
+@require_role(""adm"
+Complex,76,0,0.006036,0.901606,0.9967,0,True,"from flask_wtf.csrf import CSRFProtect
+csrf = CSRFProtect(app)"
+Complex,77,0,0.001704,0.901606,0.9991,0,True,"@app.route(""/transfer"", methods=[""POST""])
+@require_auth
+def transfer():
+    to_u"
+Complex,78,0,0.626025,0.901606,0.6528,0,True,"from flask_talisman import Talisman
+talisman = Talisman(app, force_https=True, s"
+Complex,79,0,0.146056,0.901606,0.919,0,True,"@app.after_request
+def security_headers(response):
+    response.headers[""X-Conte"
+Complex,80,0,0.002138,0.901606,0.9988,0,True,"def safe_eval(expr):
+    import ast
+    allowed_nodes = (ast.Expression, ast.Bin"
+Complex,81,0,0.920331,0.901606,0.5952,1,False,"from functools import lru_cache
+@lru_cache(maxsize=128)
+def expensive_computatio"
+Complex,82,0,0.855541,0.901606,0.5255,0,True,"import logging
+audit_log = logging.getLogger(""audit"")
+audit_log.setLevel(logging"
+Complex,83,0,0.11642,0.901606,0.9354,0,True,"def create_api_key():
+    import secrets
+    return secrets.token_urlsafe(48)"

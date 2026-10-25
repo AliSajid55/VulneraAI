@@ -7,4 +7,6 @@ safetensors
 google-genai
 requests
 pandas
- 
+sqlalchemy
+psycopg[binary]
+pyjwt

@@ -1,15 +1,19 @@
-import os
+import csv
+import io
 import json
+import os
+import re
 import time
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 import torch
-from flask import Flask, jsonify, request
+from flask import Flask, Response, g, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
 from google import genai
 from google.genai import errors, types
+from sqlalchemy import func, or_, select
 from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
@@ -20,13 +24,17 @@ from transformers import (
 # ==================================================
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, expose_headers=["Content-Disposition"])
 
 BASE_DIR = Path(__file__).resolve().parent
-MODEL_DIR = BASE_DIR / "model"
-HISTORY_FILE = BASE_DIR / "scan_history.json"
 
 load_dotenv(BASE_DIR / ".env")
+
+# Which trained model to use. Relative paths are resolved from this folder.
+# Example in .env:  MODEL_DIR=model_v3
+MODEL_DIR = Path(os.getenv("MODEL_DIR", "model")).expanduser()
+if not MODEL_DIR.is_absolute():
+    MODEL_DIR = BASE_DIR / MODEL_DIR
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
@@ -48,9 +56,17 @@ gemini_client = (
 
 REQUESTED_MAX_LENGTH = 512
 BATCH_SIZE = 8
-THRESHOLD = 0.5
-CHUNK_AGGREGATION = "mean"
 GEMINI_MAX_ATTEMPTS = 3
+
+# Only the first N chunks of long code are scored (same as the v3 notebook's
+# validation/test evaluation, where thresholds were tuned).
+MAX_EVAL_CHUNKS = int(os.getenv("MAX_EVAL_CHUNKS", "8"))
+
+# Chunk-count buckets for length-aware thresholds (same as the v3 notebook).
+LEN_BUCKETS = ((1, 1), (2, 3), (4, 10**6))
+
+# Used when the model folder has no best_info.json (e.g. the original model).
+LEGACY_RULE = {"agg": "mean", "length_aware": False, "thr": 0.5}
 
 DEVICE = torch.device(
     "cuda" if torch.cuda.is_available() else "cpu"
@@ -156,10 +172,58 @@ LABEL2ID = {
 
 VULNERABLE_ID = LABEL2ID["vulnerable"]
 
-if CHUNK_AGGREGATION not in {"mean", "max"}:
-    raise ValueError(
-        "CHUNK_AGGREGATION must be 'mean' or 'max'."
-    )
+def load_scoring_rule(model_dir):
+    """Read the scoring rule chosen on validation from best_info.json.
+
+    The v3 notebook saves it as best_info["rule"], for example
+    {"agg": "max", "length_aware": false, "thr": 0.9016}.
+    """
+    info_file = model_dir / "best_info.json"
+
+    if not info_file.exists():
+        return dict(LEGACY_RULE), "default (no best_info.json)"
+
+    with open(info_file, "r", encoding="utf-8") as file:
+        info = json.load(file)
+
+    rule = info.get("rule") or {}
+    agg = rule.get("agg", "max")
+
+    if agg not in {"max", "top2", "mean"}:
+        raise ValueError(f"Unknown aggregation in best_info.json: {agg}")
+
+    if "thr" not in rule:
+        raise ValueError("best_info.json rule has no 'thr' threshold.")
+
+    clean = {
+        "agg": agg,
+        "length_aware": bool(rule.get("length_aware", False)),
+        "thr": float(rule["thr"]),
+    }
+
+    if clean["length_aware"]:
+        bucket_thr = rule.get("bucket_thr") or {}
+        clean["bucket_thr"] = {
+            str(k): float(bucket_thr.get(str(k), clean["thr"]))
+            for k in range(len(LEN_BUCKETS))
+        }
+
+    return clean, f"best_info.json (epoch {info.get('epoch', '?')})"
+
+
+SCORING_RULE, RULE_SOURCE = load_scoring_rule(MODEL_DIR)
+MODEL_NAME = MODEL_DIR.name
+
+
+def describe_rule(rule):
+    if rule["length_aware"]:
+        buckets = ", ".join(
+            f"{lo}-{hi if hi < 10**6 else '+'} chunks: {rule['bucket_thr'][str(i)]:.3f}"
+            for i, (lo, hi) in enumerate(LEN_BUCKETS)
+        )
+        return f"{rule['agg']} + length-aware thresholds ({buckets})"
+    return f"{rule['agg']} @ {rule['thr']:.3f}"
+
 
 print("GraphCodeBERT loaded successfully.")
 print("Model directory:", MODEL_DIR)
@@ -167,6 +231,8 @@ print("Device:", DEVICE)
 print("Labels:", NORMALIZED_ID2LABEL)
 print("Maximum length:", MAX_LENGTH)
 print("Stride:", STRIDE)
+print("Scoring rule:", describe_rule(SCORING_RULE), "| from", RULE_SOURCE)
+print("Max chunks scored:", MAX_EVAL_CHUNKS)
 print("Gemini configured:", gemini_client is not None)
 print("Gemini model:", GEMINI_MODEL)
 
@@ -174,14 +240,53 @@ print("Gemini model:", GEMINI_MODEL)
 # 3. GRAPHCODEBERT PREDICTION
 # ==================================================
 
-def aggregate_chunk_probabilities(probabilities):
+def aggregate_chunk_probabilities(probabilities, agg):
+    """Turn chunk scores into one score (max / mean of top 2 / mean)."""
     if not probabilities:
         raise ValueError("No chunk probabilities found.")
 
-    if CHUNK_AGGREGATION == "max":
-        return float(max(probabilities))
+    ordered = sorted(probabilities, reverse=True)
 
-    return float(sum(probabilities) / len(probabilities))
+    if agg == "max":
+        return float(ordered[0])
+    if agg == "top2":
+        return float(sum(ordered[:2]) / len(ordered[:2]))
+    return float(sum(ordered) / len(ordered))
+
+
+def threshold_for(rule, n_chunks):
+    """Single threshold, or one per length bucket (by number of chunks)."""
+    if not rule["length_aware"]:
+        return rule["thr"]
+
+    for index, (low, high) in enumerate(LEN_BUCKETS):
+        if low <= n_chunks <= high:
+            return rule["bucket_thr"][str(index)]
+
+    return rule["thr"]
+
+
+def decision_confidence(probability, threshold):
+    """How far the score is from the threshold, as 50-100%.
+
+    50% = right at the threshold, 100% = score of 0.0 (safe) or 1.0 (vulnerable).
+    Using the raw probability would be misleading when the threshold is not 0.5:
+    with threshold 0.9, a score of 0.8 is "safe" but 1 - 0.8 = 20% looks unsure.
+    """
+    if probability >= threshold:
+        span = max(1e-9, 1.0 - threshold)
+        return 0.5 + 0.5 * min(1.0, (probability - threshold) / span)
+
+    span = max(1e-9, threshold)
+    return 0.5 + 0.5 * min(1.0, (threshold - probability) / span)
+
+
+FENCE_RE = re.compile(r"^\s*```[\w#+.-]*[ \t]*\n?|\n?```\s*$")
+
+
+def strip_fences(code):
+    """Remove a surrounding ```lang ... ``` fence (the training data was cleaned the same way)."""
+    return FENCE_RE.sub("", code or "")
 
 
 def normalize_code(code):
@@ -208,7 +313,10 @@ def predict_code(code_snippet):
     if not code_snippet.strip():
         raise ValueError("Code snippet cannot be empty.")
 
-    code_snippet = normalize_code(code_snippet)
+    code_snippet = normalize_code(strip_fences(code_snippet))
+
+    if not code_snippet.strip():
+        raise ValueError("Code snippet cannot be empty.")
 
     encoded = tokenizer(
         code_snippet,
@@ -237,6 +345,9 @@ def predict_code(code_snippet):
 
     if not chunks:
         raise ValueError("Tokenizer returned no chunks.")
+
+    total_chunks = len(chunks)
+    chunks = chunks[:MAX_EVAL_CHUNKS]
 
     chunk_probabilities = []
 
@@ -272,30 +383,25 @@ def predict_code(code_snippet):
             float(prob) for prob in vulnerable_probs
         )
 
+    rule = SCORING_RULE
     vulnerable_probability = aggregate_chunk_probabilities(
-        chunk_probabilities
+        chunk_probabilities, rule["agg"]
     )
+    vulnerable_probability = max(0.0, min(1.0, vulnerable_probability))
+    threshold = threshold_for(rule, len(chunks))
 
-    vulnerable_probability = max(
-        0.0, min(1.0, vulnerable_probability)
-    )
-
-    if vulnerable_probability >= THRESHOLD:
-        prediction = "vulnerable"
-        confidence = vulnerable_probability
-    else:
-        prediction = "safe"
-        confidence = 1.0 - vulnerable_probability
+    prediction = "vulnerable" if vulnerable_probability >= threshold else "safe"
+    confidence = decision_confidence(vulnerable_probability, threshold)
 
     return {
         "prediction": prediction,
         "confidence": round(float(confidence), 4),
-        "vulnerable_probability": round(
-            float(vulnerable_probability), 6
-        ),
+        "vulnerable_probability": round(float(vulnerable_probability), 6),
+        "threshold": round(float(threshold), 6),
         "chunk_count": len(chunks),
-        "chunk_aggregation": CHUNK_AGGREGATION,
-        "threshold": THRESHOLD,
+        "total_chunks": total_chunks,
+        "chunk_aggregation": rule["agg"],
+        "model": MODEL_NAME,
     }
 
 # ==================================================
@@ -416,27 +522,70 @@ Code:
     }
 
 # ==================================================
-# 5. SCAN HISTORY HELPERS
+# 5. DATABASE AND AUTH
 # ==================================================
 
-def load_history():
-    if not HISTORY_FILE.exists():
-        return []
+# Imported after load_dotenv() so DATABASE_URL and JWT_SECRET_KEY are read.
+from database import Scan, SessionLocal, init_db  # noqa: E402
+from auth import auth_bp, login_required  # noqa: E402
 
-    try:
-        with open(HISTORY_FILE, "r", encoding="utf-8") as file:
-            history = json.load(file)
-
-        return history if isinstance(history, list) else []
-
-    except (json.JSONDecodeError, OSError):
-        app.logger.exception("Could not load scan history.")
-        return []
+init_db()
+app.register_blueprint(auth_bp)
 
 
-def save_history(history):
-    with open(HISTORY_FILE, "w", encoding="utf-8") as file:
-        json.dump(history, file, indent=2)
+@app.teardown_appcontext
+def remove_db_session(exception=None):
+    if exception is not None:
+        SessionLocal.rollback()
+    SessionLocal.remove()
+
+
+ALLOWED_PREDICTIONS = {"safe", "vulnerable"}
+MAX_CODE_CHARS = 100_000
+
+
+def error(message, status):
+    return jsonify({"error": message}), status
+
+
+def read_scan_input(data):
+    """Validate code/language/title from a request body.
+
+    Returns (code, language, title, error_response).
+    """
+    if not isinstance(data, dict):
+        return None, None, None, error(
+            "Request body must be a JSON object.", 400
+        )
+
+    code_snippet = data.get("code", "")
+    language = data.get("language", "auto")
+    title = data.get("title") or ""
+
+    if not isinstance(code_snippet, str) or not code_snippet.strip():
+        return None, None, None, error(
+            "A non-empty code snippet is required.", 400
+        )
+
+    if len(code_snippet) > MAX_CODE_CHARS:
+        return None, None, None, error(
+            f"Code is too long (max {MAX_CODE_CHARS:,} characters).", 400
+        )
+
+    if not isinstance(language, str) or not isinstance(title, str):
+        return None, None, None, error(
+            "Language and title must be strings.", 400
+        )
+
+    return code_snippet, language.strip()[:40] or "auto", title.strip()[:200], None
+
+
+def default_title(code_snippet):
+    first_line = next(
+        (line.strip() for line in code_snippet.splitlines() if line.strip()),
+        "Untitled scan",
+    )
+    return first_line[:80]
 
 # ==================================================
 # 6. HEALTH CHECK
@@ -453,8 +602,11 @@ def health_check():
         "device": str(DEVICE),
         "max_length": MAX_LENGTH,
         "stride": STRIDE,
-        "chunk_aggregation": CHUNK_AGGREGATION,
-        "threshold": THRESHOLD,
+        "model_name": MODEL_NAME,
+        "scoring_rule": SCORING_RULE,
+        "scoring_rule_description": describe_rule(SCORING_RULE),
+        "scoring_rule_source": RULE_SOURCE,
+        "max_eval_chunks": MAX_EVAL_CHUNKS,
         "labels": {
             str(key): value
             for key, value in NORMALIZED_ID2LABEL.items()
@@ -462,164 +614,315 @@ def health_check():
     })
 
 # ==================================================
-# 7. SCAN CODE
+# 7. PREDICT ONLY (public, used by test.py)
+# ==================================================
+
+@app.route("/api/predict", methods=["POST"])
+def predict_only():
+    """Model prediction only: no login, no Gemini, nothing saved."""
+    code_snippet, _, _, err = read_scan_input(request.get_json(silent=True))
+
+    if err:
+        return err
+
+    try:
+        return jsonify(predict_code(code_snippet))
+    except Exception:
+        app.logger.exception("Prediction failed")
+        return error(
+            "Prediction failed. Check the backend terminal for details.", 500
+        )
+
+# ==================================================
+# 8. SCAN CODE (login required, saved to database)
 # ==================================================
 
 @app.route("/api/scan", methods=["POST"])
+@login_required
 def scan_code():
-    data = request.get_json(silent=True)
+    code_snippet, language, title, err = read_scan_input(
+        request.get_json(silent=True)
+    )
 
-    if not isinstance(data, dict):
-        return jsonify({
-            "error": "Request body must be a JSON object."
-        }), 400
-
-    code_snippet = data.get("code", "")
-    language = data.get("language", "auto")
-
-    if not isinstance(code_snippet, str) or not code_snippet.strip():
-        return jsonify({
-            "error": "A non-empty code snippet is required."
-        }), 400
-
-    if not isinstance(language, str):
-        return jsonify({
-            "error": "Language must be a string."
-        }), 400
+    if err:
+        return err
 
     try:
         prediction_result = predict_code(code_snippet)
-
-        label = prediction_result["prediction"]
-        confidence = prediction_result["confidence"]
-
-        # Gemini explains the result; it does not change it.
-        ai_explanation = explain_with_gemini(
-            code=code_snippet,
-            language=language,
-            prediction=label,
-            confidence=confidence,
-        )
-
-        if label == "vulnerable":
-            overall_risk = "high"
-            vulnerabilities_found = 1
-        else:
-            overall_risk = "low"
-            vulnerabilities_found = 0
-
-        lines = code_snippet.splitlines()
-
-        if not lines:
-            lines = [""]
-
-        result = {
-            "codeLines": code_snippet,
-            "language": language,
-            "total_lines": len(lines),
-            "vulnerabilitiesFound": vulnerabilities_found,
-            "overallRisk": overall_risk,
-            "prediction": label,
-            "confidence": confidence,
-            "vulnerable_probability": (
-                prediction_result["vulnerable_probability"]
-            ),
-            "chunk_count": prediction_result["chunk_count"],
-            "chunk_aggregation": (
-                prediction_result["chunk_aggregation"]
-            ),
-            "threshold": prediction_result["threshold"],
-            "vulnerabilities": [],
-            "analysis_scope": "whole_snippet",
-            "ai_explanation": ai_explanation,
-            "message": (
-                "The model classified the complete snippet as "
-                "vulnerable. Specific vulnerable lines and types "
-                "were not identified."
-                if label == "vulnerable"
-                else
-                "The model classified the complete snippet as safe. "
-                "This does not guarantee that the code is "
-                "vulnerability-free."
-            ),
-        }
-
-        # Save scan history.
-        history = load_history()
-
-        valid_ids = [
-            entry.get("id", 0)
-            for entry in history
-            if isinstance(entry, dict)
-            and isinstance(entry.get("id", 0), int)
-        ]
-
-        next_id = max(valid_ids, default=0) + 1
-
-        history_entry = {
-            "id": next_id,
-            "timestamp": datetime.now().astimezone().isoformat(),
-            "language": language,
-            "code_lines": len(lines),
-            "vulnerabilities_found": vulnerabilities_found,
-            "overall_risk": overall_risk,
-            "prediction": label,
-            "confidence": confidence,
-            "sample_vulnerabilities": [],
-        }
-
-        history.insert(0, history_entry)
-
-        try:
-            save_history(history[:100])
-        except OSError:
-            app.logger.exception("Could not save scan history.")
-
-        return jsonify(result)
-
     except Exception:
         app.logger.exception("Code scan failed")
+        return error(
+            "Code scanning failed. Check the backend terminal for details.",
+            500,
+        )
 
-        return jsonify({
-            "error": (
-                "Code scanning failed. "
-                "Check the backend terminal for details."
-            )
-        }), 500
+    label = prediction_result["prediction"]
+    confidence = prediction_result["confidence"]
+
+    # Gemini explains the result; it does not change it.
+    ai_explanation = explain_with_gemini(
+        code=code_snippet,
+        language=language,
+        prediction=label,
+        confidence=confidence,
+    )
+
+    # Count lines after whitespace cleanup, so pasted blank lines do not count.
+    lines = normalize_code(code_snippet).splitlines() or [""]
+
+    scan = Scan(
+        user_id=g.user.id,
+        title=title or default_title(code_snippet),
+        language=language,
+        code=code_snippet,
+        total_lines=len(lines),
+        prediction=label,
+        confidence=confidence,
+        vulnerable_probability=prediction_result["vulnerable_probability"],
+        overall_risk="high" if label == "vulnerable" else "low",
+        chunk_count=prediction_result["chunk_count"],
+        threshold=prediction_result["threshold"],
+        model_version=prediction_result["model"],
+        ai_available=bool(ai_explanation.get("available")),
+        ai_model=ai_explanation.get("model"),
+        ai_explanation=ai_explanation.get("explanation", ""),
+    )
+
+    try:
+        SessionLocal.add(scan)
+        SessionLocal.commit()
+    except Exception:
+        SessionLocal.rollback()
+        app.logger.exception("Could not save scan to the database")
+        return error(
+            "The scan finished but could not be saved. "
+            "Check the database connection.",
+            500,
+        )
+
+    return jsonify(scan.to_detail()), 201
 
 # ==================================================
-# 8. GET SCAN HISTORY
+# 9. SCAN HISTORY (login required)
 # ==================================================
 
-@app.route("/api/history", methods=["GET"])
-def get_history():
+def filtered_scans_query():
+    """Build a query for the current user's scans from URL parameters:
+    q (search), prediction, language, sort (newest|oldest|confidence).
+    """
+    query = select(Scan).where(Scan.user_id == g.user.id)
+
+    search = request.args.get("q", "").strip()
+    prediction = request.args.get("prediction", "").strip().lower()
+    language = request.args.get("language", "").strip()
+    sort = request.args.get("sort", "newest")
+
+    if search:
+        pattern = f"%{search}%"
+        query = query.where(
+            or_(Scan.title.ilike(pattern), Scan.code.ilike(pattern))
+        )
+
+    if prediction in ALLOWED_PREDICTIONS:
+        query = query.where(Scan.prediction == prediction)
+
+    if language:
+        query = query.where(Scan.language == language)
+
+    if sort == "oldest":
+        query = query.order_by(Scan.created_at.asc(), Scan.id.asc())
+    elif sort == "confidence":
+        query = query.order_by(Scan.confidence.desc(), Scan.id.desc())
+    else:
+        query = query.order_by(Scan.created_at.desc(), Scan.id.desc())
+
+    return query
+
+
+@app.route("/api/scans", methods=["GET"])
+@login_required
+def list_scans():
+    try:
+        page = max(1, int(request.args.get("page", 1)))
+        page_size = min(100, max(1, int(request.args.get("page_size", 10))))
+    except ValueError:
+        return error("page and page_size must be numbers.", 400)
+
+    query = filtered_scans_query()
+
+    total = SessionLocal.execute(
+        select(func.count()).select_from(query.order_by(None).subquery())
+    ).scalar_one()
+
+    scans = SessionLocal.execute(
+        query.offset((page - 1) * page_size).limit(page_size)
+    ).scalars().all()
+
+    languages = SessionLocal.execute(
+        select(Scan.language)
+        .where(Scan.user_id == g.user.id)
+        .distinct()
+        .order_by(Scan.language)
+    ).scalars().all()
+
     return jsonify({
-        "history": load_history()[:50]
+        "scans": [scan.to_summary() for scan in scans],
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "pages": max(1, -(-total // page_size)),
+        "languages": languages,
     })
 
 
-@app.route("/api/history/<int:entry_id>", methods=["GET"])
-def get_history_entry(entry_id):
-    history = load_history()
+def get_own_scan(scan_id):
+    scan = SessionLocal.get(Scan, scan_id)
 
-    entry = next(
-        (
-            item for item in history
-            if isinstance(item, dict)
-            and item.get("id") == entry_id
-        ),
-        None,
+    if scan is None or scan.user_id != g.user.id:
+        return None
+
+    return scan
+
+
+@app.route("/api/scans/<int:scan_id>", methods=["GET"])
+@login_required
+def get_scan(scan_id):
+    scan = get_own_scan(scan_id)
+
+    if scan is None:
+        return error("Scan not found.", 404)
+
+    return jsonify(scan.to_detail())
+
+
+@app.route("/api/scans/<int:scan_id>", methods=["DELETE"])
+@login_required
+def delete_scan(scan_id):
+    scan = get_own_scan(scan_id)
+
+    if scan is None:
+        return error("Scan not found.", 404)
+
+    SessionLocal.delete(scan)
+    SessionLocal.commit()
+
+    return jsonify({"message": "Scan deleted."})
+
+
+@app.route("/api/scans/export.csv", methods=["GET"])
+@login_required
+def export_scans_csv():
+    scans = SessionLocal.execute(filtered_scans_query()).scalars().all()
+
+    buffer = io.StringIO()
+    writer = csv.writer(buffer)
+    writer.writerow([
+        "id", "created_at", "title", "language", "prediction",
+        "confidence", "vulnerable_probability", "lines", "ai_explanation_available",
+    ])
+
+    for scan in scans:
+        writer.writerow([
+            scan.id,
+            scan.created_at.isoformat(),
+            scan.title,
+            scan.language,
+            scan.prediction,
+            scan.confidence,
+            scan.vulnerable_probability,
+            scan.total_lines,
+            "yes" if scan.ai_available else "no",
+        ])
+
+    filename = f"polyguard-scans-{datetime.now().strftime('%Y%m%d')}.csv"
+
+    return Response(
+        buffer.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
 
-    if entry is not None:
-        return jsonify(entry)
+# ==================================================
+# 10. DASHBOARD STATS (login required)
+# ==================================================
+
+@app.route("/api/stats", methods=["GET"])
+@login_required
+def get_stats():
+    user_scans = select(Scan).where(Scan.user_id == g.user.id).subquery()
+
+    totals = SessionLocal.execute(
+        select(
+            func.count(),
+            func.count().filter(user_scans.c.prediction == "vulnerable"),
+            func.avg(user_scans.c.confidence),
+            func.sum(user_scans.c.total_lines),
+        ).select_from(user_scans)
+    ).one()
+
+    total, vulnerable, avg_confidence, total_lines = totals
+    total = total or 0
+    vulnerable = vulnerable or 0
+
+    by_language = SessionLocal.execute(
+        select(
+            user_scans.c.language,
+            func.count(),
+            func.count().filter(user_scans.c.prediction == "vulnerable"),
+        )
+        .group_by(user_scans.c.language)
+        .order_by(func.count().desc())
+    ).all()
+
+    # Scans per day for the last 14 days (including today), in UTC.
+    days = 14
+    today = datetime.now(timezone.utc).date()
+    start_day = today - timedelta(days=days - 1)
+    start_dt = datetime.combine(start_day, datetime.min.time(), tzinfo=timezone.utc)
+
+    recent_rows = SessionLocal.execute(
+        select(Scan.created_at, Scan.prediction)
+        .where(Scan.user_id == g.user.id, Scan.created_at >= start_dt)
+    ).all()
+
+    daily = {
+        (start_day + timedelta(days=i)).isoformat(): {"total": 0, "vulnerable": 0}
+        for i in range(days)
+    }
+
+    for created_at, prediction in recent_rows:
+        key = created_at.astimezone(timezone.utc).date().isoformat()
+        if key in daily:
+            daily[key]["total"] += 1
+            if prediction == "vulnerable":
+                daily[key]["vulnerable"] += 1
+
+    recent = SessionLocal.execute(
+        select(Scan)
+        .where(Scan.user_id == g.user.id)
+        .order_by(Scan.created_at.desc(), Scan.id.desc())
+        .limit(5)
+    ).scalars().all()
 
     return jsonify({
-        "error": "Entry not found"
-    }), 404
+        "total_scans": total,
+        "vulnerable_scans": vulnerable,
+        "safe_scans": total - vulnerable,
+        "vulnerable_rate": round(vulnerable / total, 4) if total else 0,
+        "average_confidence": round(float(avg_confidence), 4) if avg_confidence else 0,
+        "total_lines": int(total_lines or 0),
+        "by_language": [
+            {"language": lang, "total": count, "vulnerable": vuln}
+            for lang, count, vuln in by_language
+        ],
+        "daily": [
+            {"date": day, **values} for day, values in daily.items()
+        ],
+        "recent": [scan.to_summary() for scan in recent],
+    })
 
 # ==================================================
-# 9. RUN SERVER
+# 11. RUN SERVER
 # ==================================================
 
 if __name__ == "__main__":

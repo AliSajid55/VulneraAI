@@ -1,0 +1,311 @@
+Model: model_v3  |  rule: max @ 0.902
+Loaded 271 cases from test_cases_300.py: Easy 103 (55 vulnerable), Medium 85 (41 vulnerable), Complex 83 (39 vulnerable)
+
+E001: actual=vulnerable, predicted=vulnerable, confidence=0.9902, vulnerable_probability=0.998069, correct=True
+E002: actual=vulnerable, predicted=vulnerable, confidence=0.9935, vulnerable_probability=0.998716, correct=True
+E003: actual=vulnerable, predicted=vulnerable, confidence=0.958, vulnerable_probability=0.99174, correct=True
+E004: actual=vulnerable, predicted=vulnerable, confidence=0.9886, vulnerable_probability=0.997765, correct=True
+E005: actual=vulnerable, predicted=vulnerable, confidence=0.9469, vulnerable_probability=0.989545, correct=True
+E006: actual=vulnerable, predicted=vulnerable, confidence=0.9071, vulnerable_probability=0.981725, correct=True
+E007: actual=vulnerable, predicted=vulnerable, confidence=0.9515, vulnerable_probability=0.990456, correct=True
+E008: actual=vulnerable, predicted=vulnerable, confidence=0.9427, vulnerable_probability=0.988731, correct=True
+E009: actual=vulnerable, predicted=vulnerable, confidence=0.9045, vulnerable_probability=0.981208, correct=True
+E010: actual=vulnerable, predicted=vulnerable, confidence=0.9654, vulnerable_probability=0.993189, correct=True
+E011: actual=vulnerable, predicted=vulnerable, confidence=0.9724, vulnerable_probability=0.994577, correct=True
+E012: actual=vulnerable, predicted=vulnerable, confidence=0.9809, vulnerable_probability=0.996249, correct=True
+E013: actual=vulnerable, predicted=vulnerable, confidence=0.9738, vulnerable_probability=0.994848, correct=True
+E014: actual=vulnerable, predicted=vulnerable, confidence=0.9845, vulnerable_probability=0.996952, correct=True
+E015: actual=vulnerable, predicted=vulnerable, confidence=0.9553, vulnerable_probability=0.99121, correct=True
+E016: actual=vulnerable, predicted=vulnerable, confidence=0.9934, vulnerable_probability=0.998694, correct=True
+E017: actual=vulnerable, predicted=safe, confidence=0.9301, vulnerable_probability=0.126008, correct=False
+E018: actual=vulnerable, predicted=vulnerable, confidence=0.9866, vulnerable_probability=0.997361, correct=True
+E019: actual=vulnerable, predicted=safe, confidence=0.9535, vulnerable_probability=0.083788, correct=False
+E020: actual=vulnerable, predicted=vulnerable, confidence=0.9901, vulnerable_probability=0.998043, correct=True
+E021: actual=vulnerable, predicted=vulnerable, confidence=0.9811, vulnerable_probability=0.996275, correct=True
+E022: actual=vulnerable, predicted=vulnerable, confidence=0.9932, vulnerable_probability=0.998664, correct=True
+E023: actual=vulnerable, predicted=vulnerable, confidence=0.9778, vulnerable_probability=0.99564, correct=True
+E024: actual=vulnerable, predicted=vulnerable, confidence=0.9935, vulnerable_probability=0.998729, correct=True
+E025: actual=vulnerable, predicted=vulnerable, confidence=0.9919, vulnerable_probability=0.998409, correct=True
+E026: actual=vulnerable, predicted=vulnerable, confidence=0.9816, vulnerable_probability=0.996377, correct=True
+E027: actual=vulnerable, predicted=vulnerable, confidence=0.9035, vulnerable_probability=0.981016, correct=True
+E028: actual=vulnerable, predicted=vulnerable, confidence=0.5823, vulnerable_probability=0.917798, correct=True
+E029: actual=vulnerable, predicted=safe, confidence=0.6026, vulnerable_probability=0.716676, correct=False
+E030: actual=vulnerable, predicted=vulnerable, confidence=0.9714, vulnerable_probability=0.99438, correct=True
+E031: actual=vulnerable, predicted=vulnerable, confidence=0.8599, vulnerable_probability=0.972437, correct=True
+E032: actual=vulnerable, predicted=vulnerable, confidence=0.6124, vulnerable_probability=0.92372, correct=True
+E033: actual=vulnerable, predicted=vulnerable, confidence=0.6864, vulnerable_probability=0.938283, correct=True
+E034: actual=vulnerable, predicted=vulnerable, confidence=0.8511, vulnerable_probability=0.97069, correct=True
+E035: actual=vulnerable, predicted=safe, confidence=0.8333, vulnerable_probability=0.300569, correct=False
+E036: actual=vulnerable, predicted=safe, confidence=0.7556, vulnerable_probability=0.440778, correct=False
+E037: actual=vulnerable, predicted=safe, confidence=0.5208, vulnerable_probability=0.864179, correct=False
+E038: actual=vulnerable, predicted=safe, confidence=0.6516, vulnerable_probability=0.628228, correct=False
+E039: actual=vulnerable, predicted=safe, confidence=0.6485, vulnerable_probability=0.633839, correct=False
+E040: actual=vulnerable, predicted=safe, confidence=0.7631, vulnerable_probability=0.42714, correct=False
+E041: actual=vulnerable, predicted=safe, confidence=0.5571, vulnerable_probability=0.798596, correct=False
+E042: actual=vulnerable, predicted=safe, confidence=0.5449, vulnerable_probability=0.82073, correct=False
+E043: actual=vulnerable, predicted=vulnerable, confidence=0.8059, vulnerable_probability=0.961812, correct=True
+E044: actual=vulnerable, predicted=vulnerable, confidence=0.6776, vulnerable_probability=0.936556, correct=True
+E045: actual=vulnerable, predicted=vulnerable, confidence=0.5232, vulnerable_probability=0.906166, correct=True
+E046: actual=vulnerable, predicted=vulnerable, confidence=0.7498, vulnerable_probability=0.950773, correct=True
+E047: actual=vulnerable, predicted=safe, confidence=0.5584, vulnerable_probability=0.796242, correct=False
+E048: actual=vulnerable, predicted=vulnerable, confidence=0.828, vulnerable_probability=0.966144, correct=True
+E049: actual=vulnerable, predicted=vulnerable, confidence=0.9152, vulnerable_probability=0.983304, correct=True
+E050: actual=vulnerable, predicted=vulnerable, confidence=0.6705, vulnerable_probability=0.93515, correct=True
+E051: actual=safe, predicted=safe, confidence=0.5015, vulnerable_probability=0.898842, correct=True
+E052: actual=safe, predicted=safe, confidence=0.8309, vulnerable_probability=0.304844, correct=True
+E053: actual=safe, predicted=safe, confidence=0.756, vulnerable_probability=0.440051, correct=True
+E054: actual=safe, predicted=vulnerable, confidence=0.8645, vulnerable_probability=0.973339, correct=False
+E055: actual=safe, predicted=safe, confidence=0.9093, vulnerable_probability=0.163474, correct=True
+E056: actual=safe, predicted=vulnerable, confidence=0.9273, vulnerable_probability=0.985701, correct=False
+E057: actual=safe, predicted=safe, confidence=0.5033, vulnerable_probability=0.895714, correct=True
+E058: actual=safe, predicted=safe, confidence=0.8126, vulnerable_probability=0.337951, correct=True
+E059: actual=safe, predicted=safe, confidence=0.7302, vulnerable_probability=0.486426, correct=True
+E060: actual=safe, predicted=vulnerable, confidence=0.6789, vulnerable_probability=0.936816, correct=False
+E061: actual=safe, predicted=vulnerable, confidence=0.8398, vulnerable_probability=0.968467, correct=False
+E062: actual=safe, predicted=safe, confidence=0.6065, vulnerable_probability=0.709524, correct=True
+E063: actual=safe, predicted=safe, confidence=0.5611, vulnerable_probability=0.791487, correct=True
+E064: actual=safe, predicted=vulnerable, confidence=0.8817, vulnerable_probability=0.976728, correct=False
+E065: actual=safe, predicted=safe, confidence=0.7928, vulnerable_probability=0.373617, correct=True
+E066: actual=safe, predicted=vulnerable, confidence=0.7183, vulnerable_probability=0.944569, correct=False
+E067: actual=safe, predicted=safe, confidence=0.8781, vulnerable_probability=0.219827, correct=True
+E068: actual=safe, predicted=safe, confidence=0.5783, vulnerable_probability=0.760441, correct=True
+E069: actual=safe, predicted=safe, confidence=0.5315, vulnerable_probability=0.844878, correct=True
+E070: actual=safe, predicted=safe, confidence=0.9708, vulnerable_probability=0.052741, correct=True
+E071: actual=safe, predicted=safe, confidence=0.8688, vulnerable_probability=0.236665, correct=True
+E072: actual=safe, predicted=safe, confidence=0.6278, vulnerable_probability=0.671204, correct=True
+E073: actual=safe, predicted=safe, confidence=0.6087, vulnerable_probability=0.70555, correct=True
+E074: actual=safe, predicted=vulnerable, confidence=0.827, vulnerable_probability=0.965948, correct=False
+E075: actual=safe, predicted=safe, confidence=0.7091, vulnerable_probability=0.524521, correct=True
+E076: actual=safe, predicted=safe, confidence=0.8147, vulnerable_probability=0.334137, correct=True
+E077: actual=safe, predicted=safe, confidence=0.5163, vulnerable_probability=0.872198, correct=True
+E078: actual=safe, predicted=safe, confidence=0.7441, vulnerable_probability=0.461389, correct=True
+E079: actual=safe, predicted=safe, confidence=0.8404, vulnerable_probability=0.287789, correct=True
+E080: actual=safe, predicted=safe, confidence=0.5802, vulnerable_probability=0.757032, correct=True
+E081: actual=safe, predicted=safe, confidence=0.6848, vulnerable_probability=0.568297, correct=True
+E082: actual=safe, predicted=safe, confidence=0.6764, vulnerable_probability=0.583546, correct=True
+E083: actual=safe, predicted=safe, confidence=0.9407, vulnerable_probability=0.107017, correct=True
+E084: actual=safe, predicted=vulnerable, confidence=0.7104, vulnerable_probability=0.943018, correct=False
+E085: actual=safe, predicted=safe, confidence=0.9802, vulnerable_probability=0.035617, correct=True
+E086: actual=safe, predicted=safe, confidence=0.658, vulnerable_probability=0.616686, correct=True
+E087: actual=safe, predicted=safe, confidence=0.5369, vulnerable_probability=0.834983, correct=True
+E088: actual=safe, predicted=safe, confidence=0.6006, vulnerable_probability=0.720124, correct=True
+E089: actual=safe, predicted=safe, confidence=0.8617, vulnerable_probability=0.249409, correct=True
+E090: actual=safe, predicted=vulnerable, confidence=0.9426, vulnerable_probability=0.988702, correct=False
+E091: actual=safe, predicted=vulnerable, confidence=0.9443, vulnerable_probability=0.989046, correct=False
+E092: actual=safe, predicted=safe, confidence=0.6954, vulnerable_probability=0.54919, correct=True
+E093: actual=safe, predicted=vulnerable, confidence=0.5549, vulnerable_probability=0.912412, correct=False
+E094: actual=vulnerable, predicted=vulnerable, confidence=0.989, vulnerable_probability=0.99784, correct=True
+E095: actual=vulnerable, predicted=vulnerable, confidence=0.9921, vulnerable_probability=0.998438, correct=True
+E096: actual=vulnerable, predicted=vulnerable, confidence=0.9817, vulnerable_probability=0.99639, correct=True
+E097: actual=vulnerable, predicted=vulnerable, confidence=0.9624, vulnerable_probability=0.992608, correct=True
+E098: actual=vulnerable, predicted=vulnerable, confidence=0.9791, vulnerable_probability=0.99589, correct=True
+E099: actual=safe, predicted=safe, confidence=0.5556, vulnerable_probability=0.80138, correct=True
+E100: actual=safe, predicted=vulnerable, confidence=0.9562, vulnerable_probability=0.991383, correct=False
+E101: actual=safe, predicted=vulnerable, confidence=0.8901, vulnerable_probability=0.978379, correct=False
+E102: actual=safe, predicted=safe, confidence=0.5592, vulnerable_probability=0.79484, correct=True
+E103: actual=safe, predicted=safe, confidence=0.5642, vulnerable_probability=0.785922, correct=True
+M001: actual=vulnerable, predicted=safe, confidence=0.9851, vulnerable_probability=0.026835, correct=False
+M002: actual=vulnerable, predicted=vulnerable, confidence=0.9801, vulnerable_probability=0.996075, correct=True
+M003: actual=vulnerable, predicted=vulnerable, confidence=0.9515, vulnerable_probability=0.990456, correct=True
+M004: actual=safe, predicted=vulnerable, confidence=0.7337, vulnerable_probability=0.947597, correct=False
+M005: actual=vulnerable, predicted=vulnerable, confidence=0.9456, vulnerable_probability=0.989302, correct=True
+M006: actual=safe, predicted=safe, confidence=0.6049, vulnerable_probability=0.712379, correct=True
+M007: actual=vulnerable, predicted=vulnerable, confidence=0.5597, vulnerable_probability=0.913349, correct=True
+M008: actual=vulnerable, predicted=safe, confidence=0.5953, vulnerable_probability=0.729703, correct=False
+M009: actual=safe, predicted=safe, confidence=0.9977, vulnerable_probability=0.004164, correct=True
+M010: actual=safe, predicted=safe, confidence=0.8258, vulnerable_probability=0.314192, correct=True
+M011: actual=vulnerable, predicted=vulnerable, confidence=0.6003, vulnerable_probability=0.921346, correct=True
+M012: actual=safe, predicted=safe, confidence=0.9135, vulnerable_probability=0.156043, correct=True
+M013: actual=vulnerable, predicted=vulnerable, confidence=0.991, vulnerable_probability=0.998233, correct=True
+M014: actual=vulnerable, predicted=vulnerable, confidence=0.9687, vulnerable_probability=0.993849, correct=True
+M015: actual=vulnerable, predicted=vulnerable, confidence=0.767, vulnerable_probability=0.954147, correct=True
+M016: actual=safe, predicted=vulnerable, confidence=0.9112, vulnerable_probability=0.982526, correct=False
+M017: actual=safe, predicted=safe, confidence=0.565, vulnerable_probability=0.78443, correct=True
+M018: actual=vulnerable, predicted=vulnerable, confidence=0.6351, vulnerable_probability=0.928189, correct=True
+M019: actual=safe, predicted=vulnerable, confidence=0.9438, vulnerable_probability=0.988934, correct=False
+M020: actual=safe, predicted=vulnerable, confidence=0.916, vulnerable_probability=0.983477, correct=False
+M021: actual=vulnerable, predicted=vulnerable, confidence=0.9623, vulnerable_probability=0.992581, correct=True
+M022: actual=vulnerable, predicted=vulnerable, confidence=0.9737, vulnerable_probability=0.99482, correct=True
+M023: actual=safe, predicted=vulnerable, confidence=0.7007, vulnerable_probability=0.941105, correct=False
+M024: actual=vulnerable, predicted=vulnerable, confidence=0.9762, vulnerable_probability=0.995317, correct=True
+M025: actual=safe, predicted=vulnerable, confidence=0.9801, vulnerable_probability=0.996075, correct=False
+M026: actual=vulnerable, predicted=safe, confidence=0.8638, vulnerable_probability=0.245637, correct=False
+M027: actual=vulnerable, predicted=safe, confidence=0.5004, vulnerable_probability=0.900968, correct=False
+M028: actual=vulnerable, predicted=safe, confidence=0.6566, vulnerable_probability=0.619192, correct=False
+M029: actual=safe, predicted=safe, confidence=0.8977, vulnerable_probability=0.184448, correct=True
+M030: actual=vulnerable, predicted=safe, confidence=0.7585, vulnerable_probability=0.435452, correct=False
+M031: actual=vulnerable, predicted=vulnerable, confidence=0.9504, vulnerable_probability=0.990231, correct=True
+M032: actual=vulnerable, predicted=vulnerable, confidence=0.7997, vulnerable_probability=0.960576, correct=True
+M033: actual=safe, predicted=vulnerable, confidence=0.5528, vulnerable_probability=0.912006, correct=False
+M034: actual=vulnerable, predicted=vulnerable, confidence=0.7642, vulnerable_probability=0.953593, correct=True
+M035: actual=safe, predicted=safe, confidence=0.5358, vulnerable_probability=0.837013, correct=True
+M036: actual=vulnerable, predicted=safe, confidence=0.7225, vulnerable_probability=0.50037, correct=False
+M037: actual=vulnerable, predicted=vulnerable, confidence=0.61, vulnerable_probability=0.923244, correct=True
+M038: actual=safe, predicted=safe, confidence=0.5153, vulnerable_probability=0.874057, correct=True
+M039: actual=safe, predicted=safe, confidence=0.7388, vulnerable_probability=0.471024, correct=True
+M040: actual=vulnerable, predicted=safe, confidence=0.6494, vulnerable_probability=0.632165, correct=False
+M041: actual=vulnerable, predicted=vulnerable, confidence=0.9705, vulnerable_probability=0.994188, correct=True
+M042: actual=vulnerable, predicted=vulnerable, confidence=0.9586, vulnerable_probability=0.991855, correct=True
+M043: actual=safe, predicted=safe, confidence=0.9989, vulnerable_probability=0.00195, correct=True
+M044: actual=vulnerable, predicted=vulnerable, confidence=0.9884, vulnerable_probability=0.997715, correct=True
+M045: actual=vulnerable, predicted=vulnerable, confidence=0.8202, vulnerable_probability=0.964627, correct=True
+M046: actual=vulnerable, predicted=safe, confidence=0.9073, vulnerable_probability=0.167141, correct=False
+M047: actual=safe, predicted=safe, confidence=0.5079, vulnerable_probability=0.887429, correct=True
+M048: actual=vulnerable, predicted=safe, confidence=0.9462, vulnerable_probability=0.097091, correct=False
+M049: actual=safe, predicted=safe, confidence=0.7848, vulnerable_probability=0.387969, correct=True
+M050: actual=vulnerable, predicted=safe, confidence=0.9596, vulnerable_probability=0.072781, correct=False
+M051: actual=vulnerable, predicted=vulnerable, confidence=0.7745, vulnerable_probability=0.955625, correct=True
+M052: actual=vulnerable, predicted=vulnerable, confidence=0.9404, vulnerable_probability=0.988276, correct=True
+M053: actual=safe, predicted=safe, confidence=0.9909, vulnerable_probability=0.016388, correct=True
+M054: actual=vulnerable, predicted=safe, confidence=0.5458, vulnerable_probability=0.818944, correct=False
+M055: actual=safe, predicted=safe, confidence=0.9984, vulnerable_probability=0.002869, correct=True
+M056: actual=vulnerable, predicted=vulnerable, confidence=0.9823, vulnerable_probability=0.996515, correct=True
+M057: actual=safe, predicted=safe, confidence=0.675, vulnerable_probability=0.586049, correct=True
+M058: actual=vulnerable, predicted=vulnerable, confidence=0.9575, vulnerable_probability=0.991644, correct=True
+M059: actual=vulnerable, predicted=safe, confidence=0.5811, vulnerable_probability=0.755336, correct=False
+M060: actual=vulnerable, predicted=safe, confidence=0.5584, vulnerable_probability=0.796352, correct=False
+M061: actual=vulnerable, predicted=vulnerable, confidence=0.9843, vulnerable_probability=0.996911, correct=True
+M062: actual=safe, predicted=vulnerable, confidence=0.9063, vulnerable_probability=0.98157, correct=False
+M063: actual=vulnerable, predicted=vulnerable, confidence=0.9742, vulnerable_probability=0.994921, correct=True
+M064: actual=safe, predicted=safe, confidence=0.9955, vulnerable_probability=0.008064, correct=True
+M065: actual=vulnerable, predicted=vulnerable, confidence=0.9591, vulnerable_probability=0.991957, correct=True
+M066: actual=safe, predicted=vulnerable, confidence=0.6616, vulnerable_probability=0.93341, correct=False
+M067: actual=safe, predicted=safe, confidence=0.8408, vulnerable_probability=0.28704, correct=True
+M068: actual=safe, predicted=safe, confidence=0.5365, vulnerable_probability=0.835807, correct=True
+M069: actual=safe, predicted=safe, confidence=0.9848, vulnerable_probability=0.027361, correct=True
+M070: actual=safe, predicted=safe, confidence=0.9936, vulnerable_probability=0.011566, correct=True
+M071: actual=safe, predicted=safe, confidence=0.999, vulnerable_probability=0.001793, correct=True
+M072: actual=safe, predicted=safe, confidence=0.9988, vulnerable_probability=0.002089, correct=True
+M073: actual=safe, predicted=safe, confidence=0.5781, vulnerable_probability=0.760776, correct=True
+M074: actual=safe, predicted=safe, confidence=0.9891, vulnerable_probability=0.019661, correct=True
+M075: actual=safe, predicted=safe, confidence=0.9988, vulnerable_probability=0.00209, correct=True
+M076: actual=safe, predicted=safe, confidence=0.9947, vulnerable_probability=0.009494, correct=True
+M077: actual=safe, predicted=vulnerable, confidence=0.8419, vulnerable_probability=0.968879, correct=False
+M078: actual=safe, predicted=safe, confidence=0.9893, vulnerable_probability=0.019279, correct=True
+M079: actual=safe, predicted=safe, confidence=0.7663, vulnerable_probability=0.421325, correct=True
+M080: actual=safe, predicted=safe, confidence=0.5506, vulnerable_probability=0.810407, correct=True
+M081: actual=safe, predicted=safe, confidence=0.8652, vulnerable_probability=0.243056, correct=True
+M082: actual=safe, predicted=safe, confidence=0.8306, vulnerable_probability=0.305428, correct=True
+M083: actual=safe, predicted=safe, confidence=0.8879, vulnerable_probability=0.202198, correct=True
+M084: actual=safe, predicted=safe, confidence=0.9918, vulnerable_probability=0.014833, correct=True
+M085: actual=safe, predicted=safe, confidence=0.9898, vulnerable_probability=0.018446, correct=True
+C001: actual=vulnerable, predicted=safe, confidence=0.5813, vulnerable_probability=0.755018, correct=False
+C002: actual=vulnerable, predicted=safe, confidence=0.8726, vulnerable_probability=0.229802, correct=False
+C003: actual=safe, predicted=safe, confidence=0.9989, vulnerable_probability=0.001976, correct=True
+C004: actual=vulnerable, predicted=vulnerable, confidence=0.604, vulnerable_probability=0.922079, correct=True
+C005: actual=vulnerable, predicted=vulnerable, confidence=0.7804, vulnerable_probability=0.95678, correct=True
+C006: actual=vulnerable, predicted=safe, confidence=0.964, vulnerable_probability=0.064826, correct=False
+C007: actual=safe, predicted=safe, confidence=0.9991, vulnerable_probability=0.001676, correct=True
+C008: actual=vulnerable, predicted=vulnerable, confidence=0.9864, vulnerable_probability=0.997328, correct=True
+C009: actual=safe, predicted=safe, confidence=0.9927, vulnerable_probability=0.013106, correct=True
+C010: actual=vulnerable, predicted=vulnerable, confidence=0.9434, vulnerable_probability=0.988869, correct=True
+C011: actual=vulnerable, predicted=safe, confidence=0.8567, vulnerable_probability=0.258324, correct=False
+C012: actual=safe, predicted=safe, confidence=0.6589, vulnerable_probability=0.615122, correct=True
+C013: actual=safe, predicted=vulnerable, confidence=0.9658, vulnerable_probability=0.993262, correct=False
+C014: actual=vulnerable, predicted=safe, confidence=0.5088, vulnerable_probability=0.8857, correct=False
+C015: actual=safe, predicted=safe, confidence=0.9615, vulnerable_probability=0.069426, correct=True
+C016: actual=vulnerable, predicted=vulnerable, confidence=0.9242, vulnerable_probability=0.985077, correct=True
+C017: actual=safe, predicted=safe, confidence=0.6748, vulnerable_probability=0.586378, correct=True
+C018: actual=vulnerable, predicted=vulnerable, confidence=0.99, vulnerable_probability=0.99803, correct=True
+C019: actual=vulnerable, predicted=safe, confidence=0.5417, vulnerable_probability=0.826479, correct=False
+C020: actual=safe, predicted=safe, confidence=0.999, vulnerable_probability=0.00176, correct=True
+C021: actual=vulnerable, predicted=safe, confidence=0.8423, vulnerable_probability=0.284378, correct=False
+C022: actual=safe, predicted=safe, confidence=0.6995, vulnerable_probability=0.54184, correct=True
+C023: actual=vulnerable, predicted=safe, confidence=0.9038, vulnerable_probability=0.173499, correct=False
+C024: actual=safe, predicted=safe, confidence=0.5136, vulnerable_probability=0.876997, correct=True
+C025: actual=vulnerable, predicted=safe, confidence=0.7477, vulnerable_probability=0.455029, correct=False
+C026: actual=vulnerable, predicted=safe, confidence=0.9985, vulnerable_probability=0.002785, correct=False
+C027: actual=safe, predicted=safe, confidence=0.9959, vulnerable_probability=0.007344, correct=True
+C028: actual=vulnerable, predicted=vulnerable, confidence=0.9587, vulnerable_probability=0.991867, correct=True
+C029: actual=safe, predicted=safe, confidence=0.9985, vulnerable_probability=0.002631, correct=True
+C030: actual=safe, predicted=vulnerable, confidence=0.8786, vulnerable_probability=0.976103, correct=False
+C031: actual=vulnerable, predicted=vulnerable, confidence=0.9898, vulnerable_probability=0.997991, correct=True
+C032: actual=safe, predicted=safe, confidence=0.5922, vulnerable_probability=0.735308, correct=True
+C033: actual=vulnerable, predicted=vulnerable, confidence=0.9806, vulnerable_probability=0.996174, correct=True
+C034: actual=safe, predicted=safe, confidence=0.9988, vulnerable_probability=0.002235, correct=True
+C035: actual=vulnerable, predicted=vulnerable, confidence=0.9575, vulnerable_probability=0.99164, correct=True
+C036: actual=vulnerable, predicted=vulnerable, confidence=0.8385, vulnerable_probability=0.968221, correct=True
+C037: actual=safe, predicted=safe, confidence=0.6907, vulnerable_probability=0.557792, correct=True
+C038: actual=vulnerable, predicted=vulnerable, confidence=0.9173, vulnerable_probability=0.983728, correct=True
+C039: actual=safe, predicted=safe, confidence=0.5359, vulnerable_probability=0.836879, correct=True
+C040: actual=vulnerable, predicted=vulnerable, confidence=0.8999, vulnerable_probability=0.980292, correct=True
+C041: actual=vulnerable, predicted=vulnerable, confidence=0.981, vulnerable_probability=0.996258, correct=True
+C042: actual=safe, predicted=safe, confidence=0.9862, vulnerable_probability=0.024887, correct=True
+C043: actual=vulnerable, predicted=vulnerable, confidence=0.8916, vulnerable_probability=0.978673, correct=True
+C044: actual=safe, predicted=vulnerable, confidence=0.9235, vulnerable_probability=0.984943, correct=False
+C045: actual=vulnerable, predicted=vulnerable, confidence=0.8335, vulnerable_probability=0.967229, correct=True
+C046: actual=safe, predicted=safe, confidence=0.8027, vulnerable_probability=0.355692, correct=True
+C047: actual=vulnerable, predicted=safe, confidence=0.9613, vulnerable_probability=0.069858, correct=False
+C048: actual=safe, predicted=safe, confidence=0.9509, vulnerable_probability=0.088601, correct=True
+C049: actual=vulnerable, predicted=safe, confidence=0.9526, vulnerable_probability=0.08546, correct=False
+C050: actual=safe, predicted=safe, confidence=0.9478, vulnerable_probability=0.094176, correct=True
+C051: actual=vulnerable, predicted=safe, confidence=0.9087, vulnerable_probability=0.164551, correct=False
+C052: actual=safe, predicted=safe, confidence=0.9993, vulnerable_probability=0.001307, correct=True
+C053: actual=safe, predicted=safe, confidence=0.5588, vulnerable_probability=0.79566, correct=True
+C054: actual=vulnerable, predicted=safe, confidence=0.9486, vulnerable_probability=0.092725, correct=False
+C055: actual=safe, predicted=safe, confidence=0.988, vulnerable_probability=0.021709, correct=True
+C056: actual=vulnerable, predicted=vulnerable, confidence=0.9311, vulnerable_probability=0.986446, correct=True
+C057: actual=safe, predicted=safe, confidence=0.9939, vulnerable_probability=0.011015, correct=True
+C058: actual=vulnerable, predicted=safe, confidence=0.8461, vulnerable_probability=0.277463, correct=False
+C059: actual=safe, predicted=safe, confidence=0.9988, vulnerable_probability=0.002155, correct=True
+C060: actual=vulnerable, predicted=vulnerable, confidence=0.9786, vulnerable_probability=0.995787, correct=True
+C061: actual=safe, predicted=safe, confidence=0.9901, vulnerable_probability=0.017879, correct=True
+C062: actual=vulnerable, predicted=vulnerable, confidence=0.8701, vulnerable_probability=0.974434, correct=True
+C063: actual=safe, predicted=safe, confidence=0.9989, vulnerable_probability=0.001903, correct=True
+C064: actual=vulnerable, predicted=vulnerable, confidence=0.9603, vulnerable_probability=0.99219, correct=True
+C065: actual=safe, predicted=safe, confidence=0.9974, vulnerable_probability=0.004672, correct=True
+C066: actual=vulnerable, predicted=vulnerable, confidence=0.9737, vulnerable_probability=0.994818, correct=True
+C067: actual=safe, predicted=safe, confidence=0.967, vulnerable_probability=0.059422, correct=True
+C068: actual=vulnerable, predicted=safe, confidence=0.5821, vulnerable_probability=0.753477, correct=False
+C069: actual=safe, predicted=safe, confidence=0.6226, vulnerable_probability=0.680527, correct=True
+C070: actual=vulnerable, predicted=vulnerable, confidence=0.969, vulnerable_probability=0.993903, correct=True
+C071: actual=safe, predicted=safe, confidence=0.9977, vulnerable_probability=0.004082, correct=True
+C072: actual=vulnerable, predicted=vulnerable, confidence=0.9837, vulnerable_probability=0.996783, correct=True
+C073: actual=safe, predicted=safe, confidence=0.9802, vulnerable_probability=0.035666, correct=True
+C074: actual=safe, predicted=safe, confidence=0.9989, vulnerable_probability=0.001949, correct=True
+C075: actual=safe, predicted=safe, confidence=0.5335, vulnerable_probability=0.841206, correct=True
+C076: actual=safe, predicted=safe, confidence=0.9967, vulnerable_probability=0.006036, correct=True
+C077: actual=safe, predicted=safe, confidence=0.9991, vulnerable_probability=0.001704, correct=True
+C078: actual=safe, predicted=safe, confidence=0.6528, vulnerable_probability=0.626025, correct=True
+C079: actual=safe, predicted=safe, confidence=0.919, vulnerable_probability=0.146056, correct=True
+C080: actual=safe, predicted=safe, confidence=0.9988, vulnerable_probability=0.002138, correct=True
+C081: actual=safe, predicted=vulnerable, confidence=0.5952, vulnerable_probability=0.920331, correct=False
+C082: actual=safe, predicted=safe, confidence=0.5255, vulnerable_probability=0.855541, correct=True
+C083: actual=safe, predicted=safe, confidence=0.9354, vulnerable_probability=0.11642, correct=True
+
+Total tested: 271
+Correct: 202
+Accuracy: 74.54%
+
+Performance by actual label:
+              sum  count   mean
+actual_label                   
+safe          109    136  0.801
+vulnerable     93    135  0.689
+
+=== Results by level (label 1 = vulnerable) ===
+  level  cases  accuracy  precision  recall    f1  TN  FP  FN  TP
+   Easy    103     0.757      0.768   0.782 0.775  35  13  12  43
+ Medium     85     0.718      0.730   0.659 0.692  34  10  14  27
+Complex     83     0.759      0.852   0.590 0.697  40   4  16  23
+    ALL    271     0.745      0.775   0.689 0.729 109  27  42  93
+
+Misclassified: 69  (false positives: 27, missed vulnerabilities: 42)
+  Easy     #17  MISSED         score=0.126  import subprocess
+  Easy     #19  MISSED         score=0.084  import subprocess
+  Easy     #29  MISSED         score=0.717  AWS_SECRET = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+  Easy     #35  MISSED         score=0.301  import pickle, base64
+  Easy     #36  MISSED         score=0.441  import hashlib
+  Easy     #37  MISSED         score=0.864  import hashlib
+  Easy     #38  MISSED         score=0.628  import md5
+  Easy     #39  MISSED         score=0.634  from hashlib import md5
+  Easy     #40  MISSED         score=0.427  import hashlib
+  Easy     #41  MISSED         score=0.799  def redirect(url):
+  Easy     #42  MISSED         score=0.821  def go_to(url):
+  Easy     #47  MISSED         score=0.796  def log_search(query):
+  Easy     #54  FALSE POSITIVE score=0.973  def greet(name):
+  Easy     #56  FALSE POSITIVE score=0.986  def fibonacci(n):
+  Easy     #60  FALSE POSITIVE score=0.937  def sum_list(lst):
+  ... 54 more in test_300_results.csv
+
+Saved: test_300_results.csv (every case) and test_300_summary.csv

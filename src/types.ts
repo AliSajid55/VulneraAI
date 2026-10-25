@@ -1,63 +1,77 @@
-
-export type RiskLevel = "critical" | "high" | "medium" | "low";
-
 export type Prediction = "safe" | "vulnerable";
 
-export type Theme = "dark" | "light";
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  created_at: string;
+}
 
-export interface Vulnerability {
-  line: number;
-  content: string;
-  vulnerabilityType: string;
-  severity: RiskLevel;
-  description: string;
-  suggestion: string;
+export interface AuthResponse {
+  token: string;
+  user: User;
 }
 
 export interface AIExplanation {
   available: boolean;
-  model?: string;
+  model?: string | null;
   explanation?: string;
-  possible_issues?: string[];
-  suggested_fix?: string;
 }
 
-export interface ScanResult {
-  codeLines: string;
+/** Short scan shape used in lists and tables. */
+export interface ScanSummary {
+  id: number;
+  title: string;
+  created_at: string;
   language: string;
   total_lines: number;
-  vulnerabilitiesFound: number;
-  overallRisk: "low" | "high";
   prediction: Prediction;
   confidence: number;
-  vulnerabilities: Vulnerability[];
-  analysis_scope: "whole_snippet" | string;
-  message: string;
-  ai_explanation?: AIExplanation;
+  vulnerable_probability: number;
+  overall_risk: "low" | "high";
+  /** Decision threshold used for this scan (0.5 for scans made before v3). */
+  threshold: number;
+  model_version: string | null;
+  ai_available: boolean;
+  code_preview: string;
 }
 
-export interface ScanRequest {
+/** Full scan, returned by POST /api/scan and GET /api/scans/:id. */
+export interface ScanDetail extends ScanSummary {
   code: string;
+  chunk_count: number;
+  ai_explanation: AIExplanation;
+}
+
+export interface ScanListResponse {
+  scans: ScanSummary[];
+  total: number;
+  page: number;
+  page_size: number;
+  pages: number;
+  languages: string[];
+}
+
+export interface DailyCount {
+  date: string;
+  total: number;
+  vulnerable: number;
+}
+
+export interface LanguageCount {
   language: string;
+  total: number;
+  vulnerable: number;
 }
 
-export interface ScanError {
-  error: string;
-}
-
-export interface HistoryEntry {
-  id: number;
-  timestamp: string;
-  language: string;
-  codeLines: number;
-  codePreview?: string;
-  vulnerabilitiesFound: number;
-  overallRisk: "low" | "high";
-  prediction: Prediction;
-  confidence: number;
-  sampleVulnerabilities: Vulnerability[];
-}
-
-export interface HistoryResponse {
-  history: HistoryEntry[];
+export interface Stats {
+  total_scans: number;
+  vulnerable_scans: number;
+  safe_scans: number;
+  vulnerable_rate: number;
+  average_confidence: number;
+  total_lines: number;
+  by_language: LanguageCount[];
+  daily: DailyCount[];
+  recent: ScanSummary[];
 }

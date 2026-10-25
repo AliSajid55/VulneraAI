@@ -8,6 +8,8 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    // Do not reload the page when files inside the Python venv change.
+    watch: { ignored: ['**/venv/**'] },
     proxy: {
       '/api': {
         target: 'http://localhost:5000',

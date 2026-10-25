@@ -1,83 +1,72 @@
-
-import { useEffect, useState } from "react";
+import { StrictMode, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
+import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 
-import { ThemeProvider, useTheme } from "./context/ThemeContext";
-import Header from "./components/Header";
-import Scanner from "./components/Scanner";
-import ScanHistory from "./components/History";
-
-import type { HistoryEntry } from "./types";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import AppLayout from "./components/AppLayout";
+import { Button, Spinner, ToastProvider } from "./components/ui";
+import { LoginPage, SignupPage } from "./pages/AuthPages";
+import DashboardPage from "./pages/DashboardPage";
+import ScanPage from "./pages/ScanPage";
+import HistoryPage from "./pages/HistoryPage";
+import ScanDetailPage from "./pages/ScanDetailPage";
+import SettingsPage from "./pages/SettingsPage";
 import "./index.css";
 
-type ActiveTab = "scan" | "history";
+/** Only for logged-in users; others go to /login. */
+function RequireAuth({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth();
+  const location = useLocation();
 
-function App() {
-  const { theme } = useTheme();
+  if (loading) return <FullPageSpinner />;
+  if (!user) return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />;
+  return <>{children}</>;
+}
 
-  const [activeTab, setActiveTab] = useState<ActiveTab>("scan");
-  const [historyCount, setHistoryCount] = useState(0);
+/** Only for logged-out users (login/signup); others go to the dashboard. */
+function GuestOnly({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth();
 
-  const refreshHistoryCount = () => {
-    try {
-      const saved = localStorage.getItem("scanHistory");
-      const history: unknown = saved ? JSON.parse(saved) : [];
+  if (loading) return <FullPageSpinner />;
+  if (user) return <Navigate to="/dashboard" replace />;
+  return <>{children}</>;
+}
 
-      setHistoryCount(Array.isArray(history) ? history.length : 0);
-    } catch (error) {
-      console.error("Unable to read scan history:", error);
-      setHistoryCount(0);
-    }
-  };
-
-  useEffect(() => {
-    refreshHistoryCount();
-
-    window.addEventListener("storage", refreshHistoryCount);
-
-    // Custom event lets components update the count in this tab.
-    window.addEventListener("scanHistoryUpdated", refreshHistoryCount);
-
-    return () => {
-      window.removeEventListener("storage", refreshHistoryCount);
-      window.removeEventListener(
-        "scanHistoryUpdated",
-        refreshHistoryCount
-      );
-    };
-  }, []);
-
-  const handleTabChange = (tab: ActiveTab) => {
-    setActiveTab(tab);
-    refreshHistoryCount();
-  };
-
+function FullPageSpinner() {
   return (
-    <div
-      className={`min-h-screen flex flex-col transition-colors duration-200 ${
-        theme === "dark"
-          ? "bg-gray-900 text-gray-100"
-          : "bg-gray-50 text-gray-900"
-      }`}
-    >
-      <Header
-        activeTab={activeTab}
-        setActiveTab={handleTabChange}
-        historyCount={historyCount}
-      />
-
-      <main className="flex-1 overflow-y-auto">
-        {activeTab === "scan" ? <Scanner /> : <ScanHistory />}
-      </main>
+    <div className="min-h-screen bg-ink-950">
+      <Spinner />
     </div>
   );
 }
 
-function Root() {
+function NotFound() {
   return (
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
+    <div className="flex flex-col items-center py-24 text-center">
+      <p className="font-mono text-6xl font-semibold text-white/10">404</p>
+      <h1 className="mt-3 text-lg font-semibold text-slate-100">Page not found</h1>
+      <Link to="/dashboard" className="mt-6"><Button>Go to dashboard</Button></Link>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/login" element={<GuestOnly><LoginPage /></GuestOnly>} />
+      <Route path="/signup" element={<GuestOnly><SignupPage /></GuestOnly>} />
+
+      <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/scan" element={<ScanPage />} />
+        <Route path="/history" element={<HistoryPage />} />
+        <Route path="/history/:id" element={<ScanDetailPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Route>
+
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+    </Routes>
   );
 }
 
@@ -87,4 +76,14 @@ if (!container) {
   throw new Error('Could not find the element with id "root" in index.html.');
 }
 
-createRoot(container).render(<Root />);
+createRoot(container).render(
+  <StrictMode>
+    <BrowserRouter>
+      <AuthProvider>
+        <ToastProvider>
+          <App />
+        </ToastProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  </StrictMode>
+);
