@@ -29,7 +29,7 @@ HISTORY_FILE = BASE_DIR / "scan_history.json"
 load_dotenv(BASE_DIR / ".env")
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
 
 # Stop waiting for Gemini after this many seconds so the scan never hangs.
 # The model prediction is still returned if Gemini times out.
