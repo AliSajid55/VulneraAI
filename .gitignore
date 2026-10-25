@@ -25,3 +25,5 @@ model_v3/
 .env.*
 !.env.example
 *.zip
+
+.DS_Store
