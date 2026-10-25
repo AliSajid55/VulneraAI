@@ -13,7 +13,7 @@ A code review dashboard powered by fine-tuned GraphCodeBERT, with optional Gemin
 ![Model](https://img.shields.io/badge/AI-GraphCodeBERT-8B5CF6?style=flat-square)
 ![Database](https://img.shields.io/badge/Database-PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
 
-[Features](#features) · [Architecture](#architecture) · [Setup](#getting-started) · [API](#api-reference) · [Evaluation](#evaluation)
+[Features](#features) · [Screenshots](#screenshots) · [Architecture](#architecture) · [Setup](#getting-started) · [API](#api-reference) · [Evaluation](#evaluation)
 
 </div>
 
@@ -54,6 +54,42 @@ PolyGuard classifies submitted code as **safe** or **vulnerable** using a fine-t
 **Language options:** Python, JavaScript, TypeScript, Java, C++, C, Go, Swift, and “Auto detect.” File extensions select a language when uploading; pasted code is not automatically classified by language. The language value provides explanation context and history metadata; it does not change GraphCodeBERT inference. Language options do not establish validated detection accuracy for each language.
 
 **Input limits:** uploaded files are limited to 100,000 bytes in the frontend; API code submissions are limited to 100,000 characters. Uploaded files are read as text in the browser and submitted as JSON.
+
+---
+
+<a id="screenshots"></a>
+
+## 📸 Screenshots
+
+### Login & signup
+
+| Login | Sign up |
+| :---: | :---: |
+| ![Login page](docs/screenshots/login.png) | ![Sign up page](docs/screenshots/signup.png) |
+
+### Dashboard
+
+![Dashboard overview](docs/screenshots/dashboard.png)
+
+| Scan activity | Results |
+| :---: | :---: |
+| ![Scan activity chart](docs/screenshots/dashboard-activity.png) | ![Safe vs vulnerable results](docs/screenshots/dashboard-results.png) |
+
+![Recent scans and languages](docs/screenshots/dashboard-recent.png)
+
+### New scan
+
+| Code input | Result: vulnerable |
+| :---: | :---: |
+| ![New scan input](docs/screenshots/scan-input.png) | ![Vulnerable result](docs/screenshots/scan-result-vulnerable.png) |
+
+![Safe result](docs/screenshots/scan-result-safe.png)
+
+### History & settings
+
+| Scan history | Settings |
+| :---: | :---: |
+| ![Scan history](docs/screenshots/history.png) | ![Settings](docs/screenshots/settings.png) |
 
 ---
 
@@ -326,7 +362,7 @@ The supplied `16_cases.png` screenshot records **13 correct predictions out of 1
 
 For the vulnerable class, the counts imply **77.78% precision**, **87.50% recall**, and **82.35% F1**. These three metrics are calculated from the screenshot's class counts; the terminal directly reports accuracy and correct counts by class. The run saves its output to `server_test_results.csv`.
 
-The screenshot does not show the checkpoint name or scoring configuration, so this small-suite result is not attributed to a specific model version.
+This run used **`model_v3` with `max @ 0.902`**, the same configuration as the larger suite (for example, S01 scores 0.899 and is classified as safe because it is just below the 0.902 threshold).
 
 ### Larger suite — 271 cases
 
@@ -357,10 +393,6 @@ Precision, recall, and F1 use **vulnerable** as the positive class.
 Start the backend with your chosen model, then run:
 
 ```bash
-# Additional dependency used by the larger evaluation runner
-# Currently missing from requirements.txt
-pip install scikit-learn
-
 # Small suite: saves server_test_results.csv
 python test.py
 
@@ -410,7 +442,7 @@ The build script runs Vite; TypeScript checking is a separate command. These com
 | `role "postgres" does not exist` | Use your Mac username in `DATABASE_URL` (see Setup step 3) |
 | Logged out after every server restart | Set `JWT_SECRET_KEY` in `.env` |
 | `ModuleNotFoundError` (torch, flask, sqlalchemy, ...) | Activate the venv and run `pip install -r requirements.txt` |
-| `ModuleNotFoundError: sklearn` | Run `pip install scikit-learn` before `python test_300.py` |
+| `ModuleNotFoundError: sklearn` | Run `pip install -r requirements.txt` (includes `scikit-learn`) |
 | Saved metrics differ after cloning | The committed run used external `model_v3`; the clone defaults to `model/`. Check `/api/health` and checkpoint provenance |
 | Frontend build cannot connect to deployed API | Set `VITE_API_URL` before building. Flask does not serve the frontend build automatically |
 | AI explanation unavailable | Check the backend terminal for the Gemini error. Check `GEMINI_API_KEY` and `GEMINI_MODEL` in `.env` |

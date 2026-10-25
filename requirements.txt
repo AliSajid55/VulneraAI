@@ -10,3 +10,4 @@ pandas
 sqlalchemy
 psycopg[binary]
 pyjwt
+scikit-learn
