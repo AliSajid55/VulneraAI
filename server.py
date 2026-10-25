@@ -1,4 +1,3 @@
-
 import os
 import json
 import time
@@ -176,12 +175,31 @@ def aggregate_chunk_probabilities(probabilities):
     return float(sum(probabilities) / len(probabilities))
 
 
+def normalize_code(code):
+    """Normalize whitespace so the same code always gets the same score,
+    regardless of line endings or blank lines added when pasting in the UI."""
+    lines = [
+        line.rstrip()
+        for line in code.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    ]
+
+    while lines and not lines[0]:
+        lines.pop(0)
+
+    while lines and not lines[-1]:
+        lines.pop()
+
+    return "\n".join(lines) + "\n"
+
+
 def predict_code(code_snippet):
     if not isinstance(code_snippet, str):
         raise ValueError("Code must be a string.")
 
     if not code_snippet.strip():
         raise ValueError("Code snippet cannot be empty.")
+
+    code_snippet = normalize_code(code_snippet)
 
     encoded = tokenizer(
         code_snippet,
