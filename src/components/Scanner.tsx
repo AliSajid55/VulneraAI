@@ -15,9 +15,39 @@ const LANGUAGES = [
   "swift",
 ];
 
+// Splits the AI text into normal text and ```fenced code blocks```,
+// so code is shown in a code box instead of as raw Markdown.
 function AIFormattedText({ text }: { text: string }) {
+  const normalized = text.replace(/\r\n?/g, "\n");
+  const parts = normalized.split(/```[^\n]*\n?/);
+
+  return (
+    <div className="space-y-2">
+      {parts.map((part, index) => {
+        // Odd indexes are inside a ``` fence.
+        if (index % 2 === 1) {
+          const codeText = part.replace(/\n+$/, "");
+          if (!codeText.trim()) return null;
+
+          return (
+            <pre
+              key={index}
+              className="overflow-x-auto rounded-lg border border-slate-700 bg-slate-950 p-3 font-mono text-sm leading-6 text-slate-200"
+            >
+              <code>{codeText}</code>
+            </pre>
+          );
+        }
+
+        if (!part.trim()) return null;
+        return <MarkdownLines key={index} text={part} />;
+      })}
+    </div>
+  );
+}
+
+function MarkdownLines({ text }: { text: string }) {
   const lines = text
-    .replace(/\r\n?/g, "\n")
     .replace(/\\\*/g, "*")
     .split("\n");
 
