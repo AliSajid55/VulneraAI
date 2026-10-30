@@ -231,7 +231,7 @@ export default function ScanPage() {
             <div className="mt-4 space-y-2">
               {EXAMPLES.map((example) => (
                 <button key={example.id} onClick={() => loadExample(example.id)} disabled={loading}
-                  className="flex w-full items-center justify-between gap-2 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-left text-sm text-slate-300 transition hover:border-indigo-400/40 hover:bg-indigo-500/[0.06] hover:text-white">
+                  className="flex w-full items-center justify-between gap-2 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-left text-sm text-slate-300 transition hover:border-indigo-400/40 hover:bg-indigo-500/[0.06] hover:text-foreground">
                   <span className="truncate">{example.label}</span>
                   <span className={cx("h-1.5 w-1.5 shrink-0 rounded-full",
                     example.expected === "vulnerable" ? "bg-rose-400" : "bg-emerald-400")} />
@@ -243,7 +243,7 @@ export default function ScanPage() {
             <p className="font-semibold text-slate-100">How it works</p>
             <ul className="mt-3 space-y-3 text-slate-400">
               <li className="flex gap-3"><Cpu size={16} className="mt-0.5 shrink-0 text-slate-500" />
-                GraphCodeBERT classifies the whole snippet as safe or vulnerable.</li>
+                GraphCodeBERT classifies token chunks as safe or vulnerable, up to the backend chunk limit.</li>
               <li className="flex gap-3"><Bot size={16} className="mt-0.5 shrink-0 text-slate-500" />
                 Gemini explains the result and suggests fixes.</li>
             </ul>
@@ -271,7 +271,7 @@ export default function ScanPage() {
       {result && (
         <div ref={resultRef} className="mt-10 scroll-mt-24 animate-fade-up">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-lg font-semibold text-white">Result</h2>
+            <h2 className="text-lg font-semibold text-foreground">Result</h2>
             <Link to={`/history/${result.id}`}
               className="inline-flex items-center gap-1.5 text-sm text-indigo-300 hover:text-indigo-200">
               Saved as scan #{result.id} <ExternalLink size={14} />

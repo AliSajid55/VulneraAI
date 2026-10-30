@@ -35,7 +35,7 @@ export function DonutChart({ safe, vulnerable }: { safe: number; vulnerable: num
           )}
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-3xl font-semibold tabular-nums text-white">{total}</span>
+          <span className="text-3xl font-semibold tabular-nums text-foreground">{total}</span>
           <span className="text-xs text-slate-400">scans</span>
         </div>
       </div>

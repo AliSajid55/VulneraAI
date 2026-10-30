@@ -127,7 +127,7 @@ export default function DashboardPage() {
                         {scan.prediction === "vulnerable" ? <ShieldAlert size={16} /> : <ShieldCheck size={16} />}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-slate-100 group-hover:text-white">{scan.title}</p>
+                        <p className="truncate text-sm font-medium text-slate-100 group-hover:text-foreground">{scan.title}</p>
                         <p className="mt-0.5 text-xs text-slate-500">
                           {languageLabel(scan.language)} · {scan.total_lines} lines · {formatRelative(scan.created_at)}
                         </p>
@@ -174,7 +174,7 @@ function GettingStarted() {
           <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/25 bg-indigo-500/10 px-2.5 py-1 text-xs font-medium text-indigo-300">
             <Sparkles size={12} /> Getting started
           </span>
-          <h2 className="mt-4 text-xl font-semibold tracking-tight text-white">Run your first scan</h2>
+          <h2 className="mt-4 text-xl font-semibold tracking-tight text-foreground">Run your first scan</h2>
           <p className="mt-2 text-sm leading-6 text-slate-400">
             Your dashboard fills up with charts and history as you scan. Try one of the examples
             to see how it works.
@@ -187,7 +187,7 @@ function GettingStarted() {
             <div className="flex flex-wrap gap-2">
               {EXAMPLES.slice(0, 3).map((example) => (
                 <Link key={example.id} to={`/scan?example=${example.id}`}
-                  className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-xs text-slate-300 transition hover:border-indigo-400/40 hover:text-white">
+                  className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-xs text-slate-300 transition hover:border-indigo-400/40 hover:text-foreground">
                   {example.label}
                 </Link>
               ))}

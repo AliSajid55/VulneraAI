@@ -9,14 +9,15 @@ export default {
         mono: ['"JetBrains Mono"', 'ui-monospace', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
       },
       colors: {
+        foreground: "rgb(var(--foreground) / <alpha-value>)",
         // App surfaces
         ink: {
-          950: '#05070d',
-          900: '#0a0e18',
-          850: '#0e1320',
-          800: '#131a2a',
-          700: '#1c2538',
-          600: '#273248',
+          950: 'rgb(var(--ink-950) / <alpha-value>)',
+          900: 'rgb(var(--ink-900) / <alpha-value>)',
+          850: 'rgb(var(--ink-850) / <alpha-value>)',
+          800: 'rgb(var(--ink-800) / <alpha-value>)',
+          700: 'rgb(var(--ink-700) / <alpha-value>)',
+          600: 'rgb(var(--ink-600) / <alpha-value>)',
         },
       },
       boxShadow: {

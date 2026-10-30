@@ -12,6 +12,7 @@ import HistoryPage from "./pages/HistoryPage";
 import ScanDetailPage from "./pages/ScanDetailPage";
 import SettingsPage from "./pages/SettingsPage";
 import "./index.css";
+import { ThemeProvider } from "./context/ThemeContext";
 
 /** Only for logged-in users; others go to /login. */
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -78,12 +79,12 @@ if (!container) {
 
 createRoot(container).render(
   <StrictMode>
-    <BrowserRouter>
+    <ThemeProvider><BrowserRouter>
       <AuthProvider>
         <ToastProvider>
           <App />
         </ToastProvider>
       </AuthProvider>
-    </BrowserRouter>
+    </BrowserRouter></ThemeProvider>
   </StrictMode>
 );

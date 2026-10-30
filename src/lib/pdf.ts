@@ -82,8 +82,8 @@ export function downloadScanPdf(scan: ScanDetail) {
     ["Vulnerable probability", scan.vulnerable_probability.toFixed(4)],
     ["Decision threshold", (scan.threshold ?? 0.5).toFixed(4)],
     ["Language", languageLabel(scan.language)],
-    ["Lines analyzed", String(scan.total_lines)],
-    ["Model", `GraphCodeBERT${scan.model_version ? ` (${scan.model_version})` : ""}, whole-snippet classification`],
+    ["Submitted lines", String(scan.total_lines)],
+    ["Model", `GraphCodeBERT${scan.model_version ? ` (${scan.model_version})` : ""}, chunk-based classification`],
   ];
   for (const [label, value] of facts) writeLines(`${label}: ${value}`, 10);
 

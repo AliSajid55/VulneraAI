@@ -97,7 +97,7 @@ export function PageHeader({
             {eyebrow}
           </p>
         )}
-        <h1 className="text-[26px] font-semibold leading-tight tracking-tight text-white">{title}</h1>
+        <h1 className="text-[26px] font-semibold leading-tight tracking-tight text-foreground">{title}</h1>
         {subtitle && <p className="mt-1.5 max-w-2xl text-sm text-slate-400">{subtitle}</p>}
       </div>
       {action && <div className="flex items-center gap-2">{action}</div>}
@@ -231,7 +231,7 @@ export function Segmented<T extends string>({
           className={cx(
             "inline-flex h-full items-center gap-1.5 rounded-md px-3 text-[13px] font-medium transition",
             value === option.value
-              ? "bg-white/[0.08] text-white shadow-sm"
+              ? "bg-white/[0.08] text-foreground shadow-sm"
               : "text-slate-400 hover:text-slate-200"
           )}
         >
@@ -481,7 +481,7 @@ export function StatCard({
       </div>
       <div className="mt-3 flex items-end justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[28px] font-semibold leading-none tabular-nums tracking-tight text-white">
+          <p className="text-[28px] font-semibold leading-none tabular-nums tracking-tight text-foreground">
             {value}
           </p>
           {hint && <p className="mt-2 text-xs text-slate-500">{hint}</p>}

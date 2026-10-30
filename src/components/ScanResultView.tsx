@@ -59,7 +59,7 @@ export default function ScanResultView({
             </div>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-xl font-semibold tracking-tight text-white">
+                <h2 className="text-xl font-semibold tracking-tight text-foreground">
                   {vulnerable ? "Potentially vulnerable" : "Classified as safe"}
                 </h2>
                 <span className={cx(
@@ -71,8 +71,8 @@ export default function ScanResultView({
               </div>
               <p className="mt-1.5 max-w-2xl text-sm leading-6 text-slate-400">
                 {vulnerable
-                  ? "The model classified the complete snippet as vulnerable. Specific vulnerable lines and types were not identified."
-                  : "The model classified the complete snippet as safe. This does not guarantee that the code is vulnerability-free."}
+                  ? "The model classified the scored portion of the snippet as vulnerable. Specific vulnerable lines and types were not identified."
+                  : "The model classified the scored portion of the snippet as safe. This does not guarantee that the code is vulnerability-free."}
               </p>
             </div>
           </div>
@@ -87,10 +87,11 @@ export default function ScanResultView({
           <Metric label="Prediction" value={<PredictionBadge prediction={scan.prediction} size="md" />} />
           <Metric label="Confidence" value={percent(scan.confidence)} />
           <Metric label="Language" value={languageLabel(scan.language)} />
-          <Metric label="Lines analyzed" value={String(scan.total_lines)} />
+          <Metric label="Submitted lines" value={String(scan.total_lines)} />
         </dl>
       </Card>
 
+      <Alert tone="warning">Scored {scan.chunk_count} chunk(s). Long submissions may be truncated by the backend chunk limit. Confidence measures distance from the decision threshold; it is not measured accuracy.</Alert>
       {/* AI explanation */}
       <Card>
         <CardHeader
@@ -197,7 +198,7 @@ function Metric({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="px-6 py-4">
       <dt className="text-[11px] font-medium uppercase tracking-[0.08em] text-slate-500">{label}</dt>
-      <dd className="mt-1.5 text-lg font-semibold text-white">{value}</dd>
+      <dd className="mt-1.5 text-lg font-semibold text-foreground">{value}</dd>
     </div>
   );
 }
