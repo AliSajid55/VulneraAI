@@ -17,6 +17,8 @@ import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { Button, cx } from "./ui";
 
+import ThemeToggle from "./ThemeToggle";
+
 const NAV_SECTIONS = [
   {
     label: "Workspace",
@@ -59,7 +61,7 @@ export function Logo({ compact = false }: { compact?: boolean }) {
       </div>
       {!compact && (
         <div>
-          <p className="text-[15px] font-semibold leading-tight tracking-tight text-white">PolyGuard</p>
+          <p className="text-[15px] font-semibold leading-tight tracking-tight text-foreground">PolyGuard</p>
           <p className="text-[11px] leading-tight text-slate-500">Code Vulnerability Scanner</p>
         </div>
       )}
@@ -169,7 +171,7 @@ export default function AppLayout() {
                     cx(
                       "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition",
                       isActive
-                        ? "bg-white/[0.06] text-white"
+                        ? "bg-white/[0.06] text-foreground"
                         : "text-slate-400 hover:bg-white/[0.03] hover:text-slate-200"
                     )
                   }
@@ -192,7 +194,7 @@ export default function AppLayout() {
 
       <div className="m-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500/40 to-violet-500/40 text-xs font-semibold text-white ring-1 ring-inset ring-white/15">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500/40 to-violet-500/40 text-xs font-semibold text-foreground ring-1 ring-inset ring-white/15">
             {initials}
           </div>
           <div className="min-w-0 flex-1">
@@ -266,7 +268,7 @@ export default function AppLayout() {
               )}
             </nav>
           </div>
-          <StatusPill health={health} error={healthError} />
+          <div className="flex items-center gap-3"><StatusPill health={health} error={healthError} /><ThemeToggle /></div>
         </header>
 
         <main className="relative mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">

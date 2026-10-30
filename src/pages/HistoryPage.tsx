@@ -173,7 +173,7 @@ export default function HistoryPage() {
                     <tr key={scan.id} onClick={() => navigate(`/history/${scan.id}`)}
                       className="group cursor-pointer transition hover:bg-white/[0.025]">
                       <td className="max-w-xs px-5 py-3.5">
-                        <p className="truncate font-medium text-slate-100 group-hover:text-white">{scan.title}</p>
+                        <p className="truncate font-medium text-slate-100 group-hover:text-foreground">{scan.title}</p>
                         <p className="mt-1 truncate font-mono text-[11px] text-slate-500">
                           #{scan.id} · {scan.total_lines} lines · {scan.code_preview}
                         </p>

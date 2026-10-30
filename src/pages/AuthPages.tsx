@@ -1,3 +1,4 @@
+import ThemeToggle from "../components/ThemeToggle";
 import { useState, type FormEvent, type InputHTMLAttributes, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Bot, Eye, EyeOff, History, ShieldAlert, ShieldCheck } from "lucide-react";
@@ -11,6 +12,7 @@ function AuthShell({ title, subtitle, children, footer }: {
 }) {
   return (
     <div className="grid min-h-screen bg-ink-950 text-slate-100 md:grid-cols-[1.05fr_1fr]">
+      <div className="fixed right-4 top-4 z-50"><ThemeToggle /></div>
       {/* Brand panel */}
       <div className="relative hidden overflow-hidden border-r border-white/[0.06] p-10 md:flex md:flex-col md:justify-between lg:p-14">
         <div className="app-backdrop absolute inset-0" />
@@ -19,7 +21,7 @@ function AuthShell({ title, subtitle, children, footer }: {
         <div className="relative"><Logo /></div>
 
         <div className="relative max-w-md">
-          <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-white">
+          <h2 className="text-[32px] font-semibold leading-[1.15] tracking-tight text-foreground">
             Find security risks in your code before they ship.
           </h2>
           <p className="mt-4 text-[15px] leading-7 text-slate-400">
@@ -63,7 +65,7 @@ function AuthShell({ title, subtitle, children, footer }: {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(600px_300px_at_50%_0%,rgba(99,102,241,0.08),transparent)]" />
         <div className="relative w-full max-w-[380px] animate-fade-up">
           <div className="mb-10 md:hidden"><Logo /></div>
-          <h1 className="text-2xl font-semibold tracking-tight text-white">{title}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">{title}</h1>
           <p className="mt-2 text-sm text-slate-400">{subtitle}</p>
           <div className="mt-8">{children}</div>
           <p className="mt-8 text-center text-sm text-slate-500">{footer}</p>

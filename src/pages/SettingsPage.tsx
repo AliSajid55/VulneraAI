@@ -79,7 +79,7 @@ function ProfileForm() {
       description={user ? `Your name and email. Member since ${formatDateTime(user.created_at)}.` : "Your name and email."}>
       <form onSubmit={save} className="space-y-5">
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500/50 to-violet-500/50 text-lg font-semibold text-white ring-1 ring-inset ring-white/15">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500/50 to-violet-500/50 text-lg font-semibold text-foreground ring-1 ring-inset ring-white/15">
             {initials}
           </div>
           <div>

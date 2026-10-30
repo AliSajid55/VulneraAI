@@ -668,7 +668,7 @@ def scan_code():
     )
 
     # Count lines after whitespace cleanup, so pasted blank lines do not count.
-    lines = normalize_code(code_snippet).splitlines() or [""]
+    lines = normalize_code(strip_fences(code_snippet)).splitlines() or [""]
 
     scan = Scan(
         user_id=g.user.id,
