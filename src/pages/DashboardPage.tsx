@@ -110,20 +110,20 @@ export default function DashboardPage() {
                 subtitle="Your latest five scans"
                 icon={<Clock size={15} />}
                 action={
-                  <Link to="/history" className="inline-flex items-center gap-1 text-xs font-medium text-indigo-300 hover:text-indigo-200">
+                  <Link to="/history" className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:text-accent">
                     View all <ArrowRight size={13} />
                   </Link>
                 }
               />
-              <ul className="divide-y divide-white/[0.05]">
+              <ul className="divide-y divide-neutral/[0.05]">
                 {stats.recent.map((scan) => (
                   <li key={scan.id}>
                     <Link to={`/history/${scan.id}`}
-                      className="group flex items-center gap-4 px-5 py-3.5 transition hover:bg-white/[0.02]">
+                      className="group flex items-center gap-4 px-5 py-3.5 transition hover:bg-neutral/[0.02]">
                       <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ring-1 ring-inset ${
                         scan.prediction === "vulnerable"
-                          ? "bg-rose-500/10 text-rose-300 ring-rose-500/20"
-                          : "bg-emerald-500/10 text-emerald-300 ring-emerald-500/20"}`}>
+                          ? "bg-rose-500/10 text-danger ring-rose-500/20"
+                          : "bg-emerald-500/10 text-success ring-emerald-500/20"}`}>
                         {scan.prediction === "vulnerable" ? <ShieldAlert size={16} /> : <ShieldCheck size={16} />}
                       </div>
                       <div className="min-w-0 flex-1">
@@ -171,7 +171,7 @@ function GettingStarted() {
       <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-indigo-600/20 blur-3xl" />
       <div className="relative grid gap-8 p-6 lg:grid-cols-5 lg:p-8">
         <div className="lg:col-span-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/25 bg-indigo-500/10 px-2.5 py-1 text-xs font-medium text-indigo-300">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/25 bg-indigo-500/10 px-2.5 py-1 text-xs font-medium text-accent">
             <Sparkles size={12} /> Getting started
           </span>
           <h2 className="mt-4 text-xl font-semibold tracking-tight text-foreground">Run your first scan</h2>
@@ -187,7 +187,7 @@ function GettingStarted() {
             <div className="flex flex-wrap gap-2">
               {EXAMPLES.slice(0, 3).map((example) => (
                 <Link key={example.id} to={`/scan?example=${example.id}`}
-                  className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-xs text-slate-300 transition hover:border-indigo-400/40 hover:text-foreground">
+                  className="rounded-full border border-neutral/[0.08] bg-neutral/[0.03] px-3 py-1.5 text-xs text-slate-300 transition hover:border-indigo-400/40 hover:text-foreground">
                   {example.label}
                 </Link>
               ))}
@@ -196,8 +196,8 @@ function GettingStarted() {
         </div>
         <ol className="grid gap-3 lg:col-span-3">
           {steps.map((step, index) => (
-            <li key={step.title} className="flex gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-300 ring-1 ring-inset ring-indigo-500/20">
+            <li key={step.title} className="flex gap-4 rounded-xl border border-neutral/[0.06] bg-neutral/[0.02] p-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-500/10 text-accent ring-1 ring-inset ring-indigo-500/20">
                 <step.icon size={18} />
               </div>
               <div>

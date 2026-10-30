@@ -128,7 +128,7 @@ export default function ScanPage() {
       <div className="grid gap-6 xl:grid-cols-[1fr_280px]">
         <Card className="overflow-hidden">
           {/* Options */}
-          <div className="grid gap-4 border-b border-white/[0.06] p-5 sm:grid-cols-[1fr_200px]">
+          <div className="grid gap-4 border-b border-neutral/[0.06] p-5 sm:grid-cols-[1fr_200px]">
             <Field label="Scan name (optional)">
               <Input value={title} maxLength={200} onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Login handler, user query function" />
@@ -143,7 +143,7 @@ export default function ScanPage() {
           </div>
 
           {/* Editor toolbar */}
-          <div className="flex items-center justify-between gap-3 border-b border-white/[0.06] bg-ink-950/40 px-4 py-2">
+          <div className="flex items-center justify-between gap-3 border-b border-neutral/[0.06] bg-ink-950/40 px-4 py-2">
             <div className="flex items-center gap-2">
               <span className="flex gap-1.5" aria-hidden="true">
                 <span className="h-2.5 w-2.5 rounded-full bg-rose-500/70" />
@@ -175,7 +175,7 @@ export default function ScanPage() {
             onDrop={onDrop}
           >
             <div ref={gutter} aria-hidden="true"
-              className="h-[380px] select-none overflow-hidden border-r border-white/[0.05] py-4 pl-4 pr-3 text-right font-mono text-[13px] leading-6 text-slate-600">
+              className="h-[380px] select-none overflow-hidden border-r border-neutral/[0.05] py-4 pl-4 pr-3 text-right font-mono text-[13px] leading-6 text-slate-600">
               {Array.from({ length: lines }, (_, i) => <div key={i}>{i + 1}</div>)}
             </div>
             <textarea
@@ -199,14 +199,14 @@ export default function ScanPage() {
               className="h-[380px] w-full resize-none bg-transparent px-4 py-4 font-mono text-[13px] leading-6 text-slate-100 outline-none placeholder:text-slate-600"
             />
             {dragging && (
-              <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-indigo-950/60 text-sm font-medium text-indigo-200 backdrop-blur-sm">
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-indigo-950/60 text-sm font-medium text-accent backdrop-blur-sm">
                 <Upload size={18} className="mr-2" /> Drop file to load it
               </div>
             )}
           </div>
 
           {/* Footer */}
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.06] px-5 py-3.5">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-neutral/[0.06] px-5 py-3.5">
             <span className="font-mono text-xs text-slate-500">
               {code ? lines : 0} lines · {code.length.toLocaleString()} chars
             </span>
@@ -226,12 +226,12 @@ export default function ScanPage() {
         <div className="space-y-4">
           <Card className="p-5">
             <p className="flex items-center gap-2 text-sm font-semibold text-slate-100">
-              <Sparkles size={15} className="text-indigo-300" /> Try an example
+              <Sparkles size={15} className="text-accent" /> Try an example
             </p>
             <div className="mt-4 space-y-2">
               {EXAMPLES.map((example) => (
                 <button key={example.id} onClick={() => loadExample(example.id)} disabled={loading}
-                  className="flex w-full items-center justify-between gap-2 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-left text-sm text-slate-300 transition hover:border-indigo-400/40 hover:bg-indigo-500/[0.06] hover:text-foreground">
+                  className="flex w-full items-center justify-between gap-2 rounded-lg border border-neutral/[0.06] bg-neutral/[0.02] px-3 py-2.5 text-left text-sm text-slate-300 transition hover:border-indigo-400/40 hover:bg-indigo-500/[0.06] hover:text-foreground">
                   <span className="truncate">{example.label}</span>
                   <span className={cx("h-1.5 w-1.5 shrink-0 rounded-full",
                     example.expected === "vulnerable" ? "bg-rose-400" : "bg-emerald-400")} />
@@ -255,7 +255,7 @@ export default function ScanPage() {
         <Card className="mt-6 flex items-center gap-4 p-5">
           <div className="relative h-10 w-10 shrink-0">
             <div className="absolute inset-0 animate-ping rounded-full bg-indigo-500/20" />
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500/15 text-indigo-300">
+            <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500/15 text-accent">
               <ScanSearch size={18} />
             </div>
           </div>
@@ -273,7 +273,7 @@ export default function ScanPage() {
           <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-lg font-semibold text-foreground">Result</h2>
             <Link to={`/history/${result.id}`}
-              className="inline-flex items-center gap-1.5 text-sm text-indigo-300 hover:text-indigo-200">
+              className="inline-flex items-center gap-1.5 text-sm text-accent hover:text-accent">
               Saved as scan #{result.id} <ExternalLink size={14} />
             </Link>
           </div>

@@ -95,7 +95,7 @@ export function DailyActivityChart({ data }: { data: DailyCount[] }) {
                 <div style={{ flexGrow: safeCount, background: SAFE_COLOR,
                   opacity: hovered === null || hovered === index ? 1 : 0.45 }} />
               </div>
-              {!day.total && <div className="h-1 w-full rounded-full bg-white/[0.05]" />}
+              {!day.total && <div className="h-1 w-full rounded-full bg-neutral/[0.05]" />}
             </div>
           );
         })}
@@ -127,10 +127,10 @@ export function LanguageBreakdown({ data }: { data: LanguageCount[] }) {
           <div className="mb-1 flex justify-between text-sm">
             <span className="text-slate-300">{languageLabel(row.language)}</span>
             <span className="tabular-nums text-slate-400">
-              {row.total} <span className="text-rose-300/80">({row.vulnerable} vuln.)</span>
+              {row.total} <span className="text-danger/80">({row.vulnerable} vuln.)</span>
             </span>
           </div>
-          <div className="flex h-2 overflow-hidden rounded-full bg-white/[0.05]">
+          <div className="flex h-2 overflow-hidden rounded-full bg-neutral/[0.05]">
             <div style={{ width: `${(row.vulnerable / max) * 100}%`, background: VULN_COLOR }} />
             <div style={{ width: `${((row.total - row.vulnerable) / max) * 100}%`, background: SAFE_COLOR }} />
           </div>

@@ -53,7 +53,7 @@ export default function ScanResultView({
           <div className="flex min-w-0 gap-4 sm:flex-1">
             <div className={cx(
               "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ring-1 ring-inset",
-              vulnerable ? "bg-rose-500/15 text-rose-300 ring-rose-500/30" : "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30"
+              vulnerable ? "bg-rose-500/15 text-danger ring-rose-500/30" : "bg-emerald-500/15 text-success ring-emerald-500/30"
             )}>
               {vulnerable ? <ShieldAlert size={24} /> : <ShieldCheck size={24} />}
             </div>
@@ -64,7 +64,7 @@ export default function ScanResultView({
                 </h2>
                 <span className={cx(
                   "rounded-md px-2 py-0.5 text-[11px] font-semibold tracking-wider",
-                  vulnerable ? "bg-rose-500/15 text-rose-300" : "bg-emerald-500/15 text-emerald-300"
+                  vulnerable ? "bg-rose-500/15 text-danger" : "bg-emerald-500/15 text-success"
                 )}>
                   {vulnerable ? "HIGH RISK" : "LOW RISK"}
                 </span>
@@ -83,7 +83,7 @@ export default function ScanResultView({
 
         <RiskMeter probability={scan.vulnerable_probability} threshold={scan.threshold ?? 0.5} />
 
-        <dl className="relative grid grid-cols-2 border-t border-white/[0.06] sm:grid-cols-4 sm:divide-x sm:divide-white/[0.06]">
+        <dl className="relative grid grid-cols-2 border-t border-neutral/[0.06] sm:grid-cols-4 sm:divide-x sm:divide-neutral/[0.06]">
           <Metric label="Prediction" value={<PredictionBadge prediction={scan.prediction} size="md" />} />
           <Metric label="Confidence" value={percent(scan.confidence)} />
           <Metric label="Language" value={languageLabel(scan.language)} />
@@ -100,7 +100,7 @@ export default function ScanResultView({
           icon={<Bot size={15} />}
           action={
             ai.available && ai.model ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-1 font-mono text-[11px] text-indigo-300">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-1 font-mono text-[11px] text-accent">
                 {ai.model}
               </span>
             ) : undefined
@@ -110,7 +110,7 @@ export default function ScanResultView({
           {ai.available && ai.explanation ? (
             <>
               <AIFormattedText text={ai.explanation} />
-              <p className="mt-6 flex items-center gap-2 border-t border-white/[0.06] pt-4 text-xs text-slate-500">
+              <p className="mt-6 flex items-center gap-2 border-t border-neutral/[0.06] pt-4 text-xs text-slate-500">
                 <Info size={13} /> AI-generated guidance may be incomplete or incorrect. Review and test suggested changes before using them.
               </p>
             </>
@@ -141,8 +141,8 @@ export default function ScanResultView({
             <table className="w-full border-collapse font-mono text-[13px] leading-6">
               <tbody>
                 {scan.code.replace(/\n+$/, "").split("\n").map((line, i) => (
-                  <tr key={i} className="hover:bg-white/[0.02]">
-                    <td className="w-12 select-none border-r border-white/[0.05] pr-3 text-right align-top text-slate-600">{i + 1}</td>
+                  <tr key={i} className="hover:bg-neutral/[0.02]">
+                    <td className="w-12 select-none border-r border-neutral/[0.05] pr-3 text-right align-top text-slate-600">{i + 1}</td>
                     <td className="whitespace-pre pl-4 pr-6 text-slate-200">{line || " "}</td>
                   </tr>
                 ))}
@@ -152,7 +152,7 @@ export default function ScanResultView({
         </Card>
       )}
 
-      <div className="flex gap-3 rounded-xl border border-white/[0.06] bg-white/[0.015] p-4 text-sm text-slate-500">
+      <div className="flex gap-3 rounded-xl border border-neutral/[0.06] bg-neutral/[0.015] p-4 text-sm text-slate-500">
         <Info size={17} className="mt-0.5 shrink-0" />
         <p>
           This result is an overall assessment of the submitted code by GraphCodeBERT. It does not
@@ -175,7 +175,7 @@ function RiskMeter({ probability, threshold }: { probability: number; threshold:
       </div>
       <div className="relative h-2 rounded-full"
         style={{ background: `linear-gradient(to right, rgba(16,185,129,0.75) 0%, rgba(251,191,36,0.75) ${thresholdPos}%, rgba(244,63,94,0.85) 100%)` }}>
-        <div className="absolute top-1/2 h-4 w-px -translate-y-1/2 bg-white/60" style={{ left: `${thresholdPos}%` }}
+        <div className="absolute top-1/2 h-4 w-px -translate-y-1/2 bg-neutral/60" style={{ left: `${thresholdPos}%` }}
           title={`Threshold ${threshold.toFixed(3)}`} />
         <div
           className="absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-ink-950 shadow-[0_0_0_4px_rgba(255,255,255,0.08)]"

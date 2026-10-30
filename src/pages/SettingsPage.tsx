@@ -32,7 +32,7 @@ function Section({
       <div>
         <div className={cx(
           "mb-3 flex h-9 w-9 items-center justify-center rounded-lg ring-1 ring-inset",
-          danger ? "bg-rose-500/10 text-rose-300 ring-rose-500/20" : "bg-white/[0.04] text-slate-300 ring-white/[0.08]"
+          danger ? "bg-rose-500/10 text-danger ring-rose-500/20" : "bg-neutral/[0.04] text-slate-300 ring-neutral/[0.08]"
         )}>
           {icon}
         </div>
@@ -79,7 +79,7 @@ function ProfileForm() {
       description={user ? `Your name and email. Member since ${formatDateTime(user.created_at)}.` : "Your name and email."}>
       <form onSubmit={save} className="space-y-5">
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500/50 to-violet-500/50 text-lg font-semibold text-foreground ring-1 ring-inset ring-white/15">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500/50 to-violet-500/50 text-lg font-semibold text-foreground ring-1 ring-inset ring-neutral/15">
             {initials}
           </div>
           <div>
@@ -96,7 +96,7 @@ function ProfileForm() {
             <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
           </Field>
         </div>
-        <div className="flex justify-end border-t border-white/[0.06] pt-5">
+        <div className="flex justify-end border-t border-neutral/[0.06] pt-5">
           <Button type="submit" loading={saving} disabled={unchanged}>Save changes</Button>
         </div>
       </form>
@@ -153,7 +153,7 @@ function PasswordForm() {
               onChange={(e) => setConfirm(e.target.value)} />
           </Field>
         </div>
-        <div className="flex justify-end border-t border-white/[0.06] pt-5">
+        <div className="flex justify-end border-t border-neutral/[0.06] pt-5">
           <Button type="submit" loading={saving} disabled={!current || !next || !confirm}>Update password</Button>
         </div>
       </form>

@@ -16,7 +16,7 @@ export default function AIFormattedText({ text }: { text: string }) {
           return (
             <pre
               key={index}
-              className="overflow-x-auto rounded-xl border border-white/[0.08] bg-ink-950/80 p-4 font-mono text-[13px] leading-6 text-slate-200"
+              className="overflow-x-auto rounded-xl border border-neutral/[0.08] bg-ink-950/80 p-4 font-mono text-[13px] leading-6 text-slate-200"
             >
               <code>{codeText}</code>
             </pre>
@@ -45,7 +45,7 @@ function MarkdownLines({ text }: { text: string }) {
 
         if (markdownHeading) {
           return (
-            <h5 key={index} className="pt-2 text-base font-semibold text-indigo-200">
+            <h5 key={index} className="pt-2 text-base font-semibold text-accent">
               {markdownHeading[1].replace(/\*\*/g, "").replace(/`/g, "")}
             </h5>
           );
@@ -81,7 +81,7 @@ function MarkdownLines({ text }: { text: string }) {
 
           return (
             <div key={index} className="flex gap-3 pl-1">
-              <span className="shrink-0 text-indigo-300">{number ? `${number}.` : "•"}</span>
+              <span className="shrink-0 text-accent">{number ? `${number}.` : "•"}</span>
               <p className="min-w-0 flex-1">{content}</p>
             </div>
           );

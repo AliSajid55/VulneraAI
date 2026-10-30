@@ -10,6 +10,13 @@ export default {
       },
       colors: {
         foreground: "rgb(var(--foreground) / <alpha-value>)",
+        neutral: "rgb(var(--neutral) / <alpha-value>)",
+        accent: "rgb(var(--accent) / <alpha-value>)",
+        purple: "rgb(var(--purple) / <alpha-value>)",
+        danger: "rgb(var(--danger) / <alpha-value>)",
+        success: "rgb(var(--success) / <alpha-value>)",
+        warning: "rgb(var(--warning) / <alpha-value>)",
+        slate: Object.fromEntries([50,100,200,300,400,500,600,700,800,900,950].map(n => [n, `rgb(var(--slate-${n}) / <alpha-value>)`])),
         // App surfaces
         ink: {
           950: 'rgb(var(--ink-950) / <alpha-value>)',
@@ -21,7 +28,7 @@ export default {
         },
       },
       boxShadow: {
-        card: '0 1px 0 0 rgba(255,255,255,0.03) inset, 0 8px 24px -12px rgba(0,0,0,0.6)',
+        card: 'var(--card-shadow)',
         glow: '0 0 0 1px rgba(99,102,241,0.35), 0 8px 30px -8px rgba(99,102,241,0.45)',
       },
       keyframes: {

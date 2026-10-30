@@ -40,7 +40,7 @@ export function Card({
   return (
     <section
       className={cx(
-        "rounded-2xl border border-white/[0.06] bg-ink-900/80 shadow-card backdrop-blur-sm",
+        "rounded-2xl border border-neutral/[0.06] bg-ink-900/80 shadow-card backdrop-blur-sm",
         className
       )}
     >
@@ -61,10 +61,10 @@ export function CardHeader({
   icon?: ReactNode;
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] px-5 py-4">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral/[0.06] px-5 py-4">
       <div className="flex min-w-0 items-center gap-3">
         {icon && (
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/[0.04] text-slate-300 ring-1 ring-inset ring-white/[0.06]">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral/[0.04] text-slate-300 ring-1 ring-inset ring-neutral/[0.06]">
             {icon}
           </div>
         )}
@@ -93,7 +93,7 @@ export function PageHeader({
     <div className="mb-7 flex flex-wrap items-end justify-between gap-4 animate-fade-up">
       <div className="min-w-0">
         {eyebrow && (
-          <p className="mb-1.5 text-xs font-medium uppercase tracking-[0.14em] text-indigo-300/80">
+          <p className="mb-1.5 text-xs font-medium uppercase tracking-[0.14em] text-accent/80">
             {eyebrow}
           </p>
         )}
@@ -116,10 +116,10 @@ const buttonStyles: Record<ButtonVariant, string> = {
   primary:
     "bg-gradient-to-b from-indigo-500 to-indigo-600 text-white shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_6px_16px_-6px_rgba(79,70,229,0.7)] hover:from-indigo-400 hover:to-indigo-500",
   secondary:
-    "border border-white/[0.08] bg-white/[0.03] text-slate-200 hover:border-white/[0.14] hover:bg-white/[0.06]",
-  ghost: "text-slate-400 hover:bg-white/[0.05] hover:text-slate-100",
+    "border border-neutral/[0.08] bg-neutral/[0.03] text-slate-200 hover:border-neutral/[0.14] hover:bg-neutral/[0.06]",
+  ghost: "text-slate-400 hover:bg-neutral/[0.05] hover:text-slate-100",
   "danger-outline":
-    "border border-rose-500/30 bg-rose-500/[0.06] text-rose-300 hover:border-rose-500/50 hover:bg-rose-500/15",
+    "border border-rose-500/30 bg-rose-500/[0.06] text-danger hover:border-rose-500/50 hover:bg-rose-500/15",
   danger:
     "bg-gradient-to-b from-rose-500 to-rose-600 text-white shadow-[0_6px_16px_-6px_rgba(225,29,72,0.7)] hover:from-rose-400 hover:to-rose-500",
 };
@@ -179,7 +179,7 @@ export function Field({
 }
 
 const controlClass =
-  "h-10 w-full rounded-lg border border-white/[0.08] bg-ink-950/70 px-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition hover:border-white/[0.14] focus:border-indigo-400/70 focus:ring-4 focus:ring-indigo-500/15";
+  "h-10 w-full rounded-lg border border-neutral/[0.08] bg-ink-950/70 px-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition hover:border-neutral/[0.14] focus:border-indigo-400/70 focus:ring-4 focus:ring-indigo-500/15";
 
 export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
   return <input className={cx(controlClass, className)} {...props} />;
@@ -219,7 +219,7 @@ export function Segmented<T extends string>({
     <div
       role="tablist"
       aria-label={ariaLabel}
-      className="inline-flex h-10 items-center rounded-lg border border-white/[0.08] bg-ink-950/70 p-1"
+      className="inline-flex h-10 items-center rounded-lg border border-neutral/[0.08] bg-ink-950/70 p-1"
     >
       {options.map((option) => (
         <button
@@ -231,7 +231,7 @@ export function Segmented<T extends string>({
           className={cx(
             "inline-flex h-full items-center gap-1.5 rounded-md px-3 text-[13px] font-medium transition",
             value === option.value
-              ? "bg-white/[0.08] text-foreground shadow-sm"
+              ? "bg-neutral/[0.08] text-foreground shadow-sm"
               : "text-slate-400 hover:text-slate-200"
           )}
         >
@@ -244,7 +244,7 @@ export function Segmented<T extends string>({
 
 export function Kbd({ children }: { children: ReactNode }) {
   return (
-    <kbd className="inline-flex h-5 min-w-5 items-center justify-center rounded border border-white/10 bg-white/[0.06] px-1.5 font-sans text-[11px] font-medium text-slate-300">
+    <kbd className="inline-flex h-5 min-w-5 items-center justify-center rounded border border-neutral/10 bg-neutral/[0.06] px-1.5 font-sans text-[11px] font-medium text-slate-300">
       {children}
     </kbd>
   );
@@ -262,10 +262,10 @@ export function Alert({
   children: ReactNode;
 }) {
   const styles = {
-    error: "border-rose-500/25 bg-rose-500/[0.07] text-rose-200",
-    success: "border-emerald-500/25 bg-emerald-500/[0.07] text-emerald-200",
-    warning: "border-amber-500/25 bg-amber-500/[0.07] text-amber-200",
-    info: "border-indigo-500/25 bg-indigo-500/[0.07] text-indigo-200",
+    error: "border-rose-500/25 bg-rose-500/[0.07] text-danger",
+    success: "border-emerald-500/25 bg-emerald-500/[0.07] text-success",
+    warning: "border-amber-500/25 bg-amber-500/[0.07] text-warning",
+    info: "border-indigo-500/25 bg-indigo-500/[0.07] text-accent",
   };
   const icons = {
     error: XCircle,
@@ -286,7 +286,7 @@ export function Alert({
 export function Spinner({ label = "Loading..." }: { label?: string }) {
   return (
     <div className="flex items-center justify-center gap-3 py-16 text-sm text-slate-400">
-      <Loader2 size={20} className="animate-spin text-indigo-400" />
+      <Loader2 size={20} className="animate-spin text-accent" />
       {label}
     </div>
   );
@@ -311,7 +311,7 @@ export function EmptyState({
     <div className="flex flex-col items-center px-6 py-16 text-center">
       <div className="relative mb-5">
         <div className="absolute inset-0 rounded-2xl bg-indigo-500/20 blur-xl" />
-        <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.08] bg-ink-800 text-indigo-300">
+        <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-neutral/[0.08] bg-ink-800 text-accent">
           {icon}
         </div>
       </div>
@@ -353,9 +353,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   const icons = { success: CheckCircle2, error: XCircle, info: Info };
   const colors = {
-    success: "text-emerald-400",
-    error: "text-rose-400",
-    info: "text-indigo-400",
+    success: "text-success",
+    error: "text-danger",
+    info: "text-accent",
   };
 
   return (
@@ -370,7 +370,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           return (
             <div
               key={toast.id}
-              className="pointer-events-auto flex items-start gap-3 rounded-xl border border-white/[0.08] bg-ink-800/95 px-4 py-3 text-sm text-slate-200 shadow-2xl shadow-black/50 backdrop-blur animate-toast-in"
+              className="pointer-events-auto flex items-start gap-3 rounded-xl border border-neutral/[0.08] bg-ink-800/95 px-4 py-3 text-sm text-slate-200 shadow-2xl shadow-black/50 backdrop-blur animate-toast-in"
             >
               <Icon size={17} className={cx("mt-0.5 shrink-0", colors[toast.tone])} />
               <p className="min-w-0 flex-1">{toast.message}</p>
@@ -413,8 +413,8 @@ export function PredictionBadge({
         "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full font-medium ring-1 ring-inset",
         size === "sm" ? "px-2 py-0.5 text-xs" : "px-3 py-1 text-sm",
         vulnerable
-          ? "bg-rose-500/10 text-rose-300 ring-rose-500/25"
-          : "bg-emerald-500/10 text-emerald-300 ring-emerald-500/25"
+          ? "bg-rose-500/10 text-danger ring-rose-500/25"
+          : "bg-emerald-500/10 text-success ring-emerald-500/25"
       )}
     >
       <Icon size={size === "sm" ? 12 : 14} />
@@ -432,7 +432,7 @@ export function ConfidenceBar({
 }) {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="h-1.5 w-20 overflow-hidden rounded-full bg-white/[0.06]">
+      <div className="h-1.5 w-20 overflow-hidden rounded-full bg-neutral/[0.06]">
         <div
           className={cx(
             "h-full rounded-full",
@@ -466,10 +466,10 @@ export function StatCard({
   chart?: ReactNode;
 }) {
   const accents = {
-    indigo: { icon: "bg-indigo-500/10 text-indigo-300 ring-indigo-500/20", line: "from-indigo-500/60" },
-    rose: { icon: "bg-rose-500/10 text-rose-300 ring-rose-500/20", line: "from-rose-500/60" },
-    emerald: { icon: "bg-emerald-500/10 text-emerald-300 ring-emerald-500/20", line: "from-emerald-500/60" },
-    amber: { icon: "bg-amber-500/10 text-amber-300 ring-amber-500/20", line: "from-amber-500/60" },
+    indigo: { icon: "bg-indigo-500/10 text-accent ring-indigo-500/20", line: "from-indigo-500/60" },
+    rose: { icon: "bg-rose-500/10 text-danger ring-rose-500/20", line: "from-rose-500/60" },
+    emerald: { icon: "bg-emerald-500/10 text-success ring-emerald-500/20", line: "from-emerald-500/60" },
+    amber: { icon: "bg-amber-500/10 text-warning ring-amber-500/20", line: "from-amber-500/60" },
   };
 
   return (

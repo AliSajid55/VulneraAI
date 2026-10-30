@@ -14,7 +14,7 @@ function AuthShell({ title, subtitle, children, footer }: {
     <div className="grid min-h-screen bg-ink-950 text-slate-100 md:grid-cols-[1.05fr_1fr]">
       <div className="fixed right-4 top-4 z-50"><ThemeToggle /></div>
       {/* Brand panel */}
-      <div className="relative hidden overflow-hidden border-r border-white/[0.06] p-10 md:flex md:flex-col md:justify-between lg:p-14">
+      <div className="relative hidden overflow-hidden border-r border-neutral/[0.06] p-10 md:flex md:flex-col md:justify-between lg:p-14">
         <div className="app-backdrop absolute inset-0" />
         <div className="grid-fade absolute inset-0" />
         <div className="pointer-events-none absolute -left-32 top-1/3 h-96 w-96 rounded-full bg-indigo-600/25 blur-3xl" />
@@ -30,10 +30,10 @@ function AuthShell({ title, subtitle, children, footer }: {
           </p>
 
           {/* Sample result preview */}
-          <div className="mt-8 rounded-2xl border border-white/[0.08] bg-ink-900/80 p-4 shadow-2xl shadow-black/40 backdrop-blur">
+          <div className="mt-8 rounded-2xl border border-neutral/[0.08] bg-ink-900/80 p-4 shadow-2xl shadow-black/40 backdrop-blur">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-rose-500/15 text-rose-300 ring-1 ring-inset ring-rose-500/30">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-rose-500/15 text-danger ring-1 ring-inset ring-rose-500/30">
                   <ShieldAlert size={17} />
                 </div>
                 <div>
@@ -41,14 +41,14 @@ function AuthShell({ title, subtitle, children, footer }: {
                   <p className="text-xs text-slate-500">Python · 4 lines</p>
                 </div>
               </div>
-              <span className="rounded-md bg-rose-500/15 px-2 py-0.5 text-[11px] font-semibold tracking-wider text-rose-300">HIGH RISK</span>
+              <span className="rounded-md bg-rose-500/15 px-2 py-0.5 text-[11px] font-semibold tracking-wider text-danger">HIGH RISK</span>
             </div>
             <pre className="mt-4 overflow-hidden rounded-lg bg-ink-950/80 p-3 font-mono text-[12px] leading-5 text-slate-400">
 {`query = "SELECT * FROM users WHERE name = '"
         + username + "'"`}
             </pre>
             <div className="mt-3 flex items-center gap-2 text-xs text-slate-400">
-              <Bot size={13} className="text-indigo-300" /> SQL injection: use a parameterized query.
+              <Bot size={13} className="text-accent" /> SQL injection: use a parameterized query.
             </div>
           </div>
 
@@ -78,7 +78,7 @@ function AuthShell({ title, subtitle, children, footer }: {
 function Feature({ icon, text }: { icon: ReactNode; text: string }) {
   return (
     <li className="flex items-center gap-3">
-      <span className="rounded-lg bg-white/[0.04] p-2 text-indigo-300 ring-1 ring-inset ring-white/[0.08]">{icon}</span>
+      <span className="rounded-lg bg-neutral/[0.04] p-2 text-accent ring-1 ring-inset ring-neutral/[0.08]">{icon}</span>
       {text}
     </li>
   );
@@ -128,7 +128,7 @@ export function LoginPage() {
       title="Welcome back"
       subtitle="Log in to scan code and view your history."
       footer={<>Don&apos;t have an account?{" "}
-        <Link to="/signup" className="font-medium text-indigo-300 underline-offset-4 hover:text-indigo-200 hover:underline">Sign up</Link></>}
+        <Link to="/signup" className="font-medium text-accent underline-offset-4 hover:text-accent hover:underline">Sign up</Link></>}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && <Alert>{error}</Alert>}
@@ -179,7 +179,7 @@ export function SignupPage() {
       title="Create your account"
       subtitle="Start scanning code in less than a minute."
       footer={<>Already have an account?{" "}
-        <Link to="/login" className="font-medium text-indigo-300 underline-offset-4 hover:text-indigo-200 hover:underline">Log in</Link></>}
+        <Link to="/login" className="font-medium text-accent underline-offset-4 hover:text-accent hover:underline">Log in</Link></>}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && <Alert>{error}</Alert>}

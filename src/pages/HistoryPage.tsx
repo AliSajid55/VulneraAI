@@ -106,15 +106,15 @@ export default function HistoryPage() {
 
       <Card>
         {/* Filters */}
-        <div className="flex flex-col gap-3 border-b border-white/[0.06] p-4 lg:flex-row lg:items-center">
+        <div className="flex flex-col gap-3 border-b border-neutral/[0.06] p-4 lg:flex-row lg:items-center">
           <Segmented
             ariaLabel="Filter by result"
             value={(prediction || "all") as "all" | "vulnerable" | "safe"}
             onChange={(v) => updateParam("prediction", v === "all" ? "" : v)}
             options={[
               { value: "all", label: "All" },
-              { value: "vulnerable", label: <><ShieldAlert size={13} className="text-rose-300" /> Vulnerable</> },
-              { value: "safe", label: <><ShieldCheck size={13} className="text-emerald-300" /> Safe</> },
+              { value: "vulnerable", label: <><ShieldAlert size={13} className="text-danger" /> Vulnerable</> },
+              { value: "safe", label: <><ShieldCheck size={13} className="text-success" /> Safe</> },
             ]}
           />
           <div className="grid flex-1 gap-3 sm:grid-cols-[1fr_170px_170px]">
@@ -158,7 +158,7 @@ export default function HistoryPage() {
             {/* Table (desktop) */}
             <div className="hidden overflow-x-auto md:block">
               <table className="w-full text-left text-sm">
-                <thead className="border-b border-white/[0.06] bg-white/[0.015] text-[11px] uppercase tracking-[0.08em] text-slate-500">
+                <thead className="border-b border-neutral/[0.06] bg-neutral/[0.015] text-[11px] uppercase tracking-[0.08em] text-slate-500">
                   <tr>
                     <th className="px-5 py-3 font-medium">Scan</th>
                     <th className="px-3 py-3 font-medium">Result</th>
@@ -168,10 +168,10 @@ export default function HistoryPage() {
                     <th className="px-5 py-3"><span className="sr-only">Actions</span></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/[0.05]">
+                <tbody className="divide-y divide-neutral/[0.05]">
                   {data.scans.map((scan) => (
                     <tr key={scan.id} onClick={() => navigate(`/history/${scan.id}`)}
-                      className="group cursor-pointer transition hover:bg-white/[0.025]">
+                      className="group cursor-pointer transition hover:bg-neutral/[0.025]">
                       <td className="max-w-xs px-5 py-3.5">
                         <p className="truncate font-medium text-slate-100 group-hover:text-foreground">{scan.title}</p>
                         <p className="mt-1 truncate font-mono text-[11px] text-slate-500">
@@ -184,7 +184,7 @@ export default function HistoryPage() {
                       <td className="whitespace-nowrap px-3 py-3.5 text-slate-400">{formatDateTime(scan.created_at)}</td>
                       <td className="px-5 py-3.5 text-right">
                         <button onClick={(e) => { e.stopPropagation(); deleteScan(scan.id); }}
-                          className="rounded-lg p-2 text-slate-600 opacity-60 transition hover:bg-rose-500/10 hover:text-rose-300 group-hover:opacity-100"
+                          className="rounded-lg p-2 text-slate-600 opacity-60 transition hover:bg-rose-500/10 hover:text-danger group-hover:opacity-100"
                           aria-label={`Delete scan ${scan.id}`} title="Delete">
                           <Trash2 size={16} />
                         </button>
@@ -196,7 +196,7 @@ export default function HistoryPage() {
             </div>
 
             {/* Cards (mobile) */}
-            <ul className="divide-y divide-white/[0.05] md:hidden">
+            <ul className="divide-y divide-neutral/[0.05] md:hidden">
               {data.scans.map((scan) => (
                 <li key={scan.id}>
                   <Link to={`/history/${scan.id}`} className="block px-4 py-3.5">
@@ -213,7 +213,7 @@ export default function HistoryPage() {
             </ul>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between border-t border-white/[0.06] px-5 py-3 text-sm text-slate-400">
+            <div className="flex items-center justify-between border-t border-neutral/[0.06] px-5 py-3 text-sm text-slate-400">
               <span>
                 {(data.page - 1) * data.page_size + 1}–{Math.min(data.page * data.page_size, data.total)} of {data.total}
               </span>

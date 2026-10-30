@@ -55,7 +55,7 @@ export function Logo({ compact = false }: { compact?: boolean }) {
     <div className="flex items-center gap-2.5">
       <div className="relative">
         <div className="absolute inset-0 rounded-xl bg-indigo-500/40 blur-md" />
-        <div className="relative rounded-xl bg-gradient-to-br from-indigo-400 via-indigo-500 to-violet-600 p-[7px] ring-1 ring-inset ring-white/20">
+        <div className="relative rounded-xl bg-gradient-to-br from-indigo-400 via-indigo-500 to-violet-600 p-[7px] ring-1 ring-inset ring-neutral/20">
           <ShieldCheck size={18} className="text-white" strokeWidth={2.2} />
         </div>
       </div>
@@ -72,7 +72,7 @@ export function Logo({ compact = false }: { compact?: boolean }) {
 function StatusPill({ health, error }: { health: Health | null; error: boolean }) {
   if (error) {
     return (
-      <span className="inline-flex items-center gap-2 rounded-full border border-rose-500/25 bg-rose-500/10 px-3 py-1 text-xs text-rose-300">
+      <span className="inline-flex items-center gap-2 rounded-full border border-rose-500/25 bg-rose-500/10 px-3 py-1 text-xs text-danger">
         <span className="h-1.5 w-1.5 rounded-full bg-rose-400" /> Backend offline
       </span>
     );
@@ -83,7 +83,7 @@ function StatusPill({ health, error }: { health: Health | null; error: boolean }
     <div className="hidden items-center gap-2 sm:flex">
       <span
         title={health.model_name ? `${health.model_name} · ${health.scoring_rule_description ?? ""}` : undefined}
-        className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/[0.08] px-3 py-1 text-xs text-emerald-300">
+        className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/[0.08] px-3 py-1 text-xs text-success">
         <span className="relative flex h-1.5 w-1.5">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
           <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
@@ -95,8 +95,8 @@ function StatusPill({ health, error }: { health: Health | null; error: boolean }
         className={cx(
           "hidden items-center gap-2 rounded-full border px-3 py-1 text-xs xl:inline-flex",
           health.gemini_configured
-            ? "border-indigo-500/20 bg-indigo-500/[0.08] text-indigo-300"
-            : "border-amber-500/20 bg-amber-500/[0.08] text-amber-300"
+            ? "border-indigo-500/20 bg-indigo-500/[0.08] text-accent"
+            : "border-amber-500/20 bg-amber-500/[0.08] text-warning"
         )}
       >
         <span className={cx("h-1.5 w-1.5 rounded-full", health.gemini_configured ? "bg-indigo-400" : "bg-amber-400")} />
@@ -171,8 +171,8 @@ export default function AppLayout() {
                     cx(
                       "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition",
                       isActive
-                        ? "bg-white/[0.06] text-foreground"
-                        : "text-slate-400 hover:bg-white/[0.03] hover:text-slate-200"
+                        ? "bg-neutral/[0.06] text-foreground"
+                        : "text-slate-400 hover:bg-neutral/[0.03] hover:text-slate-200"
                     )
                   }
                 >
@@ -181,7 +181,7 @@ export default function AppLayout() {
                       {isActive && (
                         <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-indigo-400" />
                       )}
-                      <Icon size={17} className={isActive ? "text-indigo-300" : "text-slate-500 group-hover:text-slate-300"} />
+                      <Icon size={17} className={isActive ? "text-accent" : "text-slate-500 group-hover:text-slate-300"} />
                       {label}
                     </>
                   )}
@@ -192,9 +192,9 @@ export default function AppLayout() {
         ))}
       </nav>
 
-      <div className="m-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+      <div className="m-3 rounded-xl border border-neutral/[0.06] bg-neutral/[0.02] p-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500/40 to-violet-500/40 text-xs font-semibold text-foreground ring-1 ring-inset ring-white/15">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500/40 to-violet-500/40 text-xs font-semibold text-foreground ring-1 ring-inset ring-neutral/15">
             {initials}
           </div>
           <div className="min-w-0 flex-1">
@@ -205,7 +205,7 @@ export default function AppLayout() {
             onClick={handleLogout}
             title="Log out"
             aria-label="Log out"
-            className="rounded-lg p-2 text-slate-500 transition hover:bg-rose-500/10 hover:text-rose-300"
+            className="rounded-lg p-2 text-slate-500 transition hover:bg-rose-500/10 hover:text-danger"
           >
             <LogOut size={16} />
           </button>
@@ -219,7 +219,7 @@ export default function AppLayout() {
       <div className="grid-fade pointer-events-none fixed inset-x-0 top-0 h-[420px]" />
 
       {/* Sidebar (tablet and up) */}
-      <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 border-r border-white/[0.06] bg-ink-950/80 backdrop-blur-xl md:block">
+      <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 border-r border-neutral/[0.06] bg-ink-950/80 backdrop-blur-xl md:block">
         {sidebar}
       </aside>
 
@@ -227,11 +227,11 @@ export default function AppLayout() {
       {menuOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-72 border-r border-white/[0.06] bg-ink-950 animate-fade-up">
+          <aside className="absolute inset-y-0 left-0 w-72 border-r border-neutral/[0.06] bg-ink-950 animate-fade-up">
             <button
               onClick={() => setMenuOpen(false)}
               aria-label="Close menu"
-              className="absolute right-3 top-4 rounded-lg p-1.5 text-slate-400 hover:bg-white/[0.06]"
+              className="absolute right-3 top-4 rounded-lg p-1.5 text-slate-400 hover:bg-neutral/[0.06]"
             >
               <X size={20} />
             </button>
@@ -242,12 +242,12 @@ export default function AppLayout() {
 
       <div className="relative md:pl-64">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-white/[0.06] bg-ink-950/70 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-neutral/[0.06] bg-ink-950/70 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
           <div className="flex min-w-0 items-center gap-3">
             <button
               onClick={() => setMenuOpen(true)}
               aria-label="Open menu"
-              className="-ml-1 rounded-lg p-2 text-slate-300 hover:bg-white/[0.06] md:hidden"
+              className="-ml-1 rounded-lg p-2 text-slate-300 hover:bg-neutral/[0.06] md:hidden"
             >
               <Menu size={20} />
             </button>
