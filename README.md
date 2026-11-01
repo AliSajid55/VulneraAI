@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🛡️ PolyGuard
+# 🛡️ VulneraAI
 
 ### AI-Powered Code Vulnerability Scanner
 
@@ -21,7 +21,7 @@ A code review dashboard powered by fine-tuned GraphCodeBERT, with optional Gemin
 
 ## Overview
 
-PolyGuard classifies submitted code as **safe** or **vulnerable** using a fine-tuned GraphCodeBERT model. Optional Google Gemini explanations turn the prediction into a readable summary, potential concerns, and suggested remediation. Authenticated users can review results, explore activity, and export their scan history.
+VulneraAI classifies submitted code as **safe** or **vulnerable** using a fine-tuned GraphCodeBERT model. Optional Google Gemini explanations turn the prediction into a readable summary, potential concerns, and suggested remediation. Authenticated users can review results, explore activity, and export their scan history.
 
 > **Research prototype:** predictions can contain false positives and false negatives. A “safe” result does not establish that code is secure. Review the evaluation and limitations before interpreting results.
 
@@ -215,10 +215,10 @@ ls -lh backend/model/model.safetensors
 ```bash
 brew install postgresql@16
 brew services start postgresql@16
-createdb polyguard
+createdb VulneraAI
 ```
 
-**Windows / Linux:** install PostgreSQL from [postgresql.org](https://www.postgresql.org/download/), then create a database called `polyguard` (for example `createdb -U postgres polyguard`).
+**Windows / Linux:** install PostgreSQL from [postgresql.org](https://www.postgresql.org/download/), then create a database called `VulneraAI` (for example `createdb -U postgres VulneraAI`).
 
 The tables (`users`, `scans`) are created automatically on startup. For older PostgreSQL tables, startup also adds missing `threshold` and `model_version` columns. Broader schema changes require a migration strategy.
 
@@ -235,9 +235,9 @@ Edit `backend/.env`:
 
 ```env
 # Homebrew on macOS usually uses your Mac username with no password:
-DATABASE_URL=postgresql://YOUR_MAC_USERNAME@localhost:5432/polyguard
+DATABASE_URL=postgresql://YOUR_MAC_USERNAME@localhost:5432/VulneraAI
 # With a "postgres" user and password:
-# DATABASE_URL=postgresql://postgres:postgres@localhost:5432/polyguard
+# DATABASE_URL=postgresql://postgres:postgres@localhost:5432/VulneraAI
 
 JWT_SECRET_KEY=paste-a-long-random-string-here
 GEMINI_API_KEY=
@@ -464,7 +464,7 @@ The build script runs Vite; TypeScript checking is a separate command. These com
 | `git: 'lfs' is not a git command` | Install Git LFS (`brew install git-lfs`), then `git lfs install && git lfs pull` |
 | Server fails to load the model | `backend/model/model.safetensors` is only a 134-byte LFS pointer. Run `git lfs pull` |
 | `connection refused` / `could not connect to server` on startup | PostgreSQL is not running. On macOS: `brew services start postgresql@16` |
-| `database "polyguard" does not exist` | Run `createdb polyguard` |
+| `database "VulneraAI" does not exist` | Run `createdb VulneraAI` |
 | `role "postgres" does not exist` | Use your Mac username in `DATABASE_URL` (see Setup step 3) |
 | Logged out after every server restart | Set `JWT_SECRET_KEY` in `backend/.env` |
 | `ModuleNotFoundError` (torch, flask, sqlalchemy, ...) | Activate the venv and run `pip install -r backend/requirements.txt` |
