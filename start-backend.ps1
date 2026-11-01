@@ -1,2 +1,2 @@
 # Start Flask Backend Server
-python server.py
+python backend/server.py

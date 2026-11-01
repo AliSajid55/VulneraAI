@@ -18,7 +18,8 @@ scan_history.json
 server_test_results.csv
 
 # Locally trained models (large files)
-model_v3/
+backend/model/
+backend/model_v3/
 
 # Local environment and archives
 .env
