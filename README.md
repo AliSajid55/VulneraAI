@@ -6,11 +6,11 @@
 
 **Scan code. Understand predictions. Track every review.**
 
-A code review dashboard powered by fine-tuned GraphCodeBERT, with optional Gemini explanations and a personal scan history.
+A code review dashboard powered by fine-tuned Classification model, with LLM explanations and a personal scan history.
 
 ![React](https://img.shields.io/badge/React-TypeScript-61DAFB?style=flat-square&logo=react&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-Flask-3776AB?style=flat-square&logo=python&logoColor=white)
-![Model](https://img.shields.io/badge/AI-GraphCodeBERT-8B5CF6?style=flat-square)
+![Model](https://img.shields.io/badge/AI-BERT-8B5CF6?style=flat-square)
 ![Database](https://img.shields.io/badge/Database-PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
 
 [Features](#features) · [Screenshots](#screenshots) · [Architecture](#architecture) · [Setup](#getting-started) · [API](#api-reference) · [Evaluation](#evaluation)
@@ -32,7 +32,7 @@ VulneraAI classifies submitted code as **safe** or **vulnerable** using a fine-t
 | Frontend | React, TypeScript, Vite, Tailwind CSS, React Router |
 | Backend | Python, Flask, SQLAlchemy |
 | Inference | PyTorch, Hugging Face Transformers, fine-tuned GraphCodeBERT |
-| Explanations | Google Gemini API — optional |
+| Explanations | LLM API |
 | Persistence | PostgreSQL |
 | Authentication | JWT tokens, Werkzeug password hashing |
 
@@ -215,10 +215,10 @@ ls -lh backend/model/model.safetensors
 ```bash
 brew install postgresql@16
 brew services start postgresql@16
-createdb VulneraAI
+createdb polyguard
 ```
 
-**Windows / Linux:** install PostgreSQL from [postgresql.org](https://www.postgresql.org/download/), then create a database called `VulneraAI` (for example `createdb -U postgres VulneraAI`).
+**Windows / Linux:** install PostgreSQL from [postgresql.org](https://www.postgresql.org/download/), then create a database called `polyguard` (for example `createdb -U postgres polyguard`).
 
 The tables (`users`, `scans`) are created automatically on startup. For older PostgreSQL tables, startup also adds missing `threshold` and `model_version` columns. Broader schema changes require a migration strategy.
 
@@ -235,9 +235,9 @@ Edit `backend/.env`:
 
 ```env
 # Homebrew on macOS usually uses your Mac username with no password:
-DATABASE_URL=postgresql://YOUR_MAC_USERNAME@localhost:5432/VulneraAI
+DATABASE_URL=postgresql://YOUR_MAC_USERNAME@localhost:5432/polyguard
 # With a "postgres" user and password:
-# DATABASE_URL=postgresql://postgres:postgres@localhost:5432/VulneraAI
+# DATABASE_URL=postgresql://postgres:postgres@localhost:5432/polyguard
 
 JWT_SECRET_KEY=paste-a-long-random-string-here
 GEMINI_API_KEY=
@@ -464,7 +464,7 @@ The build script runs Vite; TypeScript checking is a separate command. These com
 | `git: 'lfs' is not a git command` | Install Git LFS (`brew install git-lfs`), then `git lfs install && git lfs pull` |
 | Server fails to load the model | `backend/model/model.safetensors` is only a 134-byte LFS pointer. Run `git lfs pull` |
 | `connection refused` / `could not connect to server` on startup | PostgreSQL is not running. On macOS: `brew services start postgresql@16` |
-| `database "VulneraAI" does not exist` | Run `createdb VulneraAI` |
+| `database "polyguard" does not exist` | Run `createdb polyguard` |
 | `role "postgres" does not exist` | Use your Mac username in `DATABASE_URL` (see Setup step 3) |
 | Logged out after every server restart | Set `JWT_SECRET_KEY` in `backend/.env` |
 | `ModuleNotFoundError` (torch, flask, sqlalchemy, ...) | Activate the venv and run `pip install -r backend/requirements.txt` |
