@@ -17,7 +17,12 @@ pnpm-lock.yaml
 scan_history.json
 server_test_results.csv
 
-# V3 model files are tracked; weights use Git LFS (.gitattributes).
+# Private trained weights: keep outside public repositories.
+*.safetensors
+*.pt
+*.pth
+pytorch_model*.bin
+private_models/
 
 # Local environment and archives
 .env
