@@ -7,26 +7,34 @@ import ast
 from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
+from typing import cast
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
+BACKEND = ROOT / "backend"
 
 
 def load_functions(filename, names, namespace):
-    tree = ast.parse((ROOT / filename).read_text())
+    tree = ast.parse((BACKEND / filename).read_text())
     nodes = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name in names]
     for node in nodes:
         node.decorator_list = []
-    exec(compile(ast.Module(body=nodes, type_ignores=[]), filename, 'exec'), namespace)
+    # ast.Module.body expects list[ast.stmt]; list is invariant, so cast the
+    # narrower list[ast.FunctionDef] we collected above.
+    module = ast.Module(body=cast("list[ast.stmt]", nodes), type_ignores=[])
+    exec(compile(module, filename, 'exec'), namespace)
 
 
 class ResultContractTest(unittest.TestCase):
     def test_predict_and_saved_scan_preserve_model_result(self):
-        source = ast.parse((ROOT / 'database.py').read_text())
+        source = ast.parse((BACKEND / 'database.py').read_text())
         scan_class = next(n for n in source.body if isinstance(n, ast.ClassDef) and n.name == 'Scan')
         methods = [n for n in scan_class.body if isinstance(n, ast.FunctionDef) and n.name in {'to_summary', 'to_detail'}]
         method_ns = {}
-        exec(compile(ast.Module(body=methods, type_ignores=[]), 'database.py', 'exec'), method_ns)
+        # ast.Module.body expects list[ast.stmt]; list is invariant, so cast the
+        # narrower list[ast.FunctionDef] we collected above.
+        module = ast.Module(body=cast("list[ast.stmt]", methods), type_ignores=[])
+        exec(compile(module, 'database.py', 'exec'), method_ns)
 
         def init(scan, **values):
             scan.__dict__.update(values)

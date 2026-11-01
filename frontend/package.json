@@ -4,7 +4,6 @@
   "description": "Frontend dashboard for graphCODEBERT vulnerability scanner",
   "main": "server.js",
   "scripts": {
-    "start": "python server.py",
     "dev": "vite",
     "dev-client": "vite",
     "build": "vite build",

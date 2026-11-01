@@ -17,11 +17,12 @@ from database import SessionLocal, User, utc_now
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+_env_secret = os.getenv("JWT_SECRET_KEY")
+# Always a str so jwt.encode/jwt.decode type-check cleanly.
+JWT_SECRET_KEY: str = _env_secret or secrets.token_hex(32)
 
-if not JWT_SECRET_KEY:
+if not _env_secret:
     # Works for local development, but every restart logs everyone out.
-    JWT_SECRET_KEY = secrets.token_hex(32)
     print(
         "WARNING: JWT_SECRET_KEY is not set in .env. "
         "Using a temporary key; users will be logged out on restart."

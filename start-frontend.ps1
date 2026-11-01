@@ -1,2 +1,8 @@
 # Start Vite Development Server
-pnpm run dev-client
+Push-Location frontend
+try {
+    pnpm run dev-client
+}
+finally {
+    Pop-Location
+}

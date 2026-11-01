@@ -131,26 +131,49 @@ The diagram shows the authenticated scan path. The public `/api/predict` route r
 
 ```text
 .
-├── server.py                    # Flask app: model inference, Gemini, scan/history/stats routes
-├── auth.py                      # Signup, login, profile, password (JWT)
-├── database.py                  # PostgreSQL connection + User and Scan tables
-├── model/                       # Fine-tuned GraphCodeBERT (weights stored with Git LFS)
-├── test.py                      # Small API-based evaluation suite
-├── test_300.py                  # Larger API-based evaluation runner
-├── test_cases_300.py            # Hand-written cases; saved run contains 271
-├── test_300_summary.csv         # Committed aggregate results
-├── test_300_results.csv         # Committed per-case predictions
-├── test_300_output.txt          # Saved run output and model/rule identification
-├── vulnerability_test_cases.py  # 16 labeled Python examples (8 safe, 8 vulnerable)
-├── .env.example                 # Template for your .env file
-├── requirements.txt
-├── package.json
-└── src/
-    ├── main.tsx                 # Routes and protected pages
-    ├── context/AuthContext.tsx  # Logged-in user and token
-    ├── lib/                     # API client, formatting, PDF report
-    ├── components/              # Layout, UI kit, charts, scan result view
-    └── pages/                   # Login/Signup, Dashboard, Scan, History, Scan detail, Settings
+├── README.md
+├── .gitignore
+├── .gitattributes
+├── start-backend.ps1              # Launches the Flask backend
+├── start-frontend.ps1             # Launches the Vite dev server
+│
+├── backend/                       # Python / Flask backend
+│   ├── server.py                  # Flask app: model inference, Gemini, scan/history/stats routes
+│   ├── auth.py                    # Signup, login, profile, password (JWT)
+│   ├── database.py                # PostgreSQL connection + User and Scan tables
+│   ├── server_backup.py           # Legacy JSON-file prototype (not used by the app)
+│   ├── model/                     # Fine-tuned GraphCodeBERT (weights stored with Git LFS)
+│   ├── model_v3/                  # v3 checkpoint + best_info.json scoring rule
+│   ├── .env.example               # Template for backend/.env
+│   └── requirements.txt
+│
+├── frontend/                      # React + TypeScript frontend
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── tsconfig.json
+│   ├── tailwind.config.js
+│   ├── postcss.config.js
+│   └── src/
+│       ├── main.tsx               # Routes and protected pages
+│       ├── context/AuthContext.tsx  # Logged-in user and token
+│       ├── lib/                   # API client, formatting, PDF report
+│       ├── components/            # Layout, UI kit, charts, scan result view
+│       └── pages/                 # Login/Signup, Dashboard, Scan, History, Scan detail, Settings
+│
+├── tests/                         # Evaluation suites and saved results
+│   ├── test.py                    # Small API-based evaluation suite
+│   ├── test_300.py                # Larger API-based evaluation runner
+│   ├── test_cases_300.py          # Hand-written cases; saved run contains 271
+│   ├── vulnerability_test_cases.py  # 16 labeled Python examples (8 safe, 8 vulnerable)
+│   ├── check_result_parity.py     # Live API parity checks
+│   ├── test_gemini.py             # Gemini API connectivity check
+│   ├── test_result_contract.py    # Route-body contract test (no model/DB)
+│   ├── test_300_summary.csv       # Committed aggregate results
+│   ├── test_300_results.csv       # Committed per-case predictions
+│   └── test_300_output.txt        # Saved run output and model/rule identification
+│
+└── docs/screenshots/              # README screenshots
 ```
 
 ---
@@ -178,10 +201,10 @@ cd AI-Powered-Multi-Language-Code-Vulnerability-Scanner
 git lfs pull
 ```
 
-Check that the model downloaded correctly. `model/model.safetensors` should be about **476 MB**, not 134 bytes:
+Check that the model downloaded correctly. `backend/model/model.safetensors` should be about **476 MB**, not 134 bytes:
 
 ```bash
-ls -lh model/model.safetensors
+ls -lh backend/model/model.safetensors
 ```
 
 > On macOS, install Git LFS with `brew install git-lfs` if `git lfs` is not found.
@@ -204,11 +227,11 @@ The tables (`users`, `scans`) are created automatically on startup. For older Po
 ```bash
 python3 -m venv venv
 source venv/bin/activate          # Windows: .\venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-cp .env.example .env
+pip install -r backend/requirements.txt
+cp backend/.env.example backend/.env
 ```
 
-Edit `.env`:
+Edit `backend/.env`:
 
 ```env
 # Homebrew on macOS usually uses your Mac username with no password:
@@ -241,6 +264,7 @@ python -c "import secrets; print(secrets.token_hex(32))"
 ### 4. Frontend
 
 ```bash
+cd frontend
 npm ci
 ```
 
@@ -250,24 +274,24 @@ npm ci
 
 ## ⚙️ Model configuration & v3 scoring
 
-**The repository contains `model/`; the `model_v3/` checkpoint and its training notebook are not included in the reviewed tree.** The saved larger evaluation used an external `model_v3` folder. A fresh clone therefore does not reproduce that run automatically.
+**The repository contains `backend/model/`; the `backend/model_v3/` checkpoint and its training notebook are not included in the reviewed tree.** The saved larger evaluation used an external `model_v3` folder. A fresh clone therefore does not reproduce that run automatically.
 
 The backend can load a compatible binary fine-tuned GraphCodeBERT folder saved with `save_pretrained()`, such as `outputs/graphcodebert_vuln_v3/best_model` from `GraphCodeBERT_Vuln_v3_PairAware.ipynb`.
 
-1. Copy your compatible trained checkpoint into the project as `model_v3/`, including `config.json`, model weights, and tokenizer files. Include **`best_info.json`** to apply the validation-selected scoring rule.
-2. Add to `.env`:
+1. Copy your compatible trained checkpoint into the project as `backend/model_v3/`, including `config.json`, model weights, and tokenizer files. Include **`best_info.json`** to apply the validation-selected scoring rule.
+2. Add to `backend/.env`:
    ```env
    MODEL_DIR=model_v3
    ```
-3. Restart `python server.py`. The startup log shows the rule in use, for example `Scoring rule: max @ 0.902 | from best_info.json (epoch 4)`.
+3. Restart `python backend/server.py`. The startup log shows the rule in use, for example `Scoring rule: max @ 0.902 | from best_info.json (epoch 4)`.
 
 How the backend scores code with a v3 model, matching the notebook's evaluation:
 
 - Code is split into 512-token chunks with stride 128, and only the **first 8 chunks** are scored.
 - The chunk scores are combined with the rule's aggregation (`max`, `top2` or `mean`) from `best_info.json`.
 - The decision uses the threshold tuned on validation. Length-aware thresholds per chunk-count bucket (1 / 2–3 / 4+) are also supported.
-- Without `best_info.json` (for example the original `model/` folder), the backend falls back to `mean` with threshold 0.5.
-- The default **8-chunk cap applies to all model folders**, including `model/`. Code beyond those chunks does not contribute to the classifier verdict. `/api/predict` reports both `chunk_count` (scored) and `total_chunks` (tokenized).
+- Without `best_info.json` (for example the original `backend/model/` folder), the backend falls back to `mean` with threshold 0.5.
+- The default **8-chunk cap applies to all model folders**, including `backend/model/`. Code beyond those chunks does not contribute to the classifier verdict. `/api/predict` reports both `chunk_count` (scored) and `total_chunks` (tokenized).
 - Inference uses CUDA when available, otherwise CPU; the current code does not select Apple MPS.
 
 **Confidence** in the UI is the distance from the threshold, scaled from 50% (exactly at the threshold) to 100% (a score of 0.0 or 1.0). With a 0.9 threshold, a score of 0.85 is "safe" but only just, so it shows about 53%, not 15%. The raw vulnerable probability and the threshold are shown in the result meter and the PDF.
@@ -285,12 +309,13 @@ Open **two terminals** in the project folder.
 **Terminal 1: backend**
 ```bash
 source venv/bin/activate
-python server.py
+python backend/server.py
 ```
 Wait for `GraphCodeBERT loaded successfully.` The API runs at `http://127.0.0.1:5000`.
 
 **Terminal 2: frontend**
 ```bash
+cd frontend
 npm run dev
 ```
 Open **http://localhost:3000**, create an account, and start scanning.
@@ -386,7 +411,7 @@ Precision, recall, and F1 use **vulnerable** as the positive class.
 | Safe | 109 | 27 |
 | Vulnerable | 42 | 93 |
 
-**202 correct predictions; 27 false positives; 42 missed vulnerabilities.** These are saved results from a hand-written exploratory suite, corroborated by the supplied terminal screenshot; they are not a new run or an independent benchmark. They do not establish performance on unseen repositories or across every selectable language. Sources: [`test_300_summary.csv`](test_300_summary.csv), [`test_300_results.csv`](test_300_results.csv), and [`test_300_output.txt`](test_300_output.txt).
+**202 correct predictions; 27 false positives; 42 missed vulnerabilities.** These are saved results from a hand-written exploratory suite, corroborated by the supplied terminal screenshot; they are not a new run or an independent benchmark. They do not establish performance on unseen repositories or across every selectable language. Sources: [`tests/test_300_summary.csv`](tests/test_300_summary.csv), [`tests/test_300_results.csv`](tests/test_300_results.csv), and [`tests/test_300_output.txt`](tests/test_300_output.txt).
 
 ### Run the evaluation
 
@@ -394,13 +419,13 @@ Start the backend with your chosen model, then run:
 
 ```bash
 # Small suite: saves server_test_results.csv
-python test.py
+python tests/test.py
 
 # Larger suite: saves test_300_results.csv and test_300_summary.csv
-python test_300.py
+python tests/test_300.py
 
 # Optional alternative cases file
-python test_300.py path/to/test_cases_300.py
+python tests/test_300.py path/to/test_cases_300.py
 ```
 
 The larger runner reads literal case lists using Python's AST without executing the case file. It can trim a syntactically incomplete tail, so inspect the printed case count before interpreting results. Both runners call `/api/predict`; outputs depend on the active checkpoint, aggregation, threshold, and chunk cap. Rerunning overwrites the corresponding result files.
@@ -408,6 +433,7 @@ The larger runner reads literal case lists using Python's AST without executing 
 ### Frontend build checks
 
 ```bash
+cd frontend
 npm run build
 npx tsc --noEmit
 ```
@@ -436,16 +462,16 @@ The build script runs Vite; TypeScript checking is a separate command. These com
 | Problem | Fix |
 |---|---|
 | `git: 'lfs' is not a git command` | Install Git LFS (`brew install git-lfs`), then `git lfs install && git lfs pull` |
-| Server fails to load the model | `model/model.safetensors` is only a 134-byte LFS pointer. Run `git lfs pull` |
+| Server fails to load the model | `backend/model/model.safetensors` is only a 134-byte LFS pointer. Run `git lfs pull` |
 | `connection refused` / `could not connect to server` on startup | PostgreSQL is not running. On macOS: `brew services start postgresql@16` |
 | `database "polyguard" does not exist` | Run `createdb polyguard` |
 | `role "postgres" does not exist` | Use your Mac username in `DATABASE_URL` (see Setup step 3) |
-| Logged out after every server restart | Set `JWT_SECRET_KEY` in `.env` |
-| `ModuleNotFoundError` (torch, flask, sqlalchemy, ...) | Activate the venv and run `pip install -r requirements.txt` |
-| `ModuleNotFoundError: sklearn` | Run `pip install -r requirements.txt` (includes `scikit-learn`) |
-| Saved metrics differ after cloning | The committed run used external `model_v3`; the clone defaults to `model/`. Check `/api/health` and checkpoint provenance |
+| Logged out after every server restart | Set `JWT_SECRET_KEY` in `backend/.env` |
+| `ModuleNotFoundError` (torch, flask, sqlalchemy, ...) | Activate the venv and run `pip install -r backend/requirements.txt` |
+| `ModuleNotFoundError: sklearn` | Run `pip install -r backend/requirements.txt` (includes `scikit-learn`) |
+| Saved metrics differ after cloning | The committed run used external `model_v3`; the clone defaults to `backend/model/`. Check `/api/health` and checkpoint provenance |
 | Frontend build cannot connect to deployed API | Set `VITE_API_URL` before building. Flask does not serve the frontend build automatically |
-| AI explanation unavailable | Check the backend terminal for the Gemini error. Check `GEMINI_API_KEY` and `GEMINI_MODEL` in `.env` |
+| AI explanation unavailable | Check the backend terminal for the Gemini error. Check `GEMINI_API_KEY` and `GEMINI_MODEL` in `backend/.env` |
 | `503 UNAVAILABLE` / `504 DEADLINE_EXCEEDED` | Gemini is overloaded. Try again later or use a `flash-lite` model |
 | Frontend says it cannot reach the server | Make sure the backend is running on port 5000 |
 

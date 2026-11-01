@@ -71,7 +71,12 @@ def load_cases(path):
 
 
 def metrics(y, yhat):
-    p, r, f, _ = precision_recall_fscore_support(y, yhat, average="binary", zero_division=0)
+    # zero_division=0 is valid at runtime (sklearn accepts {0, 1, "warn", np.nan}).
+    # The parameter is untyped, so Pyright infers str from the default ("warn")
+    # and flags the int; the ignore documents this known false positive.
+    p, r, f, _ = precision_recall_fscore_support(
+        y, yhat, average="binary", zero_division=0  # type: ignore[call-overload]
+    )
     tn, fp, fn, tp = confusion_matrix(y, yhat, labels=[0, 1]).ravel()
     return {"cases": len(y), "accuracy": accuracy_score(y, yhat), "precision": p,
             "recall": r, "f1": f, "TN": tn, "FP": fp, "FN": fn, "TP": tp}
@@ -91,8 +96,10 @@ def main(path):
     print()
     scores, preds, thresholds, confidences = [], [], [], []
     names = {0: "safe", 1: "vulnerable"}
-    for row in cases.itertuples():
-        r = requests.post(f"{API}/api/predict", json={"code": row.code}, timeout=120)
+    # Iterate over row dicts (instead of itertuples) so each column is a plain
+    # dict value — this type-checks cleanly and reads the same at runtime.
+    for row in cases.to_dict("records"):
+        r = requests.post(f"{API}/api/predict", json={"code": str(row["code"])}, timeout=120)
         r.raise_for_status()
         data = r.json()
         pred = int(data["prediction"] == "vulnerable")
@@ -101,10 +108,10 @@ def main(path):
         confidences.append(data["confidence"])
         preds.append(pred)
         # Same per-case line as test.py
-        case_id = f"{row.level[0]}{row.idx:03d}"          # E001, M001, C001
-        print(f"{case_id}: actual={names[row.label]}, predicted={names[pred]}, "
+        case_id = f"{str(row['level'])[0]}{int(row['idx']):03d}"          # E001, M001, C001
+        print(f"{case_id}: actual={names[row['label']]}, predicted={names[pred]}, "
               f"confidence={data['confidence']}, vulnerable_probability={data['vulnerable_probability']}, "
-              f"correct={pred == row.label}")
+              f"correct={pred == row['label']}")
 
     cases["score"], cases["threshold"], cases["confidence"], cases["pred"] = scores, thresholds, confidences, preds
     cases["correct"] = cases.pred == cases.label
@@ -142,4 +149,5 @@ def main(path):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "test_cases_300.py")
+    _default_cases = Path(__file__).resolve().parent / "test_cases_300.py"
+    main(sys.argv[1] if len(sys.argv) > 1 else _default_cases)
