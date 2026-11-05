@@ -1,36 +1,63 @@
+# Node.js
 node_modules/
 dist/
-.env
-*.log
+pnpm-lock.yaml
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+
+# Virtual environments
 env/
 venv/
 ENV/
 .venv/
-pnpm-lock.yaml
-.vscode/
-*.log
-scan_history.json
-server_test_results.csv
 
-# Locally trained models (large files)
-backend/model/
-backend/model_v3/
-# Private trained weights: keep outside public repositories.
-*.safetensors
-*.pt
-*.pth
-pytorch_model*.bin
-private_models/
-
-# Local environment and archives
+# Environment variables and secrets
 .env
 .env.*
 !.env.example
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+
+# Local project data
+scan_history.json
+server_test_results.csv
+
+# Private trained model weights
+*.safetensors
+*.pt
+*.pth
+*.bin
+*.onnx
+
+# Private model directories
+private_models/
+checkpoints/
+weights/
+
+# Archives
 *.zip
 
+# OS files
 .DS_Store
+Thumbs.db
+# Vite cache
+.vite/
+
+# Private trained model weights
+*.safetensors
+*.pt
+*.pth
+*.bin
+*.onnx
+
+# Local private model storage
+private_models/

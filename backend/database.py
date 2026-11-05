@@ -1,8 +1,5 @@
 """
 Database setup and models (PostgreSQL via SQLAlchemy).
-
-Connection string comes from DATABASE_URL in .env, for example:
-    DATABASE_URL=postgresql://postgres:postgres@localhost:5432/polyguard
 """
 
 import os
@@ -70,6 +67,16 @@ class User(Base):
         String(255), unique=True, index=True, nullable=False
     )
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    # Python default False applies to newly-created ORM users.
+    # Database default TRUE preserves existing users during migration.
+    email_verified: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        server_default=text("true"),
+        nullable=False,
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utc_now, nullable=False
     )
@@ -80,13 +87,50 @@ class User(Base):
         passive_deletes=True,
     )
 
+    email_verification: Mapped["EmailVerification | None"] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+        uselist=False,
+        passive_deletes=True,
+    )
+
     def to_dict(self) -> dict:
         return {
             "id": self.id,
             "name": self.name,
             "email": self.email,
+            "email_verified": self.email_verified,
             "created_at": self.created_at.isoformat(),
         }
+
+
+class EmailVerification(Base):
+    __tablename__ = "email_verifications"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        unique=True,
+        index=True,
+        nullable=False,
+    )
+
+    otp_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+
+    sent_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+
+    attempts: Mapped[int] = mapped_column(
+        Integer, default=0, nullable=False
+    )
+
+    user: Mapped[User] = relationship(back_populates="email_verification")
 
 
 class Scan(Base):
@@ -112,7 +156,7 @@ class Scan(Base):
     vulnerable_probability: Mapped[float] = mapped_column(Float, nullable=False)
     overall_risk: Mapped[str] = mapped_column(String(20), nullable=False)
     chunk_count: Mapped[int] = mapped_column(Integer, nullable=False)
-    # Decision threshold and model used for this scan (older scans: NULL = 0.5 / original model)
+
     threshold: Mapped[float | None] = mapped_column(Float, nullable=True)
     model_version: Mapped[str | None] = mapped_column(String(120), nullable=True)
 
@@ -161,15 +205,24 @@ class Scan(Base):
 
 
 def init_db() -> None:
-    """Create tables if they do not exist yet, and add newer columns to old tables."""
+    """Create tables and migrate older databases."""
     Base.metadata.create_all(engine)
 
-    # Small migration for databases created before these columns existed.
     if engine.dialect.name == "postgresql":
         with engine.begin() as connection:
             connection.execute(text(
-                "ALTER TABLE scans ADD COLUMN IF NOT EXISTS threshold DOUBLE PRECISION"
+                "ALTER TABLE scans "
+                "ADD COLUMN IF NOT EXISTS threshold DOUBLE PRECISION"
             ))
+
             connection.execute(text(
-                "ALTER TABLE scans ADD COLUMN IF NOT EXISTS model_version VARCHAR(120)"
+                "ALTER TABLE scans "
+                "ADD COLUMN IF NOT EXISTS model_version VARCHAR(120)"
+            ))
+
+            # Existing accounts stay verified.
+            connection.execute(text(
+                "ALTER TABLE users "
+                "ADD COLUMN IF NOT EXISTS email_verified "
+                "BOOLEAN NOT NULL DEFAULT TRUE"
             ))
