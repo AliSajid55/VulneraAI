@@ -116,14 +116,14 @@ def _send_email(to_email: str, code: str) -> None:
         )
 
     message = EmailMessage()
-    message["Subject"] = "Verify your PolyGuard account"
+    message["Subject"] = "Verify your VulneraAI account"
     message["From"] = smtp_email
     message["To"] = to_email
 
     message.set_content(
         f"""Hello,
 
-Thank you for signing up for PolyGuard.
+Thank you for signing up for VulneraAI.
 
 Your email verification code is:
 
@@ -133,7 +133,7 @@ This code expires in {OTP_EXPIRY_MINUTES} minutes.
 
 If you did not create this account, you can ignore this email.
 
-PolyGuard Security Team
+VulneraAI Security Team
 """
     )
 
@@ -196,7 +196,7 @@ def issue_verification_code(user: User):
         SessionLocal.delete(verification)
         SessionLocal.commit()
 
-        print("PolyGuard verification email could not be sent.")
+        print("VulneraAI verification email could not be sent.")
         return (
             False,
             "We could not send the verification email. Check SMTP settings and try again.",
@@ -222,14 +222,14 @@ def _send_password_reset_email(to_email: str, code: str) -> None:
         )
 
     message = EmailMessage()
-    message["Subject"] = "PolyGuard Password Reset Code"
+    message["Subject"] = "VulneraAI Password Reset Code"
     message["From"] = smtp_email
     message["To"] = to_email
 
     message.set_content(
         f"""Hello,
 
-We received a request to reset your PolyGuard password.
+We received a request to reset your VulneraAI password.
 
 Your password reset code is:
 
@@ -239,7 +239,7 @@ This code expires in {PASSWORD_RESET_EXPIRY_MINUTES} minutes.
 
 If you did not request this reset, please ignore this email.
 
-PolyGuard Security Team
+VulneraAI Security Team
 """
     )
 
@@ -659,7 +659,7 @@ def forgot_password():
         _send_password_reset_email(user.email, code)
     except Exception:
         password_reset_otps.pop(email, None)
-        print("PolyGuard password reset email could not be sent.")
+        print("VulneraAI password reset email could not be sent.")
         return error(
             "We could not send the reset email. Please try again later.",
             503,

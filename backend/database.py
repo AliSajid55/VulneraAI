@@ -25,7 +25,7 @@ from sqlalchemy.orm import (
     sessionmaker,
 )
 
-DEFAULT_DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/polyguard"
+DEFAULT_DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/VulneraAI"
 
 
 def _normalize_database_url(url: str) -> str:
