@@ -1,99 +1,398 @@
-// Small fetch wrapper for the Flask backend.
-// The token is kept in localStorage so the user stays logged in after a refresh.
 
-export const API_URL: string =
-  (import.meta as unknown as { env?: Record<string, string> }).env
-    ?.VITE_API_URL || "http://127.0.0.1:5000";
+// ==================================================
+// VulneraAI - Centralized API Wrapper
+// HttpOnly Cookies + PostgreSQL Sessions + CSRF
+// ==================================================
 
-const TOKEN_KEY = "polyguard_token";
+// --------------------------------------------------
+// API Configuration
+// --------------------------------------------------
+
+const env = (import.meta as ImportMeta & {
+  env?: Record<string, string | undefined>;
+}).env;
+
+export const API_URL = (
+  env?.VITE_API_URL || "http://localhost:5000"
+).replace(/\/+$/, "");
+
+// --------------------------------------------------
+// CSRF Configuration
+// --------------------------------------------------
+
+const CSRF_HEADER = "X-CSRF-Token";
+const CSRF_ENDPOINT = "/api/auth/csrf-token";
+
+let csrfToken: string | null = null;
+let csrfTokenPromise: Promise<string> | null = null;
+
+const CSRF_PROTECTED_METHODS = new Set([
+  "POST",
+  "PUT",
+  "PATCH",
+  "DELETE",
+]);
+
+// --------------------------------------------------
+// API Error
+// --------------------------------------------------
 
 export class ApiError extends Error {
   status: number;
 
   constructor(message: string, status: number) {
     super(message);
+    this.name = "ApiError";
     this.status = status;
   }
 }
 
+// --------------------------------------------------
+// Legacy JWT Compatibility
+// --------------------------------------------------
+
+/** @deprecated Authentication now uses HttpOnly cookies. */
 export function getToken(): string | null {
+  return null;
+}
+
+/** @deprecated Authentication now uses HttpOnly cookies. */
+export function setToken(_token: string | null): void {
+  // Intentionally disabled.
+}
+
+// --------------------------------------------------
+// Session Expiration
+// --------------------------------------------------
+
+export const SESSION_EXPIRED_EVENT =
+  "vulneraai:session-expired";
+
+// --------------------------------------------------
+// Clear CSRF Token
+// --------------------------------------------------
+
+export function clearCsrfToken(): void {
+  csrfToken = null;
+  csrfTokenPromise = null;
+}
+
+// --------------------------------------------------
+// Fetch CSRF Token
+// --------------------------------------------------
+
+async function fetchCsrfToken(): Promise<string> {
+  let response: Response;
+
   try {
-    return localStorage.getItem(TOKEN_KEY);
+    response = await fetch(
+      `${API_URL}${CSRF_ENDPOINT}`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+        },
+        cache: "no-store",
+      }
+    );
+  } catch (error) {
+    console.error("CSRF request failed:", error);
+
+    throw new ApiError(
+      `Cannot connect to ${API_URL}. Check backend availability and browser CORS errors.`,
+      0
+    );
+  }
+
+  if (!response.ok) {
+    throw new ApiError(
+      `CSRF initialization failed (${response.status}).`,
+      response.status
+    );
+  }
+
+  let data: { csrf_token?: string };
+
+  try {
+    data = await response.json();
   } catch {
-    return null;
+    throw new ApiError(
+      "Invalid CSRF response from backend.",
+      500
+    );
+  }
+
+  if (
+    typeof data.csrf_token !== "string" ||
+    !data.csrf_token
+  ) {
+    throw new ApiError(
+      "Backend did not return a valid CSRF token.",
+      500
+    );
+  }
+
+  csrfToken = data.csrf_token;
+
+  return csrfToken;
+}
+
+// --------------------------------------------------
+// Get CSRF Token
+// --------------------------------------------------
+
+async function getCsrfToken(): Promise<string> {
+  if (csrfToken) {
+    return csrfToken;
+  }
+
+  if (!csrfTokenPromise) {
+    const pending = fetchCsrfToken();
+
+    csrfTokenPromise = pending;
+
+    try {
+      return await pending;
+    } finally {
+      if (csrfTokenPromise === pending) {
+        csrfTokenPromise = null;
+      }
+    }
+  }
+
+  return csrfTokenPromise;
+}
+
+// --------------------------------------------------
+// Capture Rotated CSRF Token
+// --------------------------------------------------
+
+async function updateCsrfTokenFromResponse(
+  response: Response
+): Promise<void> {
+  const contentType =
+    response.headers.get("Content-Type") || "";
+
+  if (!contentType.includes("application/json")) {
+    return;
+  }
+
+  try {
+    const data = await response.clone().json();
+
+    if (
+      typeof data.csrf_token === "string" &&
+      data.csrf_token
+    ) {
+      csrfToken = data.csrf_token;
+    }
+  } catch {
+    // Ignore invalid JSON.
   }
 }
 
-export function setToken(token: string | null) {
-  try {
-    if (token) localStorage.setItem(TOKEN_KEY, token);
-    else localStorage.removeItem(TOKEN_KEY);
-  } catch {
-    // Storage blocked: the session only lasts until the page is closed.
-  }
+// --------------------------------------------------
+// Public Authentication Endpoints
+// --------------------------------------------------
+
+function isPublicAuthEndpoint(path: string): boolean {
+  const endpoint = path.split("?")[0];
+
+  return [
+    "/api/auth/signup",
+    "/api/auth/login",
+    "/api/auth/verify-email",
+    "/api/auth/resend-verification",
+    "/api/auth/forgot-password",
+    "/api/auth/verify-reset-otp",
+    "/api/auth/reset-password",
+  ].includes(endpoint);
 }
 
-/** Fired when the backend says the session is no longer valid. */
-export const SESSION_EXPIRED_EVENT = "polyguard:session-expired";
+// --------------------------------------------------
+// Session Invalidation
+// --------------------------------------------------
 
-async function request(path: string, options: RequestInit = {}): Promise<Response> {
+function invalidatesCurrentSession(
+  path: string,
+  method: string
+): boolean {
+  const endpoint = path.split("?")[0];
+
+  return (
+    endpoint === "/api/auth/logout" ||
+    endpoint === "/api/auth/change-password" ||
+    endpoint === "/api/auth/reset-password" ||
+    (
+      endpoint === "/api/auth/me" &&
+      method === "DELETE"
+    )
+  );
+}
+
+// --------------------------------------------------
+// Main Request Function
+// --------------------------------------------------
+
+async function request(
+  path: string,
+  options: RequestInit = {}
+): Promise<Response> {
+  const method = (
+    options.method || "GET"
+  ).toUpperCase();
+
   const headers = new Headers(options.headers);
-  const token = getToken();
 
-  if (token) headers.set("Authorization", `Bearer ${token}`);
-  if (options.body && !headers.has("Content-Type")) {
+  if (!headers.has("Accept")) {
+    headers.set("Accept", "application/json");
+  }
+
+  // Set JSON Content-Type only for JSON string bodies.
+  // Never manually set Content-Type for FormData.
+
+  if (
+    typeof options.body === "string" &&
+    !headers.has("Content-Type")
+  ) {
     headers.set("Content-Type", "application/json");
+  }
+
+  // Attach CSRF token to unsafe methods.
+
+  if (CSRF_PROTECTED_METHODS.has(method)) {
+    const token = await getCsrfToken();
+
+    headers.set(CSRF_HEADER, token);
   }
 
   let response: Response;
 
   try {
-    response = await fetch(`${API_URL}${path}`, { ...options, headers });
-  } catch {
+    response = await fetch(
+      `${API_URL}${path}`,
+      {
+        ...options,
+        method,
+        headers,
+        credentials: "include",
+      }
+    );
+  } catch (error) {
+    console.error(
+      `API request failed: ${method} ${path}`,
+      error
+    );
+
     throw new ApiError(
-      `Could not reach the server. Check that the backend is running at ${API_URL}.`,
+      `Network request failed for ${API_URL}${path}. Check the backend, CORS configuration and browser console.`,
       0
     );
   }
 
-  if (response.status === 401 && token) {
-    window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
+  // Handle expired sessions.
+
+  if (
+    response.status === 401 &&
+    !isPublicAuthEndpoint(path)
+  ) {
+    clearCsrfToken();
+
+    window.dispatchEvent(
+      new Event(SESSION_EXPIRED_EVENT)
+    );
   }
+
+  // Handle API errors.
 
   if (!response.ok) {
     let message = `Request failed (${response.status}).`;
+
     try {
       const data = await response.json();
-      if (data && typeof data.error === "string") message = data.error;
+
+      if (typeof data.error === "string") {
+        message = data.error;
+      } else if (typeof data.message === "string") {
+        message = data.message;
+      }
     } catch {
-      // Not JSON; keep the default message.
+      // Use default error message.
     }
+
+    if (response.status === 403) {
+      clearCsrfToken();
+    }
+
     throw new ApiError(message, response.status);
+  }
+
+  // Capture rotated CSRF token.
+
+  await updateCsrfTokenFromResponse(response);
+
+  // Clear token after session invalidation.
+
+  if (invalidatesCurrentSession(path, method)) {
+    clearCsrfToken();
   }
 
   return response;
 }
 
-export async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
+// --------------------------------------------------
+// Public API Function
+// --------------------------------------------------
+
+export async function api<T>(
+  path: string,
+  options: RequestInit = {}
+): Promise<T> {
   const response = await request(path, options);
+
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
   return (await response.json()) as T;
 }
 
-/** Download a file (e.g. CSV export) from an authenticated endpoint. */
-export async function downloadFile(path: string, fallbackName: string) {
+// --------------------------------------------------
+// File Download
+// --------------------------------------------------
+
+export async function downloadFile(
+  path: string,
+  fallbackName: string
+): Promise<void> {
   const response = await request(path);
+
   const blob = await response.blob();
 
-  const disposition = response.headers.get("Content-Disposition") || "";
-  const match = disposition.match(/filename="?([^"]+)"?/);
-  const filename = match ? match[1] : fallbackName;
+  const disposition =
+    response.headers.get("Content-Disposition") || "";
+
+  const match = disposition.match(
+    /filename\*?=(?:UTF-8''|")?([^";]+)/i
+  );
+
+  const filename = match
+    ? decodeURIComponent(match[1].replace(/"/g, ""))
+    : fallbackName;
 
   const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
+
+  try {
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = filename;
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } finally {
+    URL.revokeObjectURL(url);
+  }
 }

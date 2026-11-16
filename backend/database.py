@@ -1,5 +1,7 @@
+
 """
 Database setup and models (PostgreSQL via SQLAlchemy).
+VulneraAI - PostgreSQL / Neon
 """
 
 import os
@@ -11,6 +13,7 @@ from sqlalchemy import (
     Float,
     ForeignKey,
     Integer,
+    JSON,
     String,
     Text,
     create_engine,
@@ -25,11 +28,12 @@ from sqlalchemy.orm import (
     sessionmaker,
 )
 
-DEFAULT_DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/VulneraAI"
+DEFAULT_DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/vulneraai"
 
 
 def _normalize_database_url(url: str) -> str:
-    """Use the psycopg (v3) driver for plain postgresql:// URLs."""
+    """Use the psycopg (v3) driver for plain PostgreSQL URLs."""
+
     if url.startswith("postgres://"):
         url = "postgresql://" + url[len("postgres://"):]
 
@@ -43,33 +47,67 @@ DATABASE_URL = _normalize_database_url(
     os.getenv("DATABASE_URL", DEFAULT_DATABASE_URL)
 )
 
-engine = create_engine(DATABASE_URL, pool_pre_ping=True, future=True)
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+    future=True,
+)
 
 SessionLocal = scoped_session(
-    sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
+    sessionmaker(
+        bind=engine,
+        autoflush=False,
+        expire_on_commit=False,
+    )
 )
 
 
+# ============================================================
+# TIME UTILITY
+# ============================================================
+
 def utc_now() -> datetime:
+    """Return current UTC datetime."""
     return datetime.now(timezone.utc)
 
+
+# ============================================================
+# BASE MODEL
+# ============================================================
 
 class Base(DeclarativeBase):
     pass
 
 
+# ============================================================
+# USER MODEL
+# ============================================================
+
 class User(Base):
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(120), nullable=False)
-    email: Mapped[str] = mapped_column(
-        String(255), unique=True, index=True, nullable=False
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
     )
-    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    # Python default False applies to newly-created ORM users.
-    # Database default TRUE preserves existing users during migration.
+    name: Mapped[str] = mapped_column(
+        String(120),
+        nullable=False,
+    )
+
+    email: Mapped[str] = mapped_column(
+        String(255),
+        unique=True,
+        index=True,
+        nullable=False,
+    )
+
+    password_hash: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
+
     email_verified: Mapped[bool] = mapped_column(
         Boolean,
         default=False,
@@ -78,7 +116,9 @@ class User(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=utc_now, nullable=False
+        DateTime(timezone=True),
+        default=utc_now,
+        nullable=False,
     )
 
     scans: Mapped[list["Scan"]] = relationship(
@@ -104,10 +144,17 @@ class User(Base):
         }
 
 
+# ============================================================
+# EMAIL VERIFICATION MODEL
+# ============================================================
+
 class EmailVerification(Base):
     __tablename__ = "email_verifications"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+    )
 
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -116,60 +163,183 @@ class EmailVerification(Base):
         nullable=False,
     )
 
-    otp_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    otp_hash: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
 
     expires_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False
+        DateTime(timezone=True),
+        nullable=False,
     )
 
     sent_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False
+        DateTime(timezone=True),
+        nullable=False,
     )
 
     attempts: Mapped[int] = mapped_column(
-        Integer, default=0, nullable=False
+        Integer,
+        default=0,
+        nullable=False,
     )
 
-    user: Mapped[User] = relationship(back_populates="email_verification")
+    user: Mapped[User] = relationship(
+        back_populates="email_verification"
+    )
 
+
+# ============================================================
+# AUTHENTICATION SESSION MODEL
+# ============================================================
+
+class AuthSession(Base):
+    """
+    Stores server-side authentication sessions.
+
+    The browser receives a random session ID in an HttpOnly cookie.
+    Only its SHA-256 hash is stored in this database table.
+
+    Actual session data remains on the server.
+    """
+
+    __tablename__ = "auth_sessions"
+
+    # SHA-256 hash of the browser's session ID
+    session_id_hash: Mapped[str] = mapped_column(
+        String(64),
+        primary_key=True,
+    )
+
+    # Server-side session data
+    session_data: Mapped[dict] = mapped_column(
+        JSON,
+        nullable=False,
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utc_now,
+        nullable=False,
+    )
+
+    expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        index=True,
+    )
+
+
+# ============================================================
+# SCAN MODEL
+# ============================================================
 
 class Scan(Base):
     __tablename__ = "scans"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+    )
+
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
         index=True,
         nullable=False,
     )
+
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=utc_now, index=True, nullable=False
+        DateTime(timezone=True),
+        default=utc_now,
+        index=True,
+        nullable=False,
     )
 
-    title: Mapped[str] = mapped_column(String(200), nullable=False)
-    language: Mapped[str] = mapped_column(String(40), nullable=False)
-    code: Mapped[str] = mapped_column(Text, nullable=False)
-    total_lines: Mapped[int] = mapped_column(Integer, nullable=False)
+    title: Mapped[str] = mapped_column(
+        String(200),
+        nullable=False,
+    )
 
-    prediction: Mapped[str] = mapped_column(String(20), index=True, nullable=False)
-    confidence: Mapped[float] = mapped_column(Float, nullable=False)
-    vulnerable_probability: Mapped[float] = mapped_column(Float, nullable=False)
-    overall_risk: Mapped[str] = mapped_column(String(20), nullable=False)
-    chunk_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    language: Mapped[str] = mapped_column(
+        String(40),
+        nullable=False,
+    )
 
-    threshold: Mapped[float | None] = mapped_column(Float, nullable=True)
-    model_version: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    code: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
+    )
 
-    ai_available: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    ai_model: Mapped[str | None] = mapped_column(String(80), nullable=True)
-    ai_explanation: Mapped[str | None] = mapped_column(Text, nullable=True)
+    total_lines: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+    )
 
-    user: Mapped[User] = relationship(back_populates="scans")
+    prediction: Mapped[str] = mapped_column(
+        String(20),
+        index=True,
+        nullable=False,
+    )
+
+    confidence: Mapped[float] = mapped_column(
+        Float,
+        nullable=False,
+    )
+
+    vulnerable_probability: Mapped[float] = mapped_column(
+        Float,
+        nullable=False,
+    )
+
+    overall_risk: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+    )
+
+    chunk_count: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+    )
+
+    threshold: Mapped[float | None] = mapped_column(
+        Float,
+        nullable=True,
+    )
+
+    model_version: Mapped[str | None] = mapped_column(
+        String(120),
+        nullable=True,
+    )
+
+    ai_available: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False,
+    )
+
+    ai_model: Mapped[str | None] = mapped_column(
+        String(80),
+        nullable=True,
+    )
+
+    ai_explanation: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
+    user: Mapped[User] = relationship(
+        back_populates="scans"
+    )
 
     def to_summary(self) -> dict:
         """Short version for lists and tables."""
+
         first_line = next(
-            (line.strip() for line in self.code.splitlines() if line.strip()),
+            (
+                line.strip()
+                for line in self.code.splitlines()
+                if line.strip()
+            ),
             "",
         )
 
@@ -183,7 +353,11 @@ class Scan(Base):
             "confidence": self.confidence,
             "vulnerable_probability": self.vulnerable_probability,
             "overall_risk": self.overall_risk,
-            "threshold": self.threshold if self.threshold is not None else 0.5,
+            "threshold": (
+                self.threshold
+                if self.threshold is not None
+                else 0.5
+            ),
             "model_version": self.model_version,
             "ai_available": self.ai_available,
             "code_preview": first_line[:120],
@@ -191,7 +365,9 @@ class Scan(Base):
 
     def to_detail(self) -> dict:
         """Full version, shaped like the /api/scan response."""
+
         data = self.to_summary()
+
         data.update({
             "code": self.code,
             "chunk_count": self.chunk_count,
@@ -201,15 +377,29 @@ class Scan(Base):
                 "explanation": self.ai_explanation or "",
             },
         })
+
         return data
 
 
+# ============================================================
+# DATABASE INITIALIZATION AND MIGRATIONS
+# ============================================================
+
 def init_db() -> None:
-    """Create tables and migrate older databases."""
+    """
+    Create tables and migrate older databases.
+
+    Existing users, scans and verification records are preserved.
+    The auth_sessions table is created for server-side sessions.
+    """
+
     Base.metadata.create_all(engine)
 
     if engine.dialect.name == "postgresql":
+
         with engine.begin() as connection:
+
+            # Add missing scan columns to older databases.
             connection.execute(text(
                 "ALTER TABLE scans "
                 "ADD COLUMN IF NOT EXISTS threshold DOUBLE PRECISION"
@@ -226,3 +416,12 @@ def init_db() -> None:
                 "ADD COLUMN IF NOT EXISTS email_verified "
                 "BOOLEAN NOT NULL DEFAULT TRUE"
             ))
+
+
+# ============================================================
+# DATABASE CLEANUP
+# ============================================================
+
+def close_db_session() -> None:
+    """Remove the current scoped SQLAlchemy session."""
+    SessionLocal.remove()
