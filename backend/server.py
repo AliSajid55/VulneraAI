@@ -866,7 +866,7 @@ def export_scans_csv():
             "yes" if scan.ai_available else "no",
         ])
 
-    filename = f"polyguard-scans-{datetime.now().strftime('%Y%m%d')}.csv"
+    filename = f"vulneraai-scans-{datetime.now().strftime('%Y%m%d')}.csv"
 
     return Response(
         buffer.getvalue(),

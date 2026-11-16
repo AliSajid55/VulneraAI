@@ -28,11 +28,6 @@ from sqlalchemy.orm import (
     sessionmaker,
 )
 
-
-# ============================================================
-# DATABASE CONFIGURATION
-# ============================================================
-
 DEFAULT_DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/vulneraai"
 
 

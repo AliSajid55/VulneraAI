@@ -540,7 +540,6 @@ def issue_verification_code(user: User):
         SessionLocal.commit()
 
         print("VulneraAI verification email could not be sent.")
-
         return (
             False,
             "We could not send the verification email. Check SMTP settings and try again.",
