@@ -6,12 +6,13 @@
 
 **Scan code. Understand predictions. Track every review.**
 
-A code review dashboard powered by fine-tuned Classification model, with LLM explanations and a personal scan history.
+An intelligent code security platform that analyzes source code using a fine-tuned machine learning model, provides AI-powered explanations, and helps developers understand potential security risks through an interactive dashboard.
 
 ![React](https://img.shields.io/badge/React-TypeScript-61DAFB?style=flat-square&logo=react&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-Flask-3776AB?style=flat-square&logo=python&logoColor=white)
-![Model](https://img.shields.io/badge/AI-BERT-8B5CF6?style=flat-square)
+![AI](https://img.shields.io/badge/AI-Fine--Tuned%20Model-8B5CF6?style=flat-square)
 ![Database](https://img.shields.io/badge/Database-PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+![Security](https://img.shields.io/badge/Security-Session%20Based-16A34A?style=flat-square)
 
 [Features](#features) · [Screenshots](#screenshots) · [Architecture](#architecture) · [Setup](#getting-started) · [API](#api-reference) · [Evaluation](#evaluation)
 
@@ -21,9 +22,13 @@ A code review dashboard powered by fine-tuned Classification model, with LLM exp
 
 ## Overview
 
-VulneraAI classifies submitted code as **safe** or **vulnerable** using a fine-tuned GraphCodeBERT model. An LLM turns the prediction into a readable summary, potential concerns, and suggested remediation. Authenticated users can review results, explore activity, and export their scan history.
+**VulneraAI** is an AI-powered code vulnerability scanning platform designed to help developers identify potential security weaknesses in source code.
 
-> **Research prototype:** predictions can contain false positives and false negatives. A “safe” result does not establish that code is secure. Review the evaluation and limitations before interpreting results.
+It uses a fine-tuned machine learning model to classify submitted code as **Safe** or **Vulnerable**. An integrated LLM generates easy-to-understand explanations, highlights potential security concerns, and suggests possible improvements.
+
+The platform also provides secure user authentication, email verification, password recovery, scan history, dashboard analytics, and downloadable reports.
+
+> **Research prototype:** Predictions may contain false positives and false negatives. A "Safe" result does not guarantee that code is completely secure. Always review the code and consider additional security testing.
 
 ### Technology stack
 
@@ -31,10 +36,13 @@ VulneraAI classifies submitted code as **safe** or **vulnerable** using a fine-t
 | :--- | :--- |
 | Frontend | React, TypeScript, Vite, Tailwind CSS, React Router |
 | Backend | Python, Flask, SQLAlchemy |
-| Inference | PyTorch, Hugging Face Transformers, fine-tuned GraphCodeBERT |
-| Explanations | LLM API |
-| Persistence | PostgreSQL |
-| Authentication | JWT tokens, Werkzeug password hashing |
+| Machine Learning | PyTorch, Hugging Face Transformers, Fine-Tuned Model |
+| AI Explanations | Google Gemini API |
+| Database | PostgreSQL / Neon PostgreSQL |
+| Authentication | Server-Side Sessions, HTTP-Only Cookies |
+| Application Security | CSRF Protection, CORS, Password Hashing |
+| Email Service | Gmail SMTP |
+| Reporting | jsPDF, CSV Export |
 
 ---
 
@@ -44,16 +52,33 @@ VulneraAI classifies submitted code as **safe** or **vulnerable** using a fine-t
 
 | Workspace | Implemented capabilities |
 | :--- | :--- |
-| **Dashboard** | Total, safe and vulnerable scan counts; total lines; average confidence; sparklines; 14-day activity; result donut; top six language groups; five recent scans |
-| **Scanner** | Paste code, upload or drag a file, use example snippets, add a title, and submit with `⌘ Enter` / `Ctrl Enter` |
-| **Results** | Whole-snippet verdict, vulnerable probability, decision threshold, confidence, AI explanation, and PDF download |
-| **History** | Debounced search across titles and code, result/language filters, sorting, pagination, individual details, deletion, and filtered CSV export |
-| **Account** | Signup/login, profile updates, password changes, logout, and password-confirmed account deletion with associated scans |
-| **Interface** | Dark indigo workspace, responsive sidebar/mobile drawer, loading skeletons, toasts, empty states, and backend status polling every 30 seconds |
+| **Dashboard** | Total, safe and vulnerable scan counts; total lines; average confidence; scan activity; result distribution; language statistics; recent scans |
+| **Scanner** | Paste code, upload or drag a file, use example snippets, add a title, and submit with `Ctrl + Enter` |
+| **Results** | Whole-snippet verdict, vulnerable probability, decision threshold, confidence score, AI explanation, and PDF download |
+| **History** | Search previous scans, filter by result and language, sort records, pagination, individual scan details, deletion, and CSV export |
+| **Authentication** | User registration, email verification, secure login, session management, OTP resend, forgot password, and password reset |
+| **Account** | Profile updates, password changes, logout, and password-confirmed account deletion |
+| **Security** | HTTP-only session cookies, server-side sessions, CSRF protection, password hashing, and configurable cookie security |
+| **Interface** | Dark indigo workspace, responsive sidebar/mobile drawer, loading skeletons, notifications, empty states, and backend status polling |
 
-**Language options:** Python, JavaScript, TypeScript, Java, C++, C, Go, Swift, and “Auto detect.” File extensions select a language when uploading; pasted code is not automatically classified by language. The language value provides explanation context and history metadata; it does not change GraphCodeBERT inference. Language options do not establish validated detection accuracy for each language.
+**Language options:** Python, JavaScript, TypeScript, Java, C++, C, Go, Swift, and "Auto detect." File extensions select a language when uploading; pasted code is not automatically classified by language. The language value provides explanation context and history metadata; it does not independently change model inference. Language options do not establish validated detection accuracy for each language.
 
-**Input limits:** uploaded files are limited to 100,000 bytes in the frontend; API code submissions are limited to 100,000 characters. Uploaded files are read as text in the browser and submitted as JSON.
+**Input limits:** Uploaded files are limited to 100,000 bytes in the frontend; API code submissions are limited to 100,000 characters. Uploaded files are read as text in the browser and submitted as JSON.
+
+### 🔐 Authentication & Security
+
+| Security feature | How it works |
+| :--- | :--- |
+| **Email Verification** | Sends a one-time verification code to the user's registered email address. |
+| **Secure Login** | Authenticates users and establishes a server-side session. |
+| **HTTP-Only Cookies** | Stores the session identifier in a cookie that JavaScript cannot directly access. |
+| **CSRF Protection** | Uses CSRF tokens to help protect authenticated requests. |
+| **Session Management** | Maintains authentication sessions on the backend using PostgreSQL. |
+| **OTP Resend** | Allows users to request another verification code. |
+| **Forgot Password** | Sends a password-reset OTP to the registered email address. |
+| **Password Reset** | Verifies the OTP before allowing a password change. |
+| **Password Hashing** | Stores password hashes instead of plain-text passwords. |
+| **Logout** | Ends the authenticated session. |
 
 ---
 
@@ -99,31 +124,50 @@ VulneraAI classifies submitted code as **safe** or **vulnerable** using a fine-t
 
 ```mermaid
 flowchart TD
-    UI["React workspace"] --> API["Flask REST API"]
-    API --> Auth["JWT authentication"]
-    API --> Model["Local GraphCodeBERT inference"]
-    Model --> Rule["Aggregation and threshold"]
-    Rule --> LLM["AI explanation"]
-    LLM --> DB["PostgreSQL scan history"]
-    DB --> UI
+    User["User"] --> UI["React + TypeScript Frontend"]
+
+    UI --> Auth["Flask Authentication API"]
+    Auth --> OTP["Email OTP Verification"]
+    OTP --> SMTP["Gmail SMTP"]
+
+    Auth --> Session["Server-Side Session"]
+    Session --> DB["PostgreSQL / Neon"]
+
+    UI --> API["Flask REST API"]
+    API --> CSRF["CSRF Validation"]
+    CSRF --> Model["Fine-Tuned Model"]
+    Model --> Rule["Aggregation & Threshold"]
+    Rule --> LLM["AI Explanation"]
+
+    LLM --> Save["Save Scan & Explanation"]
+    Save --> DB
+
+    DB --> Dashboard["Dashboard & Scan History"]
+    Dashboard --> UI
 ```
 
-The diagram shows the authenticated scan path. The public `/api/predict` route runs inference without AI explanations or database writes. PDF reports are generated in the browser with jsPDF; CSV history exports are generated by Flask. Dashboard charts use lightweight SVG/CSS components.
+The diagram shows the main application flow. Authentication and scan operations are handled by Flask, while PostgreSQL stores user accounts, authentication sessions and scan records.
 
-**Data handling:** authenticated scans store the submitted code and explanation in PostgreSQL. For the explanation, the backend sends up to the first **12,000 characters** of code, together with the prediction, confidence, and language, to an external LLM API. Leave `GEMINI_API_KEY` unset to disable that external explanation request.
+The public `/api/predict` route runs inference without AI explanations or database writes. PDF reports are generated in the browser with jsPDF; CSV history exports are generated by Flask. Dashboard charts use lightweight SVG/CSS components.
+
+**Data handling:** Authenticated scans store the submitted code and explanation in PostgreSQL. For the explanation, the backend sends up to the first **12,000 characters** of code, together with the prediction, confidence, and language, to the configured external LLM API. Leave `GEMINI_API_KEY` unset to disable that external explanation request.
 
 ---
 
 ## 🧠 How scanning works
 
-1. The frontend sends the code to `POST /api/scan` with the user's token.
-2. The backend **normalizes whitespace** (line endings, trailing spaces, leading/trailing blank lines), to reduce differences caused by line endings and surrounding whitespace.
-3. GraphCodeBERT scores the snippet. Long code is split into overlapping 512-token chunks (stride 128). Aggregation and the decision threshold depend on the loaded model configuration; see [Model configuration](#model-configuration).
-4. The vulnerable probability is compared with the configured threshold. The original model defaults to **0.5**; a v3 model can use validation-tuned thresholds.
-5. The LLM writes an explanation (summary, potential concerns, suggested remediation, limitations). The LLM only **explains** the result; it does not change the prediction.
-6. The scan and its explanation are saved to PostgreSQL.
+1. The user submits code through the React frontend.
+2. The frontend sends the request to the Flask backend.
+3. The backend normalizes whitespace, including line endings, trailing spaces and surrounding blank lines.
+4. The fine-tuned model analyzes the submitted code.
+5. Long code is split into overlapping 512-token chunks with a stride of 128.
+6. The chunk scores are combined using the configured aggregation rule.
+7. The vulnerable probability is compared with the configured decision threshold.
+8. The LLM generates an explanation containing a summary, potential concerns, suggested remediation and limitations.
+9. The scan and its explanation are saved in PostgreSQL for authenticated users.
+10. The frontend displays the result and makes it available in scan history.
 
-> The prediction applies to the **whole snippet**. The scanner does not point to specific vulnerable lines.
+> The prediction applies to the **whole snippet**. The scanner does not identify exact vulnerable lines.
 
 ---
 
@@ -134,46 +178,51 @@ The diagram shows the authenticated scan path. The public `/api/predict` route r
 ├── README.md
 ├── .gitignore
 ├── .gitattributes
-├── start-backend.ps1              # Launches the Flask backend
-├── start-frontend.ps1             # Launches the Vite dev server
+├── start-backend.ps1
+├── start-frontend.ps1
 │
-├── backend/                       # Python / Flask backend
-│   ├── server.py                  # Flask app: model inference, LLM explanations, scan/history/stats routes
-│   ├── auth.py                    # Signup, login, profile, password (JWT)
-│   ├── database.py                # PostgreSQL connection + User and Scan tables
-│   ├── server_backup.py           # Legacy JSON-file prototype (not used by the app)
-│   ├── model/                     # Fine-tuned GraphCodeBERT (weights stored with Git LFS)
-│   ├── model_v3/                  # v3 checkpoint + best_info.json scoring rule
-│   ├── .env.example               # Template for backend/.env
+├── backend/
+│   ├── server.py                  # Flask application, inference and API routes
+│   ├── auth.py                    # Authentication and session management
+│   ├── database.py                # PostgreSQL connection and database models
+│   ├── server_backup.py           # Legacy JSON-file prototype
+│   ├── model/                     # Fine-tuned model files
+│   ├── model_v3/                  # Optional model checkpoint and scoring metadata
+│   ├── .env.example               # Environment configuration template
 │   └── requirements.txt
 │
-├── frontend/                      # React + TypeScript frontend
+├── frontend/
 │   ├── index.html
 │   ├── package.json
+│   ├── package-lock.json
 │   ├── vite.config.js
 │   ├── tsconfig.json
 │   ├── tailwind.config.js
 │   ├── postcss.config.js
 │   └── src/
-│       ├── main.tsx               # Routes and protected pages
-│       ├── context/AuthContext.tsx  # Logged-in user and token
-│       ├── lib/                   # API client, formatting, PDF report
-│       ├── components/            # Layout, UI kit, charts, scan result view
-│       └── pages/                 # Login/Signup, Dashboard, Scan, History, Scan detail, Settings
+│       ├── main.tsx               # Application routes
+│       ├── context/
+│       │   └── AuthContext.tsx    # Authentication state
+│       ├── lib/
+│       │   ├── api.ts             # API client and request handling
+│       │   └── ...
+│       ├── components/            # Reusable UI components and charts
+│       └── pages/                 # Login, signup, dashboard, scan, history and settings
 │
-├── tests/                         # Evaluation suites and saved results
-│   ├── test.py                    # Small API-based evaluation suite
-│   ├── test_300.py                # Larger API-based evaluation runner
-│   ├── test_cases_300.py          # Hand-written cases; saved run contains 271
-│   ├── vulnerability_test_cases.py  # 16 labeled Python examples (8 safe, 8 vulnerable)
-│   ├── check_result_parity.py     # Live API parity checks
-│   ├── test_gemini.py             # LLM API connectivity check
-│   ├── test_result_contract.py    # Route-body contract test (no model/DB)
-│   ├── test_300_summary.csv       # Committed aggregate results
-│   ├── test_300_results.csv       # Committed per-case predictions
-│   └── test_300_output.txt        # Saved run output and model/rule identification
+├── tests/                         # Evaluation suites and test results
+│   ├── test.py
+│   ├── test_300.py
+│   ├── test_cases_300.py
+│   ├── vulnerability_test_cases.py
+│   ├── check_result_parity.py
+│   ├── test_gemini.py
+│   ├── test_result_contract.py
+│   ├── test_300_summary.csv
+│   ├── test_300_results.csv
+│   └── test_300_output.txt
 │
-└── docs/screenshots/              # README screenshots
+└── docs/
+    └── screenshots/
 ```
 
 ---
@@ -183,8 +232,9 @@ The diagram shows the authenticated scan path. The public `/api/predict` route r
 - Python 3.10+
 - Node.js 18+
 - PostgreSQL 14+
-- Git **and Git LFS** (the model file is ~500 MB and stored with LFS)
-- An LLM API key (needed only for AI explanations)
+- Git and Git LFS
+- Google Gemini API key (optional, for AI explanations)
+- Gmail SMTP credentials (for email verification and password recovery)
 
 ---
 
@@ -196,72 +246,143 @@ The diagram shows the authenticated scan path. The public `/api/predict` route r
 
 ```bash
 git lfs install
-git clone https://github.com/yasmeenmh90-beep/AI-Powered-Multi-Language-Code-Vulnerability-Scanner.git
-cd AI-Powered-Multi-Language-Code-Vulnerability-Scanner
+git clone https://github.com/HadiaWaheed/VulneraAI.git
+cd VulneraAI
 git lfs pull
 ```
 
-Check that the model downloaded correctly. `backend/model/model.safetensors` should be about **476 MB**, not 134 bytes:
+Check that the model downloaded correctly. For the original model file, `backend/model/model.safetensors` should be approximately **476 MB**, not a small Git LFS pointer file.
 
 ```bash
 ls -lh backend/model/model.safetensors
 ```
 
-> On macOS, install Git LFS with `brew install git-lfs` if `git lfs` is not found.
+> On Windows, install Git LFS and restart the terminal if the `git lfs` command is not found.
 
 ### 2. PostgreSQL
 
-**macOS (Homebrew):**
+Install PostgreSQL and create the database configured in your backend.
+
+For example:
+
 ```bash
-brew install postgresql@16
-brew services start postgresql@16
 createdb polyguard
 ```
 
-**Windows / Linux:** install PostgreSQL from [postgresql.org](https://www.postgresql.org/download/), then create a database called `polyguard` (for example `createdb -U postgres polyguard`).
+For Windows:
 
-The tables (`users`, `scans`) are created automatically on startup. For older PostgreSQL tables, startup also adds missing `threshold` and `model_version` columns. Broader schema changes require a migration strategy.
+```powershell
+createdb -U postgres polyguard
+```
+
+Set the database connection string in `backend/.env`:
+
+```env
+DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/polyguard
+```
+
+For Neon PostgreSQL, use the connection string provided by your Neon project.
+
+The database stores user accounts, authentication sessions and scan records. Tables are created by the application during startup according to its database initialization logic.
 
 ### 3. Backend
 
+Create a Python virtual environment:
+
 ```bash
-python3 -m venv venv
-source venv/bin/activate          # Windows: .\venv\Scripts\Activate.ps1
-pip install -r backend/requirements.txt
-cp backend/.env.example backend/.env
+python -m venv venv
 ```
 
-Edit `backend/.env`:
+Activate it:
+
+```powershell
+# Windows PowerShell
+.\venv\Scripts\Activate.ps1
+```
+
+```bash
+# macOS / Linux
+source venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r backend/requirements.txt
+```
+
+Create your backend environment file:
+
+```powershell
+Copy-Item backend/.env.example backend/.env
+```
+
+Edit `backend/.env` and configure the required settings.
+
+### 4. Environment configuration
+
+The following is a reference configuration. Use the exact variable names provided by your current `backend/.env.example` and backend code.
 
 ```env
-# Homebrew on macOS usually uses your Mac username with no password:
-DATABASE_URL=postgresql://YOUR_MAC_USERNAME@localhost:5432/polyguard
-# With a "postgres" user and password:
-# DATABASE_URL=postgresql://postgres:postgres@localhost:5432/polyguard
+# Database
+DATABASE_URL=your_postgresql_connection_string
 
-JWT_SECRET_KEY=paste-a-long-random-string-here
-GEMINI_API_KEY=
+# Email / SMTP
+SMTP_EMAIL=your_email@gmail.com
+SMTP_PASSWORD=your_gmail_app_password
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
+
+# Session configuration
+SESSION_EXPIRES_HOURS=24
+SESSION_COOKIE_SECURE=false
+SESSION_COOKIE_SAMESITE=Lax
+
+# OTP security
+OTP_SECRET_KEY=your_generated_otp_secret
+
+# AI explanations
+GEMINI_API_KEY=your_gemini_api_key
 GEMINI_MODEL=your_supported_gemini_model
 GEMINI_TIMEOUT_SECONDS=120
 
+# Model configuration
 MODEL_DIR=model
 MAX_EVAL_CHUNKS=8
-JWT_EXPIRES_HOURS=24
 
-# Optional frontend override; restart Vite after editing
-VITE_API_URL=http://127.0.0.1:5000
+# Frontend API
+VITE_API_URL=http://localhost:5000
 ```
 
-Leave `GEMINI_API_KEY` empty for local inference without explanations. To enable explanations, set the key and choose a model available to your account that supports the generation settings used in `server.py`.
+**Configuration notes:**
 
-Generate a secret key with:
+- `DATABASE_URL`: Connects the backend to PostgreSQL or Neon.
+- `SMTP_EMAIL`: Email address used to send verification and password-reset OTPs.
+- `SMTP_PASSWORD`: Gmail App Password used for SMTP authentication.
+- `SMTP_SERVER`: SMTP server address.
+- `SMTP_PORT`: SMTP connection port.
+- `SESSION_EXPIRES_HOURS`: Configures the intended session lifetime.
+- `SESSION_COOKIE_SECURE`: Set to `true` for HTTPS production deployments.
+- `SESSION_COOKIE_SAMESITE`: Configures the cookie SameSite policy.
+- `OTP_SECRET_KEY`: Private secret used by the OTP implementation.
+- `GEMINI_API_KEY`: Enables AI-generated explanations.
+- `MODEL_DIR`: Selects the model directory.
+- `MAX_EVAL_CHUNKS`: Configures the maximum number of chunks evaluated.
+- `VITE_API_URL`: Backend API address used by the frontend.
+
+Generate a strong secret key when required:
+
 ```bash
-python -c "import secrets; print(secrets.token_hex(32))"
+python -c "import secrets; print(secrets.token_urlsafe(48))"
 ```
 
-`.env` is in `.gitignore`. **Never commit your API key or secret key.**
+**Email configuration:** Enable 2-Step Verification in your Google Account and generate a Gmail App Password. Use that App Password in `SMTP_PASSWORD`, not your regular Gmail password.
 
-### 4. Frontend
+**Important:** `SESSION_COOKIE_SECURE=false` is suitable for local HTTP development. Enable Secure cookies and HTTPS for production deployment. Never commit `.env`, SMTP credentials, API keys or secret keys to GitHub.
+
+### 5. Frontend
+
+Open a new terminal:
 
 ```bash
 cd frontend
@@ -272,33 +393,59 @@ npm ci
 
 <a id="model-configuration"></a>
 
-## ⚙️ Model configuration & v3 scoring
+## ⚙️ Model configuration & scoring
 
-**The repository contains `backend/model/`; the `backend/model_v3/` checkpoint and its training notebook are not included in the reviewed tree.** The saved larger evaluation used an external `model_v3` folder. A fresh clone therefore does not reproduce that run automatically.
+VulneraAI supports a fine-tuned model stored locally in the backend.
 
-The backend can load a compatible binary fine-tuned GraphCodeBERT folder saved with `save_pretrained()`, such as `outputs/graphcodebert_vuln_v3/best_model` from `GraphCodeBERT_Vuln_v3_PairAware.ipynb`.
+The default model directory is:
 
-1. Copy your compatible trained checkpoint into the project as `backend/model_v3/`, including `config.json`, model weights, and tokenizer files. Include **`best_info.json`** to apply the validation-selected scoring rule.
-2. Add to `backend/.env`:
-   ```env
-   MODEL_DIR=model_v3
-   ```
-3. Restart `python backend/server.py`. The startup log shows the rule in use, for example `Scoring rule: max @ 0.902 | from best_info.json (epoch 4)`.
+`backend/model/`
 
-How the backend scores code with a v3 model, matching the notebook's evaluation:
+An optional updated checkpoint can be placed in:
 
-- Code is split into 512-token chunks with stride 128, and only the **first 8 chunks** are scored.
-- The chunk scores are combined with the rule's aggregation (`max`, `top2` or `mean`) from `best_info.json`.
-- The decision uses the threshold tuned on validation. Length-aware thresholds per chunk-count bucket (1 / 2–3 / 4+) are also supported.
-- Without `best_info.json` (for example the original `backend/model/` folder), the backend falls back to `mean` with threshold 0.5.
-- The default **8-chunk cap applies to all model folders**, including `backend/model/`. Code beyond those chunks does not contribute to the classifier verdict. `/api/predict` reports both `chunk_count` (scored) and `total_chunks` (tokenized).
-- Inference uses CUDA when available, otherwise CPU; the current code does not select Apple MPS.
+`backend/model_v3/`
 
-**Confidence** in the UI is the distance from the threshold, scaled from 50% (exactly at the threshold) to 100% (a score of 0.0 or 1.0). With a 0.9 threshold, a score of 0.85 is "safe" but only just, so it shows about 53%, not 15%. The raw vulnerable probability and the threshold are shown in the result meter and the PDF.
+The optional checkpoint and its scoring metadata may need to be supplied separately.
 
-This confidence value is a **decision-margin display score**, not a calibrated probability that the prediction is correct.
+### Configure the model
 
-Each saved scan stores the threshold and the model folder name, so scans made with different models stay correct in the history.
+1. Place the compatible checkpoint inside the selected model directory.
+2. Include the required configuration, model weights and tokenizer files.
+3. Include `best_info.json` if using validation-selected scoring settings.
+4. Configure the model directory in `backend/.env`:
+
+```env
+MODEL_DIR=model_v3
+```
+
+5. Restart the backend:
+
+```bash
+python backend/server.py
+```
+
+The startup logs display the active scoring configuration when available.
+
+### Scoring process
+
+- Maximum sequence length: 512 tokens.
+- Chunk stride: 128 tokens.
+- Maximum evaluated chunks: 8.
+- Supported aggregation rules: `max`, `top2` and `mean`.
+- Validation-selected thresholds can be loaded from `best_info.json`.
+- Length-aware thresholds for different chunk-count groups are supported.
+- Without scoring metadata, the backend can fall back to mean aggregation and a threshold of 0.5, according to its configured implementation.
+- Inference uses CUDA when available and otherwise falls back to CPU.
+
+### Confidence score
+
+The confidence displayed in the interface represents the distance from the configured decision threshold.
+
+It is a **decision-margin display score**, not a calibrated probability that the prediction is correct.
+
+The vulnerable probability and decision threshold are displayed separately to make the prediction easier to understand.
+
+Each saved scan can retain its threshold and model version information so historical results remain associated with the configuration used during scanning.
 
 ---
 
@@ -306,19 +453,36 @@ Each saved scan stores the threshold and the model folder name, so scans made wi
 
 Open **two terminals** in the project folder.
 
-**Terminal 1: backend**
+**Terminal 1: Backend**
+
+```powershell
+# Windows PowerShell
+.\venv\Scripts\Activate.ps1
+python backend/server.py
+```
+
 ```bash
+# macOS / Linux
 source venv/bin/activate
 python backend/server.py
 ```
-Wait for `GraphCodeBERT loaded successfully.` The API runs at `http://127.0.0.1:5000`.
 
-**Terminal 2: frontend**
+The Flask API runs at:
+
+`http://127.0.0.1:5000`
+
+**Terminal 2: Frontend**
+
 ```bash
 cd frontend
 npm run dev
 ```
-Open **http://localhost:3000**, create an account, and start scanning.
+
+Open:
+
+**http://localhost:3000**
+
+Create an account, verify your email using the OTP, log in and start scanning.
 
 ---
 
@@ -326,38 +490,45 @@ Open **http://localhost:3000**, create an account, and start scanning.
 
 ## 🔌 API reference
 
-All endpoints except `/api/health`, `/api/predict`, `/api/auth/signup` and `/api/auth/login` need the header `Authorization: Bearer <token>`.
+VulneraAI provides REST API endpoints for authentication, scanning, dashboard statistics and scan history.
 
-**Auth**
+Authenticated endpoints use the session cookie and CSRF protection configured by the backend. The frontend API client handles credentialed requests and the required CSRF header.
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/auth/signup` | `{ name, email, password }` → `{ token, user }` |
-| `POST` | `/api/auth/login` | `{ email, password }` → `{ token, user }` |
-| `GET` | `/api/auth/me` | Current user |
-| `PATCH` | `/api/auth/me` | Update `{ name, email }` |
-| `POST` | `/api/auth/change-password` | `{ current_password, new_password }` |
-| `DELETE` | `/api/auth/me` | `{ password }`: deletes the account and all its scans |
+### Authentication
 
-**Scans**
+| Function | Description |
+|---|---|
+| Signup | Create a new user account. |
+| Email Verification | Verify the registered email using an OTP. |
+| OTP Resend | Request a new verification OTP. |
+| Login | Authenticate a verified user and establish a session. |
+| Current User | Retrieve the currently authenticated user. |
+| Profile Update | Update account information. |
+| Change Password | Change the current password. |
+| Forgot Password | Request a password-reset OTP. |
+| Reset Password | Verify the OTP and reset the password. |
+| Logout | End the authenticated session. |
+| Account Deletion | Delete the account after password confirmation. |
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/scan` | `{ code, language, title? }`: scans and saves; returns the full scan |
-| `GET` | `/api/scans` | List with `q`, `prediction`, `language`, `sort` (`newest`/`oldest`/`confidence`), `page`, `page_size` |
-| `GET` | `/api/scans/<id>` | One scan (code + AI explanation) |
-| `DELETE` | `/api/scans/<id>` | Delete a scan |
-| `GET` | `/api/scans/export.csv` | CSV of the scans matching the same filters |
-| `GET` | `/api/stats` | Dashboard numbers, daily activity, per-language counts, recent scans |
-
-**Public**
+### Scans
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/health` | Model folder, scoring rule, device, labels, AI explanation configuration |
-| `POST` | `/api/predict` | `{ code }`: model prediction only (no login, no AI explanation, not saved). Returns `prediction`, `vulnerable_probability`, `threshold`, `confidence`, `chunk_count` |
+| `POST` | `/api/scan` | Scan and save code for an authenticated user. |
+| `GET` | `/api/scans` | Retrieve scan history with filters and pagination. |
+| `GET` | `/api/scans/<id>` | Retrieve an individual scan. |
+| `DELETE` | `/api/scans/<id>` | Delete a saved scan. |
+| `GET` | `/api/scans/export.csv` | Export filtered scan history. |
+| `GET` | `/api/stats` | Retrieve dashboard statistics. |
 
-The `language` field is passed to the LLM for context only. The GraphCodeBERT prediction does not use it.
+### Public
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/health` | Check backend and model configuration. |
+| `POST` | `/api/predict` | Run model prediction without login, saving or AI explanation. |
+
+The exact authentication route names and request fields should be checked against the current Flask route definitions.
 
 ---
 
@@ -367,35 +538,43 @@ The `language` field is passed to the LLM for context only. The GraphCodeBERT pr
 
 ### Test results at a glance
 
-The supplied terminal screenshots show two evaluation runs:
+The recorded evaluation runs show the following results:
 
 | Test suite | Cases tested | Correct | Accuracy | Safe correctly classified | Vulnerable correctly classified |
 | :--- | ---: | ---: | ---: | ---: | ---: |
 | Small suite (`test.py`) | 16 | 13 | **81.25%** | 6 / 8 (75.00%) | 7 / 8 (87.50%) |
 | Larger suite (`test_300.py`) | 271 | 202 | **74.54%** | 109 / 136 (80.15%) | 93 / 135 (68.89%) |
 
-The larger suite's filename contains “300,” but the recorded run evaluated **271 cases**. These suites differ in size and composition; their accuracy figures should not be interpreted as a before/after comparison or combined into one score.
+The larger suite's filename contains "300", but the recorded run evaluated **271 cases**. These suites differ in size and composition; their accuracy figures should not be interpreted as a before/after comparison.
 
 ### Small suite — 16 cases
-
-The supplied `16_cases.png` screenshot records **13 correct predictions out of 16**, with **3 misclassifications**: two safe examples flagged as vulnerable and one vulnerable example classified as safe.
 
 | Actual class | Predicted safe | Predicted vulnerable |
 | :--- | ---: | ---: |
 | Safe | 6 | 2 |
 | Vulnerable | 1 | 7 |
 
-For the vulnerable class, the counts imply **77.78% precision**, **87.50% recall**, and **82.35% F1**. These three metrics are calculated from the screenshot's class counts; the terminal directly reports accuracy and correct counts by class. The run saves its output to `server_test_results.csv`.
-
-This run used **`model_v3` with `max @ 0.902`**, the same configuration as the larger suite (for example, S01 scores 0.899 and is classified as safe because it is just below the 0.902 threshold).
+- Correct predictions: 13
+- Misclassifications: 3
+- Accuracy: 81.25%
+- Vulnerable precision: 77.78%
+- Vulnerable recall: 87.50%
+- Vulnerable F1: 82.35%
 
 ### Larger suite — 271 cases
 
-The supplied `300_cases.png` screenshot confirms the committed larger-suite summary below: **202 correct predictions**, **27 false positives**, and **42 missed vulnerabilities**. Its displayed result rows include a decision threshold of `0.901606`.
+| Actual class | Predicted safe | Predicted vulnerable |
+| :--- | ---: | ---: |
+| Safe | 109 | 27 |
+| Vulnerable | 42 | 93 |
 
-### Committed evaluation results
+- Total cases: 271
+- Correct predictions: 202
+- False positives: 27
+- Missed vulnerabilities: 42
+- Accuracy: 74.54%
 
-The saved output identifies **`model_v3` with `max @ 0.902`** (rounded threshold). Despite the filenames, this run contains **271 cases**, comprising **136 safe** and **135 vulnerable** examples.
+### Performance by complexity
 
 | Group | Cases | Accuracy | Precision | Recall | F1 |
 | :--- | ---: | ---: | ---: | ---: | ---: |
@@ -404,31 +583,26 @@ The saved output identifies **`model_v3` with `max @ 0.902`** (rounded threshold
 | Complex | 83 | 75.90% | 85.19% | 58.97% | 69.70% |
 | **Overall** | **271** | **74.54%** | **77.50%** | **68.89%** | **72.94%** |
 
-Precision, recall, and F1 use **vulnerable** as the positive class.
+Precision, recall and F1 use **vulnerable** as the positive class.
 
-| Actual class | Predicted safe | Predicted vulnerable |
-| :--- | ---: | ---: |
-| Safe | 109 | 27 |
-| Vulnerable | 42 | 93 |
-
-**202 correct predictions; 27 false positives; 42 missed vulnerabilities.** These are saved results from a hand-written exploratory suite, corroborated by the supplied terminal screenshot; they are not a new run or an independent benchmark. They do not establish performance on unseen repositories or across every selectable language. Sources: [`tests/test_300_summary.csv`](tests/test_300_summary.csv), [`tests/test_300_results.csv`](tests/test_300_results.csv), and [`tests/test_300_output.txt`](tests/test_300_output.txt).
+These are saved results from a hand-written exploratory evaluation suite, not an independent benchmark. They do not establish performance on unseen repositories or across every selectable language.
 
 ### Run the evaluation
 
-Start the backend with your chosen model, then run:
+Start the backend with your selected model, then run:
 
 ```bash
-# Small suite: saves server_test_results.csv
+# Small suite
 python tests/test.py
 
-# Larger suite: saves test_300_results.csv and test_300_summary.csv
+# Larger suite
 python tests/test_300.py
 
 # Optional alternative cases file
 python tests/test_300.py path/to/test_cases_300.py
 ```
 
-The larger runner reads literal case lists using Python's AST without executing the case file. It can trim a syntactically incomplete tail, so inspect the printed case count before interpreting results. Both runners call `/api/predict`; outputs depend on the active checkpoint, aggregation, threshold, and chunk cap. Rerunning overwrites the corresponding result files.
+The evaluation runners call `/api/predict`. Results depend on the active checkpoint, aggregation rule, threshold and chunk limit.
 
 ### Frontend build checks
 
@@ -438,22 +612,51 @@ npm run build
 npx tsc --noEmit
 ```
 
-The build script runs Vite; TypeScript checking is a separate command. These commands are provided for local verification, not reported as passed in this documentation review.
+The build script runs Vite; TypeScript checking is a separate command.
+
+---
+
+## 🔐 Security & testing
+
+VulneraAI includes several security mechanisms designed to protect user accounts and authenticated requests.
+
+| Security control | Purpose |
+|---|---|
+| Password Hashing | Protects stored passwords by saving password hashes. |
+| Email OTP Verification | Helps verify ownership of a registered email address. |
+| Server-Side Sessions | Maintains authentication state on the backend. |
+| HTTP-Only Cookies | Helps prevent JavaScript from reading the session identifier. |
+| CSRF Protection | Helps prevent unauthorized cross-site state-changing requests. |
+| SameSite Cookies | Controls when cookies are sent with cross-site requests. |
+| Secure Cookie | Supports secure cookie transmission over HTTPS. |
+| Session Management | Maintains and manages user sessions in PostgreSQL. |
+| Password Reset OTP | Adds email verification to the password recovery process. |
+| CORS Configuration | Controls allowed frontend origins. |
+
+### Recommended security checks
+
+- Verify that an account cannot be used before email verification.
+- Test invalid and expired OTPs.
+- Confirm that the session cookie is not accessible through `document.cookie`.
+- Verify that protected endpoints reject unauthenticated requests.
+- Verify that missing or invalid CSRF tokens are rejected where required.
+- Confirm that logout invalidates the previous session.
+- Check that credentials are not stored in browser localStorage.
+- Verify CORS restrictions and HTTPS cookie behavior before deployment.
 
 ---
 
 ## 📌 Limitations & deployment considerations
 
-- **Whole-snippet classification only.** The model does not identify the vulnerable line or the vulnerability type.
-- **Detection quality is limited.** The saved evaluation misses 42 of 135 vulnerable examples. Diverse training data and independent, leakage-controlled evaluation remain necessary.
-- **Partial analysis of long inputs.** The classifier scores only the first eight chunks by default, while the LLM sees only the first 12,000 characters. The displayed line count describes the submission, not guaranteed model coverage.
-- **Risk labels are derived.** “High” maps to a vulnerable verdict and “low” to safe; there is no separately trained severity estimator.
-- **Explanation health is configuration-based.** An “AI explanations on” indicator means a key is configured, not that an external API request has succeeded.
-- **Deployment hardening remains.** The current app uses permissive CORS, exposes public inference, and does not implement rate limiting. Password changes do not revoke already-issued JWTs; logout removes the local token. Review these behaviors before public hosting.
-- **No email verification or "forgot password".** Accounts are created immediately.
-- **Limited schema upgrades.** Startup creates tables and adds two compatibility columns; there is no versioned migration framework.
-- **Login tokens are stored in the browser's `localStorage`.** Browser scripts can access these tokens. Review token storage and session security before deployment; HTTP-only cookies are one option.
-- **LLM availability.** Explanation generation runs synchronously, with up to three attempts for selected API errors. `GEMINI_TIMEOUT_SECONDS` is a per-request client timeout, not a total scan deadline. If explanation generation fails, the classifier result can still be saved and returned.
+- **Whole-snippet classification only.** The model does not identify exact vulnerable lines or independently determine vulnerability types.
+- **Detection quality is limited.** The saved evaluation misses 42 of 135 vulnerable examples. More diverse training data and independent evaluation are necessary.
+- **Partial analysis of long inputs.** The classifier evaluates only the first eight chunks by default, while the LLM receives only the first 12,000 characters.
+- **Risk labels are derived.** High and low risk labels are based on the prediction rather than a separately trained severity estimator.
+- **External explanation service.** AI explanations depend on the configured LLM API and its availability.
+- **Language coverage.** Language options provide context but do not establish equal model accuracy across languages.
+- **Production hardening.** HTTPS, Secure cookie settings, restrictive CORS, rate limiting and secret management should be reviewed before public hosting.
+- **Security verification.** Cookie flags, CSRF rejection, session invalidation and other negative security tests should be verified independently.
+- **Database migrations.** A versioned migration strategy is recommended as the database schema evolves.
 
 ---
 
@@ -461,33 +664,42 @@ The build script runs Vite; TypeScript checking is a separate command. These com
 
 | Problem | Fix |
 |---|---|
-| `git: 'lfs' is not a git command` | Install Git LFS (`brew install git-lfs`), then `git lfs install && git lfs pull` |
-| Server fails to load the model | `backend/model/model.safetensors` is only a 134-byte LFS pointer. Run `git lfs pull` |
-| `connection refused` / `could not connect to server` on startup | PostgreSQL is not running. On macOS: `brew services start postgresql@16` |
-| `database "polyguard" does not exist` | Run `createdb polyguard` |
-| `role "postgres" does not exist` | Use your Mac username in `DATABASE_URL` (see Setup step 3) |
-| Logged out after every server restart | Set `JWT_SECRET_KEY` in `backend/.env` |
-| `ModuleNotFoundError` (torch, flask, sqlalchemy, ...) | Activate the venv and run `pip install -r backend/requirements.txt` |
-| `ModuleNotFoundError: sklearn` | Run `pip install -r backend/requirements.txt` (includes `scikit-learn`) |
-| Saved metrics differ after cloning | The committed run used external `model_v3`; the clone defaults to `backend/model/`. Check `/api/health` and checkpoint provenance |
-| Frontend build cannot connect to deployed API | Set `VITE_API_URL` before building. Flask does not serve the frontend build automatically |
-| AI explanation unavailable | Check the backend terminal for the explanation error. Check `GEMINI_API_KEY` and `GEMINI_MODEL` in `backend/.env` |
-| `503 UNAVAILABLE` / `504 DEADLINE_EXCEEDED` | The explanation LLM is overloaded. Try again later or use a faster model |
-| Frontend says it cannot reach the server | Make sure the backend is running on port 5000 |
+| `git: 'lfs' is not a git command` | Install Git LFS, then run `git lfs install && git lfs pull`. |
+| Server fails to load the model | Run `git lfs pull` and check the model files. |
+| `connection refused` on startup | Make sure PostgreSQL is running and verify `DATABASE_URL`. |
+| Database does not exist | Create the database configured in `DATABASE_URL`. |
+| `ModuleNotFoundError` | Activate the virtual environment and run `pip install -r backend/requirements.txt`. |
+| Email verification fails | Check SMTP credentials, Gmail App Password, server and port in `backend/.env`. |
+| Password-reset email fails | Verify SMTP configuration and backend email logs. |
+| CSRF error | Refresh the application and check CSRF token retrieval and the `X-CSRF-Token` header. |
+| Login/session issue | Check browser cookies, session configuration and PostgreSQL connection. |
+| AI explanation unavailable | Check `GEMINI_API_KEY`, `GEMINI_MODEL` and backend logs. |
+| Frontend cannot reach backend | Make sure Flask is running on port 5000 and check `VITE_API_URL`. |
+| Saved metrics differ | Check the active model directory, scoring rule, threshold and chunk limit. |
 
 ---
 
-## Development priorities
+## 🚧 Future improvements
 
-- Package the evaluated checkpoint with its exact scoring metadata and provenance.
-- Add independent test data, per-language metrics, and complete run metadata.
-- Add automated authentication, authorization, API, and frontend integration tests.
-- Introduce versioned database migrations, rate limits, restrictive CORS, and token revocation.
-- Make truncation coverage explicit in saved scan results and the UI.
+- Improve vulnerability detection using more diverse training data.
+- Add independent evaluation datasets and per-language performance metrics.
+- Improve detection of complex vulnerability patterns.
+- Add more detailed vulnerability explanations.
+- Highlight potentially vulnerable code sections.
+- Expand automated authentication and authorization testing.
+- Introduce versioned database migrations.
+- Add API rate limiting and further deployment hardening.
+- Improve model checkpoint packaging and reproducibility.
+- Enhance scan reporting and dashboard analytics.
 
-<details>
-<summary><strong>Documentation review scope</strong></summary>
+---
 
-This README was checked against the frontend pages and components, API client and export code, Flask routes, authentication, database models, environment template, package configuration, and committed evaluation artifacts at commit [`f99101e`](https://github.com/yasmeenmh90-beep/AI-Powered-Multi-Language-Code-Vulnerability-Scanner/tree/f99101e5ea44e194de7a5f7e591a9114761f712d). The model and database were not started, and browser flows were not exercised during this source review. The evaluation section also incorporates the user-supplied `16_cases.png` and `300_cases.png` screenshots; results were transcribed rather than rerun.
+<div align="center">
 
-</details>
+### 🛡️ VulneraAI
+
+**Building safer code with AI-powered analysis.**
+
+[GitHub Repository](https://github.com/HadiaWaheed/VulneraAI)
+
+</div>
