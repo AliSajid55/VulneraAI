@@ -141,7 +141,7 @@ export default function AppLayout() {
     .toUpperCase();
 
   const section = "/" + (location.pathname.split("/")[1] || "dashboard");
-  const pageTitle = PAGE_TITLES[section] ?? "PolyGuard";
+  const pageTitle = PAGE_TITLES[section] ?? "VulneraAI";
   const isDetail = /^\/history\/\d+/.test(location.pathname);
 
   const sidebar = (
@@ -253,7 +253,7 @@ export default function AppLayout() {
             </button>
             <div className="md:hidden"><Logo compact /></div>
             <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-sm">
-              <span className="hidden text-slate-500 sm:inline">PolyGuard</span>
+              <span className="hidden text-slate-500 sm:inline">VulneraAI</span>
               <ChevronRight size={14} className="hidden text-slate-600 sm:inline" />
               {isDetail ? (
                 <>

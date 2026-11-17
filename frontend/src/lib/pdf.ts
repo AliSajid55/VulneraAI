@@ -60,7 +60,7 @@ export function downloadScanPdf(scan: ScanDetail) {
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(18);
-  doc.text("PolyGuard Scan Report", margin, 42);
+  doc.text("VulneraAI Scan Report", margin, 42);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
   doc.text(`Scan #${scan.id}`, pageWidth - margin, 42, { align: "right" });
@@ -118,5 +118,5 @@ export function downloadScanPdf(scan: ScanDetail) {
     doc.text(`${page} / ${pages}`, pageWidth - margin, pageHeight - 24, { align: "right" });
   }
 
-  doc.save(`polyguard-scan-${scan.id}.pdf`);
+  doc.save(`vulneraai-scan-${scan.id}.pdf`);
 }
