@@ -24,7 +24,37 @@ from transformers import (
 # ==================================================
 
 app = Flask(__name__)
-CORS(app, expose_headers=["Content-Disposition"])
+
+# Credentialed CORS is required because the frontend uses
+# fetch(..., credentials="include") for HttpOnly session cookies.
+# Keep this list limited to the exact local frontend origins.
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": [
+                "http://localhost:3000",
+            ]
+        }
+    },
+
+
+    supports_credentials=True,
+    allow_headers=[
+        "Content-Type",
+        "X-CSRF-Token",
+        "Accept",
+    ],
+    methods=[
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+        "OPTIONS",
+    ],
+    expose_headers=["Content-Disposition"],
+)
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -929,7 +959,7 @@ def get_stats():
 
 if __name__ == "__main__":
     app.run(
-        host="127.0.0.1",
+        host="0.0.0.0",
         port=5000,
         debug=False,
     )
