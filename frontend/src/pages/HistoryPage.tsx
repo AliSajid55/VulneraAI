@@ -80,7 +80,7 @@ export default function HistoryPage() {
   const exportCsv = async () => {
     setExporting(true);
     try {
-      await downloadFile(`/api/scans/export.csv?${filterQuery()}`, "polyguard-scans.csv");
+      await downloadFile(`/api/scans/export.csv?${filterQuery()}`, "vulneraai-scans.csv");
       toast("CSV export downloaded.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Export failed.");

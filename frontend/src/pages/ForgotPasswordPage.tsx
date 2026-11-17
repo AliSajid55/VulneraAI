@@ -155,7 +155,7 @@ export function ForgotPasswordPage() {
   const subtitles = {
     email: "Enter your registered email address to receive a reset code.",
     otp: "Enter the 6-digit code sent to your email address.",
-    password: "Choose a strong password for your PolyGuard account.",
+    password: "Choose a strong password for your VulneraAI account.",
   };
 
   return (
