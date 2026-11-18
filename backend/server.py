@@ -10,6 +10,8 @@ from datetime import datetime, timedelta, timezone
 import torch
 from flask import Flask, Response, g, jsonify, request
 from flask_cors import CORS
+from limiter import limiter
+from logger import logger
 from dotenv import load_dotenv
 from google import genai
 from google.genai import errors, types
@@ -255,16 +257,16 @@ def describe_rule(rule):
     return f"{rule['agg']} @ {rule['thr']:.3f}"
 
 
-print("GraphCodeBERT loaded successfully.")
-print("Model directory:", MODEL_DIR)
-print("Device:", DEVICE)
-print("Labels:", NORMALIZED_ID2LABEL)
-print("Maximum length:", MAX_LENGTH)
-print("Stride:", STRIDE)
-print("Scoring rule:", describe_rule(SCORING_RULE), "| from", RULE_SOURCE)
-print("Max chunks scored:", MAX_EVAL_CHUNKS)
-print("Gemini configured:", gemini_client is not None)
-print("Gemini model:", GEMINI_MODEL)
+logger.info("GraphCodeBERT loaded successfully.")
+logger.info("Model directory: %s", MODEL_DIR)
+logger.info("Device: %s", DEVICE)
+logger.info("Labels: %s", NORMALIZED_ID2LABEL)
+logger.info("Maximum length: %s", MAX_LENGTH)
+logger.info("Stride: %s", STRIDE)
+logger.info("Scoring rule: %s | from %s", describe_rule(SCORING_RULE), RULE_SOURCE)
+logger.info("Max chunks scored: %s", MAX_EVAL_CHUNKS)
+logger.info("Gemini configured: %s", gemini_client is not None)
+logger.info("Gemini model: %s", GEMINI_MODEL)
 
 # ==================================================
 # 3. GRAPHCODEBERT PREDICTION
@@ -563,6 +565,10 @@ from auth import auth_bp, login_required  # noqa: E402
 
 init_db()
 app.register_blueprint(auth_bp)
+# Brute-force protection. Sensitive routes (login, signup, OTP) carry tighter
+# per-route limits declared in auth.py; the generous app-wide default lives in
+# limiter.py.
+limiter.init_app(app)
 
 
 @app.teardown_appcontext

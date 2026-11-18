@@ -22,6 +22,8 @@ from hashlib import sha256
 from hmac import compare_digest
 
 from flask import Blueprint, g, jsonify, request
+from limiter import limiter
+from logger import logger
 from sqlalchemy import func, select
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -91,8 +93,8 @@ OTP_SECRET_KEY = (
 
 if not OTP_SECRET_KEY:
     OTP_SECRET_KEY = secrets.token_hex(32)
-    print(
-        "WARNING: OTP_SECRET_KEY is not configured. "
+    logger.warning(
+        "OTP_SECRET_KEY is not configured. "
         "OTP verification may stop working after a restart."
     )
 
@@ -535,11 +537,12 @@ def issue_verification_code(user: User):
         _send_email(user.email, code)
 
     except Exception:
+        # Full traceback goes to the log file; the user sees a generic message.
+        logger.exception("Verification email could not be sent to %s", user.email)
 
         SessionLocal.delete(verification)
         SessionLocal.commit()
 
-        print("VulneraAI verification email could not be sent.")
         return (
             False,
             "We could not send the verification email. Check SMTP settings and try again.",
@@ -663,6 +666,7 @@ def login_required(view):
 # --------------------------------------------------
 
 @auth_bp.route("/signup", methods=["POST"])
+@limiter.limit("3 per minute")
 def signup():
 
     data = read_json()
@@ -741,6 +745,7 @@ def signup():
 # --------------------------------------------------
 
 @auth_bp.route("/verify-email", methods=["POST"])
+@limiter.limit("5 per minute")
 def verify_email():
 
     data = read_json()
@@ -841,6 +846,7 @@ def verify_email():
 # --------------------------------------------------
 
 @auth_bp.route("/resend-verification", methods=["POST"])
+@limiter.limit("2 per minute")
 def resend_verification():
 
     data = read_json()
@@ -876,6 +882,7 @@ def resend_verification():
 # --------------------------------------------------
 
 @auth_bp.route("/login", methods=["POST"])
+@limiter.limit("5 per minute")
 def login():
 
     data = read_json()
@@ -1051,6 +1058,7 @@ def delete_me():
 # --------------------------------------------------
 
 @auth_bp.route("/forgot-password", methods=["POST"])
+@limiter.limit("3 per minute")
 def forgot_password():
 
     data = read_json()
@@ -1102,10 +1110,10 @@ def forgot_password():
         _send_password_reset_email(user.email, code)
 
     except Exception:
+        # Full traceback goes to the log file; the user sees a generic message.
+        logger.exception("Password reset email could not be sent to %s", email)
 
         password_reset_otps.pop(email, None)
-
-        print("VulneraAI password reset email could not be sent.")
 
         return error(
             "We could not send the reset email. Please try again later.",
@@ -1122,6 +1130,7 @@ def forgot_password():
 # --------------------------------------------------
 
 @auth_bp.route("/verify-reset-otp", methods=["POST"])
+@limiter.limit("5 per minute")
 def verify_reset_otp():
 
     data = read_json()
@@ -1196,6 +1205,7 @@ def verify_reset_otp():
 # --------------------------------------------------
 
 @auth_bp.route("/reset-password", methods=["POST"])
+@limiter.limit("5 per minute")
 def reset_password():
 
     data = read_json()
