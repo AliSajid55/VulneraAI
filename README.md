@@ -185,7 +185,6 @@ The public `/api/predict` route runs inference without AI explanations or databa
 │   ├── server.py                  # Flask application, inference and API routes
 │   ├── auth.py                    # Authentication and session management
 │   ├── database.py                # PostgreSQL connection and database models
-│   ├── server_backup.py           # Legacy JSON-file prototype
 │   ├── model/                     # Fine-tuned model files
 │   ├── model_v3/                  # Optional model checkpoint and scoring metadata
 │   ├── .env.example               # Environment configuration template
